@@ -888,6 +888,10 @@ int convertdefine() { int i; int j;   i=0;
      eax=lexvalL; _ lexvalL=eax;   return T_CONST; } }      i++; }
    return 0;
 }
+int letterX(char c) { if (digit(c)) return 1; if (c=='_') return 1;
+  if (c> 'z') return 0; if (c< '@') return 0;
+  if (c> 'Z') { if (c< 'a') return 0; }  return 1; }
+  
 long getdigit(unsigned char c) { unsigned long L;
     _ lexvalL=0;    c-='0';
     eax=c;/* cast B2L */  _ lexvalL=eax;
