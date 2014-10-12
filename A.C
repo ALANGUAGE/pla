@@ -1,5 +1,5 @@
-//   simplexpr-test-prleft-prrigth   22.05.2011 21.09.2014
-char Version1[]="F.COM CComp V0.6";
+// 12.10.2014
+char Version1[]="A.COM CComp V0.7";
 #define BSS
 #define ARCHIVE "AR.C"
 #define ORGDATA     30000
@@ -849,8 +849,8 @@ g1: c=next(); if (c == 0) return 0; if (c <= ' ') goto g1;
       c=next(); return getlex(); } else  return '/'; }
   if (c == '"') {getstring(c); return T_STRING;}
   if (digit(c)) { getdigit(c); return T_CONST; }
-  if (c==39) { lexvalL=next();
-    if (lexvalL==92) {lexvalL=next();
+  if (c==39) { lexvalL=next();// Hochkomma
+    if (lexvalL==92) {lexvalL=next();// Backslash
       if (lexvalL=='n') lexvalL=10; if (lexvalL=='t') lexvalL= 9;
       if (lexvalL=='0') lexvalL= 0; } next(); return T_CONST; }
   if (letterX(c)) { 
