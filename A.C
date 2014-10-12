@@ -853,9 +853,9 @@ g1: c=next(); if (c == 0) return 0; if (c <= ' ') goto g1;
     if (lexvalL==92) {lexvalL=next();
       if (lexvalL=='n') lexvalL=10; if (lexvalL=='t') lexvalL= 9;
       if (lexvalL=='0') lexvalL= 0; } next(); return T_CONST; }
-  if (letter(c)) { 
+  if (letterX(c)) { 
     strcpy(symboltemp, symbol); p=&symbol;  *p=c;  p++;
-    while(letter(thechar)) {c=next(); *p=c;  p++; } 
+    while(letterX(thechar)) {c=next(); *p=c;  p++; } 
       *p=0;
     if (eqstr(symbol,"signed"  )) return T_SIGNED;
     if (eqstr(symbol,"unsigned")) return T_UNSIGNED;
@@ -888,8 +888,9 @@ int convertdefine() { int i; int j;   i=0;
      eax=lexvalL; _ lexvalL=eax;   return T_CONST; } }      i++; }
    return 0;
 }
-int letterX(char c) { if (digit(c)) return 1; if (c=='_') return 1;
-  if (c> 'z') return 0; if (c< '@') return 0;
+int letterX(char c) { if (digit(c)) return 1; 
+  if (c=='.') return 1; if (c=='_') return 1;
+  if (c> 'z') return 0; if (c< '@') return 0;// @ included
   if (c> 'Z') { if (c< 'a') return 0; }  return 1; }
   
 long getdigit(unsigned char c) { unsigned long L;
