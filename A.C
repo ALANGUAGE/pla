@@ -943,7 +943,6 @@ int fgets1() { char c; c=*fgetsp;
   fgetsp++; spalte++;  return c; }
 int printinputline() { fgetsp=&fgetsdest;
   do {DOS_NoBytes=readR(&DOS_ByteRead, fdin);
-  while (DOS_ByteRead == 13) DOS_NoBytes=readR(&DOS_ByteRead, fdin);//skipCR
   if (DOS_NoBytes == 0) return; 
     *fgetsp=DOS_ByteRead; fgetsp++;} 
   while (DOS_ByteRead != 10); *fgetsp=0;
