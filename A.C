@@ -843,7 +843,7 @@ g1: c=next(); if (c == 0) return 0; if (c <= ' ') goto g1;
   if (c=='/') {if(thechar=='=') {next(); return T_DIVASS;    }}        
   if (instr1("()[]{},;*:%-><=+!&|#?", c)) return c ;
   if (c == '/') { if (thechar == '/') {
-      do c=next(); while(c != 13); /* c=next(); */ return getlex(); } }
+      do c=next(); while(c != 10); /* c=next(); */ return getlex(); } }
   if (c == '/') { if (thechar == '*') {
       g2: c=next(); if (c != '*') goto g2; if (thechar != '/') goto g2;
       c=next(); return getlex(); } else  return '/'; }
