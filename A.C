@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 // 26.10.2014
+=======
+// 12.10.2014
+>>>>>>> letterX
 char Version1[]="A.COM CComp V0.7";
 #define BSS
 #define ARCHIVE "AR.C"
@@ -843,7 +847,11 @@ g1: c=next(); if (c == 0) return 0; if (c <= ' ') goto g1;
   if (c=='/') {if(thechar=='=') {next(); return T_DIVASS;    }}        
   if (instr1("()[]{},;*:%-><=+!&|#?", c)) return c ;
   if (c == '/') { if (thechar == '/') {
+<<<<<<< HEAD
       do c=next(); while(c != 13); /* c=next(); */ return getlex(); } }
+=======
+      do c=next(); while(c != 10); /* c=next(); */ return getlex(); } }
+>>>>>>> letterX
   if (c == '/') { if (thechar == '*') {
       g2: c=next(); if (c != '*') goto g2; if (thechar != '/') goto g2;
       c=next(); return getlex(); } else  return '/'; }
@@ -923,8 +931,13 @@ int prscomment(unsigned char *s) {unsigned char c;
 int prnl() { prs("\n ");}
 
 int prs(unsigned char *s) {unsigned char c; int com; com=0;
+<<<<<<< HEAD
   while(*s) { c=*s; if (c==34) if (com) com=0; else com=1;//Apostrophe
     if (c==92) { if (com==0) { s++; c=*s;                 //Backslash
+=======
+  while(*s) { c=*s; if (c==34) if (com) com=0; else com=1;
+    if (c==92) { if (com==0) { s++; c=*s;
+>>>>>>> letterX
           if (c=='n') c=10; if (c=='t') c= 9; } } prc(c); s++;  } }
 int eprnum(int n){int e; if(n<0) { eprc('-'); n=mkneg(n); }
   if (n >= 10) {e=n/10; eprnum(e);}  n=n%10; n=n+'0'; eprc(n); }
