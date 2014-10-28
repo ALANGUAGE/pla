@@ -764,7 +764,7 @@ int stmt() { int c; char cha;
   else if(istoken(T_WHILE)) dowhile();
   else if(istoken(T_GOTO))  {prs("\n jmp @@");name1();prs(symbol);expect(';');}
   else if(token==T_ASM)     {prs("\n"); c=next();
-    while(c != '\n') { prc(c);	c=next(); }; token=getlex(); }
+    while(c != 10) { prc(c);	c=next(); }; token=getlex(); }
   else if(istoken(T_ASMBLOCK)) { if (token== '{' )  { prs("\n"); cha=next();  
     while(_ cha!= '}') { prc(cha); cha=next(); }
     token=getlex(); }
