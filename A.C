@@ -1,12 +1,4 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-// 26.10.2014
-=======
 // 28.10.2014
->>>>>>> letterX
-=======
-// 28.10.2014
->>>>>>> letterX
 char Version1[]="A.COM CComp V0.7";
 #define BSS
 #define ARCHIVE "AR.C"
@@ -772,15 +764,7 @@ int stmt() { int c; char cha;
   else if(istoken(T_WHILE)) dowhile();
   else if(istoken(T_GOTO))  {prs("\n jmp @@");name1();prs(symbol);expect(';');}
   else if(token==T_ASM)     {prs("\n"); c=next();
-<<<<<<< HEAD
-<<<<<<< HEAD
-    while(c != '\n') { prc(c);	c=next(); }; token=getlex(); }
-=======
     while(c != 10) { prc(c);	c=next(); }; token=getlex(); }
->>>>>>> letterX
-=======
-    while(c != 10) { prc(c);	c=next(); }; token=getlex(); }
->>>>>>> letterX
   else if(istoken(T_ASMBLOCK)) { if (token== '{' )  { prs("\n"); cha=next();  
     while(_ cha!= '}') { prc(cha); cha=next(); }
     token=getlex(); }
@@ -939,18 +923,8 @@ int prscomment(unsigned char *s) {unsigned char c;
 int prnl() { prs("\n ");}
 
 int prs(unsigned char *s) {unsigned char c; int com; com=0;
-<<<<<<< HEAD
-<<<<<<< HEAD
-  while(*s) { c=*s; if (c==34) if (com) com=0; else com=1;//Apostrophe
-    if (c==92) { if (com==0) { s++; c=*s;                 //Backslash
-=======
   while(*s) { c=*s; if (c==34) if (com) com=0; else com=1;
     if (c==92) { if (com==0) { s++; c=*s;
->>>>>>> letterX
-=======
-  while(*s) { c=*s; if (c==34) if (com) com=0; else com=1;
-    if (c==92) { if (com==0) { s++; c=*s;
->>>>>>> letterX
           if (c=='n') c=10; if (c=='t') c= 9; } } prc(c); s++;  } }
 int eprnum(int n){int e; if(n<0) { eprc('-'); n=mkneg(n); }
   if (n >= 10) {e=n/10; eprnum(e);}  n=n%10; n=n+'0'; eprc(n); }
