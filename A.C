@@ -1,4 +1,4 @@
-// 12.10.2014
+// 28.10.2014
 char Version1[]="A.COM CComp V0.7";
 #define BSS
 #define ARCHIVE "AR.C"
