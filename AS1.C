@@ -1,4 +1,4 @@
-//AS1.C  2.11.2014
+//AS1.C  2.11.201
 // parse: getToken storeLabel. searchLabel. getVariable
 int parse() {
   LabelNamePtr= &LabelNames;
