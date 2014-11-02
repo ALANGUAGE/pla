@@ -43,7 +43,7 @@ int OpPrintIndex;  //0-OPMAXLEN, Position to print opcode, by genCode8()
 char *OpCodePtr;   //position in OpCodeTable by searchSymbol(), div.
 char PrReloc;      //print 'R' if relocative
 char LabelNames[1000]; char *LabelNamePtr;
-char LabelType[ 100]; unsigned int LabelAddr[ 100];
+char LabelType  [100]; unsigned int LabelAddr[100];
 int LabelMaxIx=0;  int LabelIx;
 char FileBin  [2000]; unsigned int BinLen=0;
 int test1() { __asm {
@@ -116,19 +116,19 @@ int r; char r1; char r2;//temp-register
     if (RegType == BYTE) wflag=0; else wflag=1;
     return;
   }
-  if (Op1 == ADDRES) {disp=LabelAddr(LabelIx); wflag=1; return;}
+  if (Op1 == ADDRES) {disp=LabelAddr[LabelIx]; wflag=1; return;}
 
   if (Op1 == CONTNS) {
     getToken1();
     oper1();
     if (TokeType != ALNUM) error1("reg/mem expected");
 
-    if (Op1==ADDRESS) {
-      disp=LabelAddr(LabelIx);
+    if (Op1==ADDRES) {
+      disp=LabelAddr[LabelIx];
       if (isToken(']')) {modrm=6;//mod=00, r/m=110
         return; }
       if (Op1 == REGIS) getIndReg();
-      if (op1 == ADDRES) {//only 1 ind reg
+      if (Op1 == ADDRES) {//only 1 ind reg
 
       }
     }
@@ -204,8 +204,8 @@ int genInstruction(char No, int i) {char c;//set: OpCodePtr++
   if(i) OpCodePtr=OpCodePtr+i;
   c= *OpCodePtr + No; genCode8(c);
 }
-int genAddr16(int i) {unsigned int j;
-  j = LabelAddr[i]; genCode16(j);      /////////////////
+int genAddr16(int i) { unsigned int j; 
+  j = LabelAddr[i]; genCode16(j);      
 }
 int genMod() {char x;
   OpCodePtr++; x= *OpCodePtr; writeEA(x);
@@ -218,4 +218,3 @@ int writeEA(char xxx) {
   genCode8(xxx);
 }
 #include "AS1.C"
-
