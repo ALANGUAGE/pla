@@ -1,4 +1,8 @@
+<<<<<<< Updated upstream
 //AS1.C  2.11.201
+=======
+//AS1.C  03.01.2014
+>>>>>>> Stashed changes
 // parse: getToken storeLabel. searchLabel. getVariable
 int parse() {
   LabelNamePtr= &LabelNames;
