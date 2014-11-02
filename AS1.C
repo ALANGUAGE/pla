@@ -23,23 +23,13 @@ int parse() {
 int getToken1() { char c; //set: TokeType
   skipBlank();
   c = *InputPtr;
-  if (c == 013) {TokeType=0; return; }//empty line
+  if (c == 10)  {TokeType=0; return; }//empty line
   if (c == 0)   {TokeType=0; return; }//last line
   if (c == ';') {TokeType=0; return; }//comment
   if (digit(c)) {getDigit(c); TokeType=DIGIT; return;}//ret:1=SymbolInt
   if (alnum (c)) {getName(c); TokeType=ALNUM; return;}//ret:2=Symbol
   TokeType=3; return;               //no alnum
 }
-/*int getToken() { char c;
-  skipBlank();
-  c = *InputPtr;
-  if (c == 013)  return 0;//empty line
-  if (c == 0)    return 0;//last line
-  if (c == ';')  return 0;//comment
-  if (digit(c)) {getDigit(c);  return DIGIT;}//ret:1=SymbolInt
-  if (alnum (c)) {getName(c);  return ALNUM;}//ret:2=Symbol
-  return 3;               //no alnum
-} */
 int storeLabel(char LabType) {
   if(searchLabel(LabType)) error1("duplicate symbol");
   LabelNamePtr=strcpy(LabelNamePtr, Symbol);
@@ -104,6 +94,7 @@ int getLine() {
 }
 int skipBlank() {
   skipblank1:
+    if (*InputPtr == 13 ) { InputPtr++; goto skipblank1; }
     if (*InputPtr == ' ') { InputPtr++; goto skipblank1; }
     if (*InputPtr == 9  ) { InputPtr++; goto skipblank1; }
 }
