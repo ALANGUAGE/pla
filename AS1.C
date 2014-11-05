@@ -321,8 +321,8 @@ int prs(unsigned char *s) {unsigned char c; int com; com=0;
           if (c=='n') c=10; if (c=='t') c= 9; } } prc(c); s++;  }
 }
 int printhex8(unsigned int c) { unsigned int nib;
-  nib = c >> 4; nib += 48; if (nib > 57)nib += 7; putch(nib);
-  nib = c & 15; nib += 48; if (nib > 57)nib += 7; putch(nib);
+  nib = c >> 4; nib += 48; if (nib > 57)nib += 7; prc(nib);
+  nib = c & 15; nib += 48; if (nib > 57)nib += 7; prc(nib);
 }
 int printhex16(unsigned int i) {unsigned int half;
   half = i >>  8; printhex8(half); half = i & 255; printhex8(half);
@@ -399,7 +399,7 @@ int epilog() { int i; int j; char c;
   i=0;
   do {
     prc(' ');
-    j = FileBin[i];
+    j = FileBina[i];
     printhex8(j);
     i++;
   } while (i < BinLen);
