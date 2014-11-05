@@ -298,7 +298,7 @@ int printLine() { int i; char c;
     i=0;
     do {
       c=OpPos[i];
-      printhex8(c); prc(' ');
+      printhex8a(c); prc(' ');
       i++;
     } while(i < OpPrintIndex);
     do {// fill rest with blank
@@ -320,12 +320,12 @@ int prs(unsigned char *s) {unsigned char c; int com; com=0;
     if (c==92) { if (com==0) { s++; c=*s;
           if (c=='n') c=10; if (c=='t') c= 9; } } prc(c); s++;  }
 }
-int printhex8(unsigned int c) { unsigned int nib;
+int printhex8a(unsigned int c) { unsigned int nib;
   nib = c >> 4; nib += 48; if (nib > 57)nib += 7; prc(nib);
   nib = c & 15; nib += 48; if (nib > 57)nib += 7; prc(nib);
 }
 int printhex16(unsigned int i) {unsigned int half;
-  half = i >>  8; printhex8(half); half = i & 255; printhex8(half);
+  half = i >>  8; printhex8a(half); half = i & 255; printhex8a(half);
 }
 int printIntU(unsigned int n) { unsigned int e;
   if ( _ n >= 10) {  e=n/10; //DIV
@@ -399,8 +399,8 @@ int epilog() { int i; int j; char c;
   i=0;
   do {
     prc(' ');
-    j = FileBina[i];
-    printhex8(j);
+    j = FileBin[i];
+    printhex8a(j);
     i++;
   } while (i < BinLen);
 }
