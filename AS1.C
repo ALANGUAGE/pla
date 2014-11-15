@@ -1,4 +1,4 @@
-//AS1.C  2.11.2014
+//AS1.C  15.11.2014
 // parse: getLine. getToken1 storeLabel. searchSymbol process 
 //        getVariable printLine
 int parse() {
@@ -80,18 +80,23 @@ int getVariable() { char c;
   else errorexit("DB,DW,DD or RESB,W,D expected");
 }
 // helper functions XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-int getLine() {// make ASCIIZ, skip LF=13
+int getLine() {// make ASCIIZ, skip LF=10 and CR=13
   InputPtr= &InputBuf;
   *InputPtr=0;//if last line is empty
   do {
     DOS_NoBytes=readRL(&DOS_ByteRead, asm_fd, 1);
     if (DOS_ERR) error1("Reading Source");
     if (DOS_NoBytes == 0) return;
-    if(DOS_ByteRead != 13) {
-        *InputPtr = DOS_ByteRead; InputPtr++;} 
-  } while (DOS_ByteRead != 10);
+    *InputPtr = DOS_ByteRead; 
+    InputPtr++;
+  } while (ifEOL(DOS_ByteRead) == 0);
   InputPtr--;
   *InputPtr=0;
+}
+int ifEOL(char c) {
+  if (c == 10) return 1;
+  if (c == 13) return 1;
+  return 0;
 }
 int skipBlank() {
   skipblank1:
