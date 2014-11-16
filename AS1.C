@@ -1,11 +1,12 @@
-//AS1.C  2.11.2014
+//AS1.C  16.11.2014 00:30
 // parse: getLine. getToken1 storeLabel. searchSymbol process 
 //        getVariable printLine
 int parse() {
   LabelNamePtr= &LabelNames;
   do {
-    PCStart=PC; OpSize=0; OpPrintIndex=0; PrReloc=0;
+    PCStart=PC; OpSize=0; OpPrintIndex=0; PrReloc=' ';
     getLine();
+ //   printLineHex(InputBuf);
     InputPtr = &InputBuf;
     getToken1();
     if (TokeType == ALNUM) {
@@ -21,6 +22,10 @@ int parse() {
     printLine();
   } while (DOS_NoBytes != 0 );
 }
+/*int printLineHex(unsigned char *s) { int L;
+  L = strlen(s);
+  prs(" L:");
+  printIntU(L);  } */
 int getToken1() { char c; //set: TokeType
   skipBlank();
   c = *InputPtr;
@@ -80,18 +85,25 @@ int getVariable() { char c;
   else errorexit("DB,DW,DD or RESB,W,D expected");
 }
 // helper functions XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-int getLine() {// make ASCIIZ, skip LF=13
+int getLine() {// make ASCIIZ, skip LF=10 and CR=13
   InputPtr= &InputBuf;
   *InputPtr=0;//if last line is empty
   do {
     DOS_NoBytes=readRL(&DOS_ByteRead, asm_fd, 1);
     if (DOS_ERR) error1("Reading Source");
     if (DOS_NoBytes == 0) return;
-    if(DOS_ByteRead != 13) {
-        *InputPtr = DOS_ByteRead; InputPtr++;} 
-  } while (DOS_ByteRead != 10);
+    *InputPtr = DOS_ByteRead; 
+    InputPtr++;
+  } while (ifEOL(DOS_ByteRead) == 0);
   InputPtr--;
   *InputPtr=0;
+}
+int ifEOL(char c) {
+  if (c == 10) return 1;
+  if (c == 13) { 
+    DOS_NoBytes=readRL(&DOS_ByteRead, asm_fd, 1); 
+    return 1;}
+  return 0;
 }
 int skipBlank() {
   skipblank1:
@@ -377,7 +389,7 @@ int epilog() { int i; int j; char c;
   prs(", LabelNamesChar: ");
   i= &LabelNames; i=LabelNamePtr-i; printIntU(i); prs(". >>");
   i= &LabelNames;
-  do { c=*i; prc(c); i++;
+  do { c=*i; if (c==0) c=' '; prc(c); i++;
   } while (i < LabelNamePtr); prs("<< \n");
   if (LabelMaxIx) {
     i = 1;
