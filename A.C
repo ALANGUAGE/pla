@@ -1,9 +1,9 @@
 // 28.10.2014
-char Version1[]="A.COM CComp V0.7";
-#define BSS
+char Version1[]="A.COM CComp V0.7 16.11.2014";
+//#define BSS
 #define ARCHIVE "AR.C"
 #define ORGDATA     30000
-char BSS=0;  char NASM=0;  char PROTECTED=0;     char LIST=0;
+char BSS=1;  char NASM=0;  char PROTECTED=0;     char LIST=0;
 #define LSTART        200
 #define VARMAX        300
 #define FUNCMAX       300
