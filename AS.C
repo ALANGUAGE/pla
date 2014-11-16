@@ -1,5 +1,5 @@
-int main() {getarg(); parse(); epilog(); end1();}/*AB,  NC*/
-char Version1[]="AS.C X86-ASM V0.05  3.1.2014";
+int main() {getarg(); parse(); epilog(); end1();}
+char Version1[]="AS.C V0.06  15.11.2014";
 char LIST;
 char Symbol[80]; char SymbolUpper[80]; unsigned int SymbolInt;
 char InputBuf[128];  unsigned char *InputPtr;
@@ -14,7 +14,7 @@ char isLabel;      //by getName()
 #define LABEL    1
 #define VARIABLE 2
 #define DIGIT    1 //0-9
-#define ALNUM    2 //0-9, _, a-z, A-Z
+#define ALNUM    2 //0-9 _ a-z A-Z
 char TokeType;     //0-3 ret:getToken1()  by oper()
 #define BYTE     1
 #define WORD     2
@@ -22,15 +22,15 @@ char TokeType;     //0-3 ret:getToken1()  by oper()
 #define DWORD    8
 char RegType;      //0=no reg, BYTE, WORD, SEGREG, DWORD
 char RegNo;        //0 - 7 AL, CL, ...  by testReg()
-char OpSize;       //66h: 0=not defined, BYTE, WORD, DWORD by oper2()
+char OpSize;       //66h: 0=no length, BYTE, WORD, DWORD
 //char AddrSize;   //67h:
-unsigned int OpCode;// 1-2 bytes
+unsigned int OpCode;// 1-3 bytes
 char wflag;        //0=byte, 1=word/dword
 char dflag;        //0=source is reg,  1=dest is reg
 char Op1;          //ret: REGIS,ADDRES,CONTNS,IMMED
 char modrm;        //mod, r/m
-int disp;          //displacement
-int imme;          //immediate
+int disp;          //displacement      0-8 bytes
+int imme;          //immediate         0-8 bytes
 #define IMMED  1   //immediate const  ,123
 #define REGIS  2   //simple reg       ,BX
 #define ADDRES 4   //VALUE direct     ,var1
@@ -218,3 +218,5 @@ int writeEA(char xxx) {
   genCode8(xxx);
 }
 #include "AS1.C"
+// mk_const  mk_addr  simplify_add
+// emitByte  emitWord  emitModRM
