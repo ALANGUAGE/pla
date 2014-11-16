@@ -1,4 +1,4 @@
-//AS1.C  16.11.2014 00:30
+//AS1.C  16.11.2014 00:30  BAS,  AS TE
 // parse: getLine. getToken1 storeLabel. searchSymbol process 
 //        getVariable printLine
 int parse() {
@@ -22,10 +22,19 @@ int parse() {
     printLine();
   } while (DOS_NoBytes != 0 );
 }
-/*int printLineHex(unsigned char *s) { int L;
+/*int printLineHex(unsigned char *s) { int L; char c;
   L = strlen(s);
   prs(" L:");
-  printIntU(L);  } */
+  printIntU(L);  
+  if (L <= 0) return;
+  if (L > 80) errorexit("Line > 80 char");
+  while ( *s ) {
+    c = *s;
+    prc(' ');
+    printhex8a(c);
+    s++;
+  }
+} */
 int getToken1() { char c; //set: TokeType
   skipBlank();
   c = *InputPtr;

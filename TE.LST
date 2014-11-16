@@ -1,18 +1,18 @@
 ;AS.C X86-ASM V0.05  3.1.2014, Source: TE.S, Output: TE.LST, TE.COM
- L:3
-0000 90             nop L:11
-0001 FE C9          dec byte cl L:11
-0003 49             dec word cx L:7
-0004 08 00          VA dw 8 L:6
-0006 F6 D1          not cl L:6
-0008 F7 D1          not cx L:12
-000A 41 42 06       VB db "AB",6 L:8
-000D FE 06 04 00    inc [VA] L:6
-0011 FE 0E 0A 00    dec VB L:6
-0015                org 10 L:3
-000A                L7: L:6
-000A C2 0B 00       ret 11 L:3
-000D C3             ret L:0
+
+0000 90             nop
+0001 FE C9          dec byte cl
+0003 49             dec word cx
+0004 08 00          VA dw 8
+0006 F6 D1          not cl
+0008 F7 D1          not cx
+000A 41 42 06       VB db "AB",6
+000D FE 06 04 00    inc [VA]
+0011 FE 0E 0A 00    dec VB
+0015                org 10
+000A                L7:
+000A C2 0B 00       ret 11
+000D C3             ret
 000E                
 ;END Errors: 0, LabelNamesChar: 9. >>VA VB L7 << 
 VA V.0004,  VB V.000A,  L7 L.000A,  
