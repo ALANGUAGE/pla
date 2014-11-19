@@ -1,5 +1,5 @@
 //AS1.C  16.11.2014 00:30  BAS,  AS TE
-// parse: getLine. getToken1 storeLabel. searchSymbol process 
+// parse: getLine. getToken1 storeLabel. getOpType process 
 //        getVariable printLine
 int parse() {
   LabelNamePtr= &LabelNames;
@@ -8,11 +8,11 @@ int parse() {
     getLine();
  //   printLineHex(InputBuf);
     InputPtr = &InputBuf;
-    getToken1();
+    getToken1();// getCode in SymbolUpper
     if (TokeType == ALNUM) {
       if (isLabel) {storeLabel(LABEL); }
       else {
-        searchSymbol();
+        getOpType();
         if(OpType) process();
         else getVariable();
       }
@@ -67,7 +67,7 @@ int searchLabel(char searchType) {
 int getVariable() { char c;
   storeLabel(VARIABLE);
   getToken1(); if(TokeType==ALNUM) {// getName
-    searchSymbol();
+    getOpType();
     if (OpType < 200) errorexit("D or RES B,W,D expected");
     if (OpType > 207) errorexit("D or RES B,W,D expected");
     if (OpType== 200) {// DB
@@ -262,9 +262,9 @@ char I_JC []={'J','C',0,                6, 2,     0xF1};
 char I_JNB[]={'J','N','B',0,            6, 3,     0xF1};
 char I_JAE[]={'J','A','E',0,            6, 3,     0xF1};
 char I_JNC[]={'J','N','C',0,            6, 3,     0xF1};
-char I_JE []={'J','E',0,                6, 4,     0xF1};
-char I_JZ []={'J','Z',0,                6, 4,     0xF1};
-char I_JNE[]={'J','N','E',0,            6, 5,     0xF1};
+char I_JE []={'J','E',0,                6, 4,     0xF1};//      74 je i8 rel
+char I_JZ []={'J','Z',0,                6, 4,     0xF1};//   0F 84 je i16 rel
+char I_JNE[]={'J','N','E',0,            6, 5,     0xF1};//66 0F 84 je i32 rel
 char I_JNZ[]={'J','N','Z',0,            6, 5,     0xF1};
 char I_JBE[]={'J','B','E',0,            6, 6,     0xF1};
 char I_JNA[]={'J','N','A',0,            6, 6,     0xF1};
@@ -296,7 +296,7 @@ char I_RESW[]= {'R','E','S','W',0,    206,        0xF1};
 char I_RESD[]= {'R','E','S','D',0,    207,        0xF1};
 char I_END=0;// end of table char
 
-int searchSymbol() { // ret: OpType, OpCodePtr
+int getOpType() { // ret: OpType, OpCodePtr
   OpType=0;
   OpCodePtr= &I_START;
   OpCodePtr++;
@@ -430,10 +430,10 @@ int end1(int n) {fcloseR(asm_fd); fcloseR(lst_fd); fcloseR(bin_fd);exitR(n);
 /*
 Hierarchical software diagram, except string & DOS functions,  .=end
 main:  getarg. parse epilog. end1.
-parse: getLine. getToken storeLabel. searchLabel. searchSymbol. process
+parse: getLine. getToken storeLabel. searchLabel. getOpType. process
        getVariable printLine.
 getToken: skipBlank. getDigit. getName.
 process: genInstruction getToken testReg. genAddr16.
 genInstruction: genCode8.
-getVariable: storeLabel. getToken searchSymbol. skipBlank. isToken. genAddr16.
+getVariable: storeLabel. getToken getOpType. skipBlank. isToken. genAddr16.
 */
