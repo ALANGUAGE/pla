@@ -1,6 +1,6 @@
 org 256
 nop
-dec byte cl
+L1: dec byte cl
 dec word cx
 VA dw 8
 not cl
