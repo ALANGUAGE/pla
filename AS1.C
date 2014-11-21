@@ -1,4 +1,4 @@
-//AS1.C  16.11.2014 00:30  BAS,  AS TE
+//AS1.C  21.11.2014 18:00  BAS,  AS TE
 // parse: getLine. getToken1 storeLabel. getOpType process 
 //        getVariable printLine
 int parse() {
@@ -6,7 +6,6 @@ int parse() {
   do {
     PCStart=PC; OpSize=0; OpPrintIndex=0; PrReloc=' ';
     getLine();
- //   printLineHex(InputBuf);
     InputPtr = &InputBuf;
     getToken1();// getCode in SymbolUpper, set TokeType, set isLabel by getName
     if (TokeType == ALNUM) {
@@ -26,23 +25,10 @@ int parse() {
     printLine();
   } while (DOS_NoBytes != 0 );
 }
-/*int printLineHex(unsigned char *s) { int L; char c;
-  L = strlen(s);
-  prs(" L:");
-  printIntU(L);  
-  if (L <= 0) return;
-  if (L > 80) errorexit("Line > 80 char");
-  while ( *s ) {
-    c = *s;
-    prc(' ');
-    printhex8a(c);
-    s++;
-  }
-} */
 int getToken1() { char c; //set: TokeType
   skipBlank();
   c = *InputPtr;
-  if (c == 10)  {TokeType=0; return; }//empty line
+//  if (c == 10)  {TokeType=0; return; }//empty line
   if (c == 0)   {TokeType=0; return; }//last line
   if (c == ';') {TokeType=0; return; }//comment
   if (digit(c)) {getDigit(c); TokeType=DIGIT; return;}//ret:1=SymbolInt
@@ -358,6 +344,19 @@ int printIntU(unsigned int n) { unsigned int e;
     n = n % 10; //unsigned mod
     n += '0'; prc(n);
 }
+/*int printLineHex(unsigned char *s) { int L; char c;
+  L = strlen(s);
+  prs(" L:");
+  printIntU(L);  
+  if (L <= 0) return;
+  if (L > 80) errorexit("Line > 80 char");
+  while ( *s ) {
+    c = *s;
+    prc(' ');
+    printhex8a(c);
+    s++;
+  }
+} */
 int error1(char *s) {
   LIST=1; ErrorCount++;
 //  printLine();

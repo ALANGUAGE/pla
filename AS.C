@@ -1,5 +1,5 @@
 int main() {getarg(); parse(); epilog(); end1();}
-char Version1[]="AS.C V0.06 15.11.2014";
+char Version1[]="AS.C V0.06 21.11.2014";
 char LIST;
 char Symbol[80]; char SymbolUpper[80]; unsigned int SymbolInt;
 char InputBuf[128];  unsigned char *InputPtr;
@@ -18,23 +18,23 @@ char isLabel;      //by getName()
 char TokeType;     //0-3 ret:getToken1()  by oper()
 #define BYTE     1
 #define WORD     2
-#define SEGREG   4
-#define DWORD    8
+#define DWORD    4
+#define SEGREG   8
+#define IMMED    1 //immediate const  ,123
+#define REGIS    2 //simple reg       ,BX
+#define ADDRES   4 //VALUE direct     ,var1
+#define CONTNS   8 //indexed r/m      ,[var1] [BX+SI],[table+BX], [bp-4]
 char RegType;      //0=no reg, BYTE, WORD, SEGREG, DWORD
 char RegNo;        //0 - 7 AL, CL, ...  by testReg()
 char OpSize;       //66h: 0=no length, BYTE, WORD, DWORD
 //char AddrSize;   //67h:
-unsigned int OpCode;// 1-3 bytes
+char numop;        // 1-3 bytes
 char wflag;        //0=byte, 1=word/dword
 char dflag;        //0=source is reg,  1=dest is reg
 char Op1;          //ret: REGIS,ADDRES,CONTNS,IMMED
 char modrm;        //mod, r/m
 int disp;          //displacement      0-8 bytes
 int imme;          //immediate         0-8 bytes
-#define IMMED  1   //immediate const  ,123
-#define REGIS  2   //simple reg       ,BX
-#define ADDRES 4   //VALUE direct     ,var1
-#define CONTNS 8   //indexed r/m      ,[var1] [BX+SI],[table+BX], [bp-4]
 int  OpType;       //1-207 by searchSymbol()
 
 #define OPMAXLEN  5
@@ -46,23 +46,6 @@ char LabelNames[1000]; char *LabelNamePtr;
 char LabelType  [100]; unsigned int LabelAddr[100];
 int LabelMaxIx=0;  int LabelIx;
 char FileBin  [2000]; unsigned int BinLen=0;
-int test1() { __asm {
-add bx, ax    ;01 C3
-add ax, bx    ;01 D8
-add word ax, [bx] ;03 07
-VA dw 8
-dec cl        ;FE C9
-dec byte [bx] ;FE 0F
-;dec word [cx] ;invalid effective address
-;inc word  VA ;invalid comb opcode+operands
-inc word [VA] ;FF 06 [300F]
-inc byte [bp]        ;FE 46 00
-inc byte [bp+4]      ;FE 46 04
-inc byte [bp+258]    ;FE 86 02 01
-inc byte [bp-4]      ;FE 46 FC
-mov byte [bp- 4], al ;88 46 FC
-mov      [VA+bx], al ;88 87 [300F]
-}  }
 
 int process() { int i; char c;
   if (OpType ==  1) {//1 byte opcode
@@ -70,37 +53,41 @@ int process() { int i; char c;
   }
 
   if (OpType ==  2) {//inc, dec
-    oper3();
+    getLeftOp();
     if (Op1 == REGIS) {
       if (RegType == BYTE) {genInstruction(0, 1); genMod(); return; }
       if (RegType == WORD) {genInstruction(RegNo, 3); return; }
     error1("only byte or word reg allowed");return; }
-    if (Op1 == ADDRES) {  //CONSTNS
-      genInstruction(0, 1); genMod(); genAddr16(LabelIx); return; }
+    if (Op1 == ADDRES) {  //CONSTNS  OpSize=1
+      genInstruction(1, 1); genMod(); genAddr16(LabelIx); return; }
     error1("only reg or value allowed"); return;
   }
+
   if (OpType ==  52) {//not, neg, mul, imul, div, idiv
-    oper3();
+    getLeftOp();
     if (Op1 == REGIS) {
       genInstruction(wflag, 1); genMod(); return; }
     if (Op1 == ADDRES) {
       genInstruction(0, 1); genMod(); genAddr16(LabelIx); return; }
     error1("only reg or value allowed"); return;
   }
+
   if (OpType==  8) {// ret
     getToken1(); if (TokeType != DIGIT) {genInstruction(0, 1); return; }
     genInstruction(0, 2);
     genCode16(SymbolInt); return;
   }
+
   if (OpType==101) {// ORG nn
     getToken1(); if (TokeType != DIGIT) error1("only digit allowed");
     PC=SymbolInt;return;
   }
+  
   error1("unknown OpType");//debug
 }
 
 // scan code XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-int oper3() {//get single operand with error checking
+int getLeftOp() {//get single operand with error checking
 //get:
 //set: wflag, modrm, disp,  imme?
 char sign;    //0=no sign, 1=+,  2=-
@@ -218,5 +205,21 @@ int writeEA(char xxx) {
   genCode8(xxx);
 }
 #include "AS1.C"
-// mk_const  mk_addr  simplify_add
-// emitByte  emitWord  emitModRM
+
+int test1() { __asm {
+add bx, ax    ;01 C3
+add ax, bx    ;01 D8
+add word ax, [bx] ;03 07
+VA dw 8
+dec cl        ;FE C9
+dec byte [bx] ;FE 0F
+;dec word [cx] ;invalid effective address
+;inc word  VA ;invalid comb opcode+operands
+inc word [VA] ;FF 06 [300F]
+inc byte [bp]        ;FE 46 00
+inc byte [bp+4]      ;FE 46 04
+inc byte [bp+258]    ;FE 86 02 01
+inc byte [bp-4]      ;FE 46 FC
+mov byte [bp- 4], al ;88 46 FC
+mov      [VA+bx], al ;88 87 [300F]
+}  }
