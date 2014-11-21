@@ -10,12 +10,13 @@ int parse() {
     InputPtr = &InputBuf;
     getToken1();// getCode in SymbolUpper
     if (TokeType == ALNUM) {
-      if (isLabel) {storeLabel(LABEL); }
-      else {
-        getOpType();
-        if(OpType) process();
-        else getVariable();
+      if (isLabel) {
+        storeLabel(LABEL); 
+        
       }
+      getOpType();// and OpCodePtr
+      if(OpType) process();
+      else getVariable();
     }
     else if (TokeType >  ALNUM) error1("Label or instruction expected");
     else if (TokeType == DIGIT) error1("No digit allowed at start of line");
