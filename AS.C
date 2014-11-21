@@ -82,7 +82,7 @@ int process() { int i; char c;
     getToken1(); if (TokeType != DIGIT) error1("only digit allowed");
     PC=SymbolInt;return;
   }
-  
+
   error1("unknown OpType");//debug
 }
 
@@ -174,11 +174,11 @@ int isToken(char c) {
   if (*InputPtr == c) {
     InputPtr++; return 1;} return 0;
 }
-int need(char c) {
+/*int need(char c) {
   if (isToken(c) == 0) {
     prs("\\; ************** expected >> "); prc(c);
     prs(" <<\\n"); errorexit("token expected"); }
-}
+}*/
 // generate code XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 int genCode8(char c) {//ret: BinLen++, OpPrintIndex++
   FileBin[BinLen]=c; BinLen++; PC++;
