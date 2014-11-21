@@ -1,8 +1,7 @@
 ;AS.C V0.06 21.11.2014, Source: TE.S, Output: TE.LST, TE.COM
 
 0000                org 256
-; ********** extra char ignored
-0100 90             nop  comment
+0100 90             nop;  comment
 0101 FE C9          L1: dec byte cl
 0103 49             dec word cx
 0104 08 00          VA dw 8

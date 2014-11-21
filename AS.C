@@ -73,9 +73,13 @@ int process() { int i; char c;
   }
 
   if (OpType==  8) {// ret
-    getToken1(); if (TokeType != DIGIT) {genInstruction(0, 1); return; }
-    genInstruction(0, 2);
-    genCode16(SymbolInt); return;
+    getToken1(); 
+    if (TokeType == DIGIT) {
+      genInstruction(0, 2);
+      genCode16(SymbolInt); return;
+    }
+    skipRest();
+    genInstruction(0, 1); return; 
   }
 
   if (OpType==101) {// ORG nn
@@ -190,8 +194,8 @@ int genCode8(char c) {//ret: BinLen++, OpPrintIndex++
 int genCode16(int i) {
   genCode8(i); i=i >> 8; genCode8(i);
 }
-int genInstruction(char No, int i) {char c;//set: OpCodePtr++
-  if(i) OpCodePtr=OpCodePtr+i;
+int genInstruction(char No, int op1) {char c;//set: OpCodePtr++
+  if(op1) OpCodePtr=OpCodePtr+op1;
   c= *OpCodePtr + No; genCode8(c);
 }
 int genAddr16(int i) { unsigned int j; 
