@@ -8,12 +8,15 @@ int parse() {
     getLine();
  //   printLineHex(InputBuf);
     InputPtr = &InputBuf;
-    getToken1();// getCode in SymbolUpper
+    getToken1();// getCode in SymbolUpper, set TokeType, set isLabel by getName
     if (TokeType == ALNUM) {
       if (isLabel) {
         storeLabel(LABEL); 
-        
+        InputPtr++;//remove :
+        getToken1();
       }
+    }
+    if (TokeType == ALNUM) {
       getOpType();// and OpCodePtr
       if(OpType) process();
       else getVariable();

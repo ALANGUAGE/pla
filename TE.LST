@@ -2,17 +2,17 @@
 
 0000                org 256
 0100 90             nop
-0101                L1: dec byte cl
-0101 49             dec word cx
-0102 08 00          VA dw 8
-0104 F6 D1          not cl
-0106 F7 D1          not cx
-0108 41 42 06       VB db "AB",6
-010B FE 06 02 01    inc word [VA]
-010F                L7:
-010F C2 0B 00       ret 11
-0112 C3             ret
-0113                
+0101 FE C9          L1: dec byte cl
+0103 49             dec word cx
+0104 08 00          VA dw 8
+0106 F6 D1          not cl
+0108 F7 D1          not cx
+010A 41 42 06       VB db "AB",6
+010D FE 06 04 01    inc word [VA]
+0111                L7:
+0111 C2 0B 00       ret 11
+0114 C3             ret
+0115                
 ;END Errors: 0, LabelNamesChar: 12. >>L1 VA VB L7 << 
-L1 L.0101,  VA V.0102,  VB V.0108,  L7 L.010F,  
-;COM file: 90 49 08 00 F6 D1 F7 D1 41 42 06 FE 06 02 01 C2 0B 00 C3
+L1 L.0101,  VA V.0104,  VB V.010A,  L7 L.0111,  
+;COM file: 90 FE C9 49 08 00 F6 D1 F7 D1 41 42 06 FE 06 04 01 C2 0B 00 C3
