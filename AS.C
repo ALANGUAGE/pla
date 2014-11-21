@@ -49,7 +49,7 @@ char FileBin  [2000]; unsigned int BinLen=0;
 
 int process() { int i; char c;
   if (OpType ==  1) {//1 byte opcode
-    genInstruction(0, 1); return;
+    genInstruction(0, 1); skipRest(); return;
   }
 
   if (OpType ==  2) {//inc, dec
@@ -176,9 +176,12 @@ int isToken(char c) {
 }
 /*int need(char c) {
   if (isToken(c) == 0) {
-    prs("\\; ************** expected >> "); prc(c);
+    prs("\n; ************** expected >> "); prc(c);
     prs(" <<\\n"); errorexit("token expected"); }
 }*/
+int skipRest() {
+  getToken1(); if (TokeType != 0) prs("\n; ********** extra char ignored");
+}
 // generate code XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 int genCode8(char c) {//ret: BinLen++, OpPrintIndex++
   FileBin[BinLen]=c; BinLen++; PC++;
