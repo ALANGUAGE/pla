@@ -35,7 +35,7 @@ char Op1;          //ret: REGIS,ADDRES,CONTNS,IMMED
 char modrm;        //mod, r/m
 int disp;          //displacement      0-8 bytes
 int imme;          //immediate         0-8 bytes
-int  OpType;       //1-207 by searchSymbol()
+int  CodeType;     //1-207 by searchSymbol()
 
 #define OPMAXLEN  5
 char OpPos[OPMAXLEN];
@@ -48,22 +48,22 @@ int LabelMaxIx=0;  int LabelIx;
 char FileBin  [2000]; unsigned int BinLen=0;
 
 int process() { int i; char c;
-  if (OpType ==  1) {//1 byte opcode
+  if (CodeType ==  1) {//1 byte opcode
     genInstruction(0, 1); skipRest(); return;
   }
-
-  if (OpType ==  2) {//inc, dec
+//todo
+  if (CodeType ==  2) {//inc, dec
     getLeftOp();
     if (Op1 == REGIS) {
       if (RegType == BYTE) {genInstruction(0, 1); genMod(); return; }
-      if (RegType == WORD) {genInstruction(RegNo, 3); return; }
+      if (RegType == WORD) {genInstruction(RegNo, 3); return; }//short form
     error1("only byte or word reg allowed");return; }
     if (Op1 == ADDRES) {  //CONSTNS  OpSize=1
       genInstruction(1, 1); genMod(); genAddr16(LabelIx); return; }
     error1("only reg or value allowed"); return;
   }
-
-  if (OpType ==  52) {//not, neg, mul, imul, div, idiv
+//todo
+  if (CodeType ==  52) {//not, neg, mul, imul, div, idiv
     getLeftOp();
     if (Op1 == REGIS) {
       genInstruction(wflag, 1); genMod(); return; }
@@ -72,7 +72,7 @@ int process() { int i; char c;
     error1("only reg or value allowed"); return;
   }
 
-  if (OpType==  8) {// ret
+  if (CodeType==  8) {// ret
     getToken1(); 
     if (TokeType == DIGIT) {
       genInstruction(0, 2);
@@ -82,24 +82,25 @@ int process() { int i; char c;
     genInstruction(0, 1); return; 
   }
 
-  if (OpType==101) {// ORG nn
+  if (CodeType==101) {// ORG nn
     getToken1(); if (TokeType != DIGIT) error1("only digit allowed");
     PC=SymbolInt;return;
   }
 
-  error1("unknown OpType");//debug
+  error1("unknown CodeType");//debug
 }
 
 // scan code XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 int getLeftOp() {//get single operand with error checking
-//get:
 //set: wflag, modrm, disp,  imme?
-char sign;    //0=no sign, 1=+,  2=-
-int r; char r1; char r2;//temp-register
-  disp=0; r=0; sign=0;
+//char sign;    //0=no sign, 1=+,  2=-
+//int r; char r1; char r2;//temp-register
+//r=0; sign=0;
+  disp=0; 
   getToken1();//set: TokeType
+
   getOpSize();//set: OpSize
-  oper1();
+  getOp1();
 //  if (Op1 == 0) errorexit("Name of operand expected");
 //  if (Op1 == IMMED) return;
   if (Op1 == REGIS) {
@@ -111,7 +112,7 @@ int r; char r1; char r2;//temp-register
 
   if (Op1 == CONTNS) {
     getToken1();
-    oper1();
+    getOp1();
     if (TokeType != ALNUM) error1("reg/mem expected");
 
     if (Op1==ADDRES) {
@@ -136,7 +137,7 @@ int getIndReg() {
   if (modrm==0) error1("invalid index register #2");
   if (isToken(']')) return;
   if (isToken('+')) {
-    getToken1(); oper1();
+    getToken1(); getOp1();
     if(Op1==REGIS) {
       if (RegType !=WORD) error1("invalid index register #3");
       if (RegNo==7) if (modrm==6) modrm=3;//BP+DI
@@ -147,7 +148,7 @@ int getIndReg() {
     }
   }
 }
-int oper1() {//scan for a single operand, set:Op1
+int getOp1() {//scan for a single operand, set:Op1
   if (TokeType == 0)     {Op1=0;     return;}
   if (TokeType == DIGIT) {Op1=IMMED; return;}
   if (TokeType == ALNUM) {
@@ -198,17 +199,20 @@ int genInstruction(char No, int op1) {char c;//set: OpCodePtr++
   if(op1) OpCodePtr=OpCodePtr+op1;
   c= *OpCodePtr + No; genCode8(c);
 }
+//todo
 int genAddr16(int i) { unsigned int j; 
   j = LabelAddr[i]; genCode16(j);      
 }
+//todo
 int genMod() {char x;
   OpCodePtr++; x= *OpCodePtr; writeEA(x);
 }
+
 int writeEA(char xxx) {
   xxx = xxx << 3;//in reg field of mod r/m
   if (Op1 == REGIS ) {xxx |= 0xC0; xxx = xxx + RegNo; }
   if (Op1 == ADDRES) {xxx |= 6; }
-//errorcheck
+//todo: errorcheck
   genCode8(xxx);
 }
 #include "AS1.C"

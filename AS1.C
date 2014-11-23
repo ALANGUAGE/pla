@@ -1,5 +1,5 @@
 //AS1.C  21.11.2014 18:00  BAS,  AS TE
-// parse: getLine. getToken1 storeLabel. getOpType process 
+// parse: getLine. getToken1 storeLabel. lookCode process 
 //        getVariable printLine
 int parse() {
   LabelNamePtr= &LabelNames;
@@ -16,8 +16,8 @@ int parse() {
       }
     }
     if (TokeType == ALNUM) {
-      getOpType();// and OpCodePtr
-      if(OpType) process();
+      lookCode();// and OpCodePtr
+      if(CodeType) process();
       else getVariable();
     }
     else if (TokeType >  ALNUM) error1("Label or instruction expected");
@@ -57,10 +57,10 @@ int searchLabel(char searchType) {
 int getVariable() { char c;
   storeLabel(VARIABLE);
   getToken1(); if(TokeType==ALNUM) {// getName
-    getOpType();
-    if (OpType < 200) errorexit("D or RES B,W,D expected");
-    if (OpType > 207) errorexit("D or RES B,W,D expected");
-    if (OpType== 200) {// DB
+    lookCode();
+    if (CodeType < 200) errorexit("D or RES B,W,D expected");
+    if (CodeType > 207) errorexit("D or RES B,W,D expected");
+    if (CodeType== 200) {// DB
       do { getToken1();
         if (TokeType ==DIGIT) genCode8(SymbolInt);
         else {
@@ -75,7 +75,7 @@ int getVariable() { char c;
         }
       } while (isToken(','));
     }
-    if (OpType== 201) {// DW
+    if (CodeType== 201) {// DW
       do { getToken1();
         if (TokeType ==DIGIT) genCode16(SymbolInt);
       } while (isToken(','));
@@ -180,7 +180,7 @@ int testReg() {
   RegType=0; RegNo=0;
 }
 // opcodes XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-char I_START=0xF1;//OpName,0,OpType,OpCode1,OpCodeN,F1h
+char I_START=0xF1;//OpName,0,CodeType,OpCode1,OpCodeN,F1h
 //  1:   1 byte opcode
 char I_PUSHA[]={'P','U','S','H','A',0,  1,0x60,   0xF1};
 char I_POPA[]= {'P','O','P','A',0,      1,0x61,   0xF1};
@@ -286,14 +286,14 @@ char I_RESW[]= {'R','E','S','W',0,    206,        0xF1};
 char I_RESD[]= {'R','E','S','D',0,    207,        0xF1};
 char I_END=0;// end of table char
 
-int getOpType() { // ret: OpType, OpCodePtr
-  OpType=0;
+int lookCode() { // ret: CodeType, OpCodePtr
+  CodeType=0;
   OpCodePtr= &I_START;
   OpCodePtr++;
   do  {
     if (eqstr(SymbolUpper, OpCodePtr))  {
       while(*OpCodePtr!=0) OpCodePtr++;
-      OpCodePtr++; OpType =*OpCodePtr;
+      OpCodePtr++; CodeType =*OpCodePtr;
       return;
     }
   while(*OpCodePtr!=0xF1) OpCodePtr++;
@@ -433,10 +433,10 @@ int end1(int n) {fcloseR(asm_fd); fcloseR(lst_fd); fcloseR(bin_fd);exitR(n);
 /*
 Hierarchical software diagram, except string & DOS functions,  .=end
 main:  getarg. parse epilog. end1.
-parse: getLine. getToken storeLabel. searchLabel. getOpType. process
+parse: getLine. getToken storeLabel. searchLabel. lookCode. process
        getVariable printLine.
 getToken: skipBlank. getDigit. getName.
 process: genInstruction getToken testReg. genAddr16.
 genInstruction: genCode8.
-getVariable: storeLabel. getToken getOpType. skipBlank. isToken. genAddr16.
+getVariable: storeLabel. getToken lookCode. skipBlank. isToken. genAddr16.
 */
