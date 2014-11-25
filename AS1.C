@@ -1,18 +1,16 @@
-//AS1.C  21.11.2014 18:00  BAS,  AS TE
-// parse: getLine. getToken1 storeLabel. lookCode process 
-//        getVariable printLine
+//AS1.C  25.11.2014  BAS,  AS TE
 int parse() {
   LabelNamePtr= &LabelNames;
   do {
     PCStart=PC; OpSize=0; OpPrintIndex=0; PrReloc=' ';
     getLine();
     InputPtr = &InputBuf;
-    getToken1();// getCode in SymbolUpper, set TokeType, set isLabel by getName
+    setTokeType();// getCode in SymbolUpper, set TokeType, set isLabel by getName
     if (TokeType == ALNUM) {
       if (isLabel) {
         storeLabel(LABEL); 
         InputPtr++;//remove :
-        getToken1();
+        setTokeType();
       }
     }
     if (TokeType == ALNUM) {
@@ -25,11 +23,10 @@ int parse() {
     printLine();
   } while (DOS_NoBytes != 0 );
 }
-int getToken1() { char c; //set: TokeType
+int setTokeType() { char c; //set: TokeType
   skipBlank();
   c = *InputPtr;
-//  if (c == 10)  {TokeType=0; return; }//empty line
-  if (c == 0)   {TokeType=0; return; }//last line
+  if (c == 0)   {TokeType=0; return; }//last line or empty line
   if (c == ';') {TokeType=0; return; }//comment
   if (digit(c)) {getDigit(c); TokeType=DIGIT; return;}//ret:1=SymbolInt
   if (alnum (c)) {getName(c); TokeType=ALNUM; return;}//ret:2=Symbol
@@ -56,12 +53,12 @@ int searchLabel(char searchType) {
 }
 int getVariable() { char c;
   storeLabel(VARIABLE);
-  getToken1(); if(TokeType==ALNUM) {// getName
+  setTokeType(); if(TokeType==ALNUM) {// getName
     lookCode();
     if (CodeType < 200) errorexit("D or RES B,W,D expected");
     if (CodeType > 207) errorexit("D or RES B,W,D expected");
     if (CodeType== 200) {// DB
-      do { getToken1();
+      do { setTokeType();
         if (TokeType ==DIGIT) genCode8(SymbolInt);
         else {
           skipBlank();
@@ -76,7 +73,7 @@ int getVariable() { char c;
       } while (isToken(','));
     }
     if (CodeType== 201) {// DW
-      do { getToken1();
+      do { setTokeType();
         if (TokeType ==DIGIT) genCode16(SymbolInt);
       } while (isToken(','));
     }

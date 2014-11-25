@@ -1,5 +1,5 @@
 int main() {getarg(); parse(); epilog(); end1();}
-char Version1[]="AS.C V0.06 21.11.2014";
+char Version1[]="AS.C V0.06 25.11.2014";
 char LIST;
 char Symbol[80]; char SymbolUpper[80]; unsigned int SymbolInt;
 char InputBuf[128];  unsigned char *InputPtr;
@@ -15,15 +15,19 @@ char isLabel;      //by getName()
 #define VARIABLE 2
 #define DIGIT    1 //0-9
 #define ALNUM    2 //0-9 _ a-z A-Z
-char TokeType;     //0-3 ret:getToken1()  by oper()
+char TokeType;     //0, DIGIT, ALNUM, noalnum
 #define BYTE     1
 #define WORD     2
 #define DWORD    4
 #define SEGREG   8
-#define IMMED    1 //immediate const  ,123
-#define REGIS    2 //simple reg       ,BX
-#define ADDRES   4 //VALUE direct     ,var1
-#define CONTNS   8 //indexed r/m      ,[var1] [BX+SI],[table+BX], [bp-4]
+char CodeSize;     //0, BYTE, WORD, DWORD
+#define IMM      1 //const  ,123
+#define REG      2 //       ,BX    mode=11
+#define DIR      3 //VALUE  ,var1  mod=00, r/m=110
+#define IND      8 //indirec,[var1], [BX+SI], [table+BX], [bp-4]  disp 0,8,16
+char Op1;          //0, IMM, REG, DIR, IND
+int  CodeType;     //1-207 by searchSymbol()
+
 char RegType;      //0=no reg, BYTE, WORD, SEGREG, DWORD
 char RegNo;        //0 - 7 AL, CL, ...  by testReg()
 char OpSize;       //66h: 0=no length, BYTE, WORD, DWORD
@@ -31,11 +35,9 @@ char OpSize;       //66h: 0=no length, BYTE, WORD, DWORD
 char numop;        // 1-3 bytes
 char wflag;        //0=byte, 1=word/dword
 char dflag;        //0=source is reg,  1=dest is reg
-char Op1;          //ret: REGIS,ADDRES,CONTNS,IMMED
 char modrm;        //mod, r/m
 int disp;          //displacement      0-8 bytes
 int imme;          //immediate         0-8 bytes
-int  CodeType;     //1-207 by searchSymbol()
 
 #define OPMAXLEN  5
 char OpPos[OPMAXLEN];
@@ -54,26 +56,26 @@ int process() { int i; char c;
 //todo
   if (CodeType ==  2) {//inc, dec
     getLeftOp();
-    if (Op1 == REGIS) {
+    if (Op1 == REG) {
       if (RegType == BYTE) {genInstruction(0, 1); genMod(); return; }
       if (RegType == WORD) {genInstruction(RegNo, 3); return; }//short form
     error1("only byte or word reg allowed");return; }
-    if (Op1 == ADDRES) {  //CONSTNS  OpSize=1
+    if (Op1 == DIR) {  //CONSTNS  OpSize=1
       genInstruction(1, 1); genMod(); genAddr16(LabelIx); return; }
     error1("only reg or value allowed"); return;
   }
 //todo
   if (CodeType ==  52) {//not, neg, mul, imul, div, idiv
     getLeftOp();
-    if (Op1 == REGIS) {
+    if (Op1 == REG) {
       genInstruction(wflag, 1); genMod(); return; }
-    if (Op1 == ADDRES) {
+    if (Op1 == DIR) {
       genInstruction(0, 1); genMod(); genAddr16(LabelIx); return; }
     error1("only reg or value allowed"); return;
   }
 
   if (CodeType==  8) {// ret
-    getToken1(); 
+    setTokeType(); 
     if (TokeType == DIGIT) {
       genInstruction(0, 2);
       genCode16(SymbolInt); return;
@@ -83,7 +85,7 @@ int process() { int i; char c;
   }
 
   if (CodeType==101) {// ORG nn
-    getToken1(); if (TokeType != DIGIT) error1("only digit allowed");
+    setTokeType(); if (TokeType != DIGIT) error1("only digit allowed");
     PC=SymbolInt;return;
   }
 
@@ -97,30 +99,30 @@ int getLeftOp() {//get single operand with error checking
 //int r; char r1; char r2;//temp-register
 //r=0; sign=0;
   disp=0; 
-  getToken1();//set: TokeType
+  setTokeType();//set: TokeType
 
   getOpSize();//set: OpSize
   getOp1();
 //  if (Op1 == 0) errorexit("Name of operand expected");
-//  if (Op1 == IMMED) return;
-  if (Op1 == REGIS) {
+//  if (Op1 == IMM) return;
+  if (Op1 == REG) {
     validateOpSize();
     if (RegType == BYTE) wflag=0; else wflag=1;
     return;
   }
-  if (Op1 == ADDRES) {disp=LabelAddr[LabelIx]; wflag=1; return;}
+  if (Op1 == DIR) {disp=LabelAddr[LabelIx]; wflag=1; return;}
 
-  if (Op1 == CONTNS) {
-    getToken1();
+  if (Op1 == IND) {
+    setTokeType();
     getOp1();
     if (TokeType != ALNUM) error1("reg/mem expected");
 
-    if (Op1==ADDRES) {
+    if (Op1==DIR) {
       disp=LabelAddr[LabelIx];
       if (isToken(']')) {modrm=6;//mod=00, r/m=110
         return; }
-      if (Op1 == REGIS) getIndReg();
-      if (Op1 == ADDRES) {//only 1 ind reg
+      if (Op1 == REG) getIndReg();
+      if (Op1 == DIR) {//only 1 ind reg
 
       }
     }
@@ -137,8 +139,8 @@ int getIndReg() {
   if (modrm==0) error1("invalid index register #2");
   if (isToken(']')) return;
   if (isToken('+')) {
-    getToken1(); getOp1();
-    if(Op1==REGIS) {
+    setTokeType(); getOp1();
+    if(Op1==REG) {
       if (RegType !=WORD) error1("invalid index register #3");
       if (RegNo==7) if (modrm==6) modrm=3;//BP+DI
                else if (modrm==7) modrm=1;//BX+DI
@@ -150,14 +152,14 @@ int getIndReg() {
 }
 int getOp1() {//scan for a single operand, set:Op1
   if (TokeType == 0)     {Op1=0;     return;}
-  if (TokeType == DIGIT) {Op1=IMMED; return;}
+  if (TokeType == DIGIT) {Op1=IMM; return;}
   if (TokeType == ALNUM) {
     testReg();
-    if (RegType)         {Op1=REGIS; return;}
+    if (RegType)         {Op1=REG; return;}
     LabelIx=searchLabel(VARIABLE);
-    if (LabelIx)         {Op1=ADDRES;return;}
+    if (LabelIx)         {Op1=DIR;return;}
     else error1("variable not found"); }
-  if (isToken('['))      {Op1=CONTNS;return;}
+  if (isToken('['))      {Op1=IND;return;}
   Op1=0;
 }
 int validateOpSize() {//with RegSize
@@ -169,9 +171,9 @@ int validateOpSize() {//with RegSize
 }
 int getOpSize() {//set: OpSize
   if (TokeType ==ALNUM) {
-    if (eqstr(SymbolUpper,"BYTE")) {getToken1();OpSize=BYTE; return;}
-    if (eqstr(SymbolUpper,"WORD")) {getToken1();OpSize=WORD; return;}
-    if (eqstr(SymbolUpper,"DWORD")){getToken1();OpSize=DWORD;return;}
+    if (eqstr(SymbolUpper,"BYTE")) {setTokeType();OpSize=BYTE; return;}
+    if (eqstr(SymbolUpper,"WORD")) {setTokeType();OpSize=WORD; return;}
+    if (eqstr(SymbolUpper,"DWORD")){setTokeType();OpSize=DWORD;return;}
   } OpSize=0;
 }
 int isToken(char c) {
@@ -185,7 +187,7 @@ int isToken(char c) {
     prs(" <<\\n"); errorexit("token expected"); }
 }*/
 int skipRest() {
-  getToken1(); if (TokeType != 0) prs("\n; ********** extra char ignored");
+  setTokeType(); if (TokeType != 0) prs("\n; ********** extra char ignored");
 }
 // generate code XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 int genCode8(char c) {//ret: BinLen++, OpPrintIndex++
@@ -210,8 +212,8 @@ int genMod() {char x;
 
 int writeEA(char xxx) {
   xxx = xxx << 3;//in reg field of mod r/m
-  if (Op1 == REGIS ) {xxx |= 0xC0; xxx = xxx + RegNo; }
-  if (Op1 == ADDRES) {xxx |= 6; }
+  if (Op1 == REG ) {xxx |= 0xC0; xxx = xxx + RegNo; }
+  if (Op1 == DIR) {xxx |= 6; }
 //todo: errorcheck
   genCode8(xxx);
 }
