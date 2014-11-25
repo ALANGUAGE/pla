@@ -234,9 +234,9 @@ add word ax, [bx] ;03 07
 VA dw 8
 dec cl        ;FE C9
 dec byte [bx] ;FE 0F
-dec word [bx] 
+dec word [bx] ;FF 0F
 ;inc word  VA ;invalid comb opcode+operands
-inc byte [VA]        ;F     [300F]
+inc byte [VA]        ;FE 06 [300F]
 inc word [VA]        ;FF 06 [300F]
 inc byte [bp]        ;FE 46 00
 inc byte [bp+4]      ;FE 46 04
