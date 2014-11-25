@@ -20,7 +20,7 @@ char TokeType;     //0, DIGIT, ALNUM, noalnum
 #define WORD     2
 #define DWORD    4
 #define SEGREG   8
-char CodeSize;     //0, BYTE, WORD, DWORD
+char CodeSize;     //66h: 0 BYTE, WORD, DWORD
 #define IMM      1 //const  ,123
 #define REG      2 //       ,BX    mode=11
 #define DIR      3 //VALUE  ,var1  mod=00, r/m=110
@@ -30,7 +30,7 @@ int  CodeType;     //1-207 by searchSymbol()
 
 char RegType;      //0=no reg, BYTE, WORD, SEGREG, DWORD
 char RegNo;        //0 - 7 AL, CL, ...  by testReg()
-char OpSize;       //66h: 0=no length, BYTE, WORD, DWORD
+char OpSize;       //0, BYTE, WORD, DWORD
 //char AddrSize;   //67h:
 char numop;        // 1-3 bytes
 char wflag;        //0=byte, 1=word/dword
@@ -94,25 +94,24 @@ int process() { int i; char c;
 
 // scan code XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 int getLeftOp() {//get single operand with error checking
-//set: wflag, modrm, disp,  imme?
-//char sign;    //0=no sign, 1=+,  2=-
-//int r; char r1; char r2;//temp-register
-//r=0; sign=0;
-  disp=0; 
-  setTokeType();//set: TokeType
+  disp=0; imme=0;   modrm=0; wflag=0;
+  setTokeType();
 
   getOpSize();//set: OpSize
-  getOp1();
-//  if (Op1 == 0) errorexit("Name of operand expected");
-//  if (Op1 == IMM) return;
-  if (Op1 == REG) {
+  CodeSize=OpSize;
+  //if (CodeSize) setTokeType();//get next token//todo
+
+  getOp1();//0, IMM, REG, DIR, IND
+  //if (Op1 == 0) error1("Name of operand expected");//todo
+  //if (Op1 == IMM) {imme=SymbolInt; return;}                  //1 todo
+  if (Op1 == REG) {                                          //2
     validateOpSize();
     if (RegType == BYTE) wflag=0; else wflag=1;
     return;
   }
-  if (Op1 == DIR) {disp=LabelAddr[LabelIx]; wflag=1; return;}
+  if (Op1 == DIR) {disp=LabelAddr[LabelIx]; wflag=1; return;}//3
 
-  if (Op1 == IND) {
+  if (Op1 == IND) {                                          //4
     setTokeType();
     getOp1();
     if (TokeType != ALNUM) error1("reg/mem expected");
@@ -197,8 +196,8 @@ int genCode8(char c) {//ret: BinLen++, OpPrintIndex++
 int genCode16(int i) {
   genCode8(i); i=i >> 8; genCode8(i);
 }
-int genInstruction(char No, int op1) {char c;//set: OpCodePtr++
-  if(op1) OpCodePtr=OpCodePtr+op1;
+int genInstruction(char No, int loc) {char c;//set: OpCodePtr++
+  if(loc) OpCodePtr=OpCodePtr+loc;
   c= *OpCodePtr + No; genCode8(c);
 }
 //todo
@@ -210,11 +209,20 @@ int genMod() {char x;
   OpCodePtr++; x= *OpCodePtr; writeEA(x);
 }
 
-int writeEA(char xxx) {
+int writeEA(char xxx) { char len; //need: Op1, disp
+  len=0;
   xxx = xxx << 3;//in reg field of mod r/m
-  if (Op1 == REG ) {xxx |= 0xC0; xxx = xxx + RegNo; }
-  if (Op1 == DIR) {xxx |= 6; }
-//todo: errorcheck
+  if (Op1 ==   0) errorexit("illegal addressing"); 
+  
+  if (Op1 == REG) {xxx |= 0xC0; xxx = xxx + RegNo;}
+  
+  if (Op1 == DIR) {xxx |= 6; len=2; }
+
+  if (Op1 == IND) {
+
+
+  }
+
   genCode8(xxx);
 }
 #include "AS1.C"
@@ -226,9 +234,10 @@ add word ax, [bx] ;03 07
 VA dw 8
 dec cl        ;FE C9
 dec byte [bx] ;FE 0F
-;dec word [cx] ;invalid effective address
+dec word [bx] 
 ;inc word  VA ;invalid comb opcode+operands
-inc word [VA] ;FF 06 [300F]
+inc byte [VA]        ;F     [300F]
+inc word [VA]        ;FF 06 [300F]
 inc byte [bp]        ;FE 46 00
 inc byte [bp+4]      ;FE 46 04
 inc byte [bp+258]    ;FE 86 02 01
