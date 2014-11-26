@@ -1,4 +1,4 @@
-;AS.C V0.06 25.11.2014, Source: TE.S, Output: TE.LST, TE.COM
+;AS.C V0.06 26.11.2014, Source: TE.S, Output: TE.LST, TE.COM
 
 0000                org 256
 0100 90             nop;  comment

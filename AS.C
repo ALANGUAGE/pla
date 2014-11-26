@@ -1,5 +1,5 @@
 int main() {getarg(); parse(); epilog(); end1();}
-char Version1[]="AS.C V0.06 25.11.2014";
+char Version1[]="AS.C V0.06 26.11.2014";
 char LIST;
 char Symbol[80]; char SymbolUpper[80]; unsigned int SymbolInt;
 char InputBuf[128];  unsigned char *InputPtr;
@@ -96,20 +96,21 @@ int process() { int i; char c;
 int getLeftOp() {//get single operand with error checking
   disp=0; imme=0;   modrm=0; wflag=0;
   setTokeType();
-
   getOpSize();//set: OpSize
   CodeSize=OpSize;
-  //if (CodeSize) setTokeType();//get next token//todo
 
   getOp1();//0, IMM, REG, DIR, IND
-  //if (Op1 == 0) error1("Name of operand expected");//todo
-  //if (Op1 == IMM) {imme=SymbolInt; return;}                  //1 todo
+  if (Op1 == 0) error1("Name of operand expected");
+  if (Op1 == IMM) {imme=SymbolInt; return;}                  //1
   if (Op1 == REG) {                                          //2
     validateOpSize();
     if (RegType == BYTE) wflag=0; else wflag=1;
     return;
   }
-  if (Op1 == DIR) {disp=LabelAddr[LabelIx]; wflag=1; return;}//3
+  if (Op1 == DIR) {                                          //3
+    disp=LabelAddr[LabelIx]; wflag=1;//todo 
+    return;
+  }
 
   if (Op1 == IND) {                                          //4
     setTokeType();
