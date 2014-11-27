@@ -57,20 +57,20 @@ int process() { int i; char c;
   if (CodeType ==  2) {//inc, dec
     getLeftOp();
     if (Op1 == REG) {
-      if (RegType == BYTE) {genInstruction(0, 1); genCodeInREGfild(); return; }
+      if (RegType == BYTE) {genInstruction(0, 1); genCodeInREG(); return; }
       if (RegType == WORD) {genInstruction(RegNo, 3); return; }//short form
     error1("only byte or word reg allowed");return; }
     if (Op1 == DIR) {  //CONSTNS  OpSize=1
-      genInstruction(1, 1); genCodeInREGfild(); genAddr16(LabelIx); return; }
+      genInstruction(1, 1); genCodeInREG(); return; }
     error1("only reg or value allowed"); return;
   }
 //todo
   if (CodeType ==  52) {//not, neg, mul, imul, div, idiv
     getLeftOp();
     if (Op1 == REG) {
-      genInstruction(wflag, 1); genCodeInREGfild(); return; }
+      genInstruction(wflag, 1); genCodeInREG(); return; }
     if (Op1 == DIR) {
-      genInstruction(0, 1); genCodeInREGfild(); genAddr16(LabelIx); return; }
+      genInstruction(0, 1); genCodeInREG(); return; }
     error1("only reg or value allowed"); return;
   }
 
@@ -200,15 +200,14 @@ int genInstruction(char No, int loc) {char c;//set: OpCodePtr++
   if(loc) OpCodePtr=OpCodePtr+loc;
   c= *OpCodePtr + No; genCode8(c);
 }
-//todo
-int genAddr16(int i) { unsigned int j; 
-  j = LabelAddr[i]; genCode16(j);      
-}
-//todo
-int genCodeInREGfild() {char x; //get Code for second byte
+
+//int genAddr1(int i) { unsigned int j; 
+//  j = LabelAddr[i]; genCode16(j);      
+//}
+
+int genCodeInREG() {char x; //get Code for second byte
   OpCodePtr++; x= *OpCodePtr; writeEA(x);
 }
-
 int writeEA(char xxx) { char len; //need: Op1, disp
   len=0; di=0;
   xxx = xxx << 3;//in reg field of mod r/m
