@@ -57,20 +57,20 @@ int process() { int i; char c;
   if (CodeType ==  2) {//inc, dec
     getLeftOp();
     if (Op1 == REG) {
-      if (RegType == BYTE) {genInstruction(0, 1); genMod(); return; }
+      if (RegType == BYTE) {genInstruction(0, 1); genCodeInREGfild(); return; }
       if (RegType == WORD) {genInstruction(RegNo, 3); return; }//short form
     error1("only byte or word reg allowed");return; }
     if (Op1 == DIR) {  //CONSTNS  OpSize=1
-      genInstruction(1, 1); genMod(); genAddr16(LabelIx); return; }
+      genInstruction(1, 1); genCodeInREGfild(); genAddr16(LabelIx); return; }
     error1("only reg or value allowed"); return;
   }
 //todo
   if (CodeType ==  52) {//not, neg, mul, imul, div, idiv
     getLeftOp();
     if (Op1 == REG) {
-      genInstruction(wflag, 1); genMod(); return; }
+      genInstruction(wflag, 1); genCodeInREGfild(); return; }
     if (Op1 == DIR) {
-      genInstruction(0, 1); genMod(); genAddr16(LabelIx); return; }
+      genInstruction(0, 1); genCodeInREGfild(); genAddr16(LabelIx); return; }
     error1("only reg or value allowed"); return;
   }
 
@@ -104,14 +104,13 @@ int getLeftOp() {//get single operand with error checking
   if (Op1 == IMM) {imme=SymbolInt; return;}                  //1
   if (Op1 == REG) {                                          //2
     validateOpSize();
-    if (RegType == BYTE) wflag=0; else wflag=1;
+    if (RegType != BYTE) wflag=1;
     return;
   }
   if (Op1 == DIR) {                                          //3
     disp=LabelAddr[LabelIx]; wflag=1;//todo 
     return;
   }
-
   if (Op1 == IND) {                                          //4
     setTokeType();
     getOp1();
@@ -206,25 +205,23 @@ int genAddr16(int i) { unsigned int j;
   j = LabelAddr[i]; genCode16(j);      
 }
 //todo
-int genMod() {char x;
+int genCodeInREGfild() {char x; //get Code for second byte
   OpCodePtr++; x= *OpCodePtr; writeEA(x);
 }
 
 int writeEA(char xxx) { char len; //need: Op1, disp
-  len=0;
+  len=0; di=0;
   xxx = xxx << 3;//in reg field of mod r/m
-  if (Op1 ==   0) errorexit("illegal addressing"); 
-  
+  if (Op1 ==   0) errorexit("illegal addressing");  
   if (Op1 == REG) {xxx |= 0xC0; xxx = xxx + RegNo;}
-  
   if (Op1 == DIR) {xxx |= 6; len=2; }
-
   if (Op1 == IND) {
 
 
   }
-
-  genCode8(xxx);
+  genCode8(xxx);// gen second byte
+  if (len == 1) genCode8 (    );
+  if (len == 2) genCode16(disp);
 }
 #include "AS1.C"
 
