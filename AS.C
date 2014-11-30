@@ -1,5 +1,5 @@
 int main() {getarg(); parse(); epilog(); end1();}
-char Version1[]="AS.C V0.06 26.11.2014";
+char Version1[]="AS.C V0.06 28.11.2014";
 char LIST;
 char Symbol[80]; char SymbolUpper[80]; unsigned int SymbolInt;
 char InputBuf[128];  unsigned char *InputPtr;
@@ -36,6 +36,7 @@ char numop;        // 1-3 bytes
 char wflag;        //0=byte, 1=word/dword
 char dflag;        //0=source is reg,  1=dest is reg
 char modrm;        //mod, r/m
+char reg;          //combination of index and base reg
 int disp;          //displacement      0-8 bytes
 int imme;          //immediate         0-8 bytes
 
@@ -53,14 +54,13 @@ int process() { int i; char c;
   if (CodeType ==  1) {//1 byte opcode
     genInstruction(0, 1); skipRest(); return;
   }
-//todo
   if (CodeType ==  2) {//inc, dec
     getLeftOp();
     if (Op1 == REG) {
       if (RegType == BYTE) {genInstruction(0, 1); genCodeInREG(); return; }
       if (RegType == WORD) {genInstruction(RegNo, 3); return; }//short form
     error1("only byte or word reg allowed");return; }
-    if (Op1 == DIR) {  //CONSTNS  OpSize=1
+    if (Op1 == DIR) { 
       genInstruction(1, 1); genCodeInREG(); return; }
     error1("only reg or value allowed"); return;
   }
@@ -88,20 +88,19 @@ int process() { int i; char c;
     setTokeType(); if (TokeType != DIGIT) error1("only digit allowed");
     PC=SymbolInt;return;
   }
-
   error1("unknown CodeType");//debug
 }
 
 // scan code XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-int getLeftOp() {//get single operand with error checking
-  disp=0; imme=0;   modrm=0; wflag=0;
+int getLeftOp() {char Op2; //get single operand with error checking
+  disp=0; imme=0;   modrm=0; reg=0; wflag=0;
   setTokeType();
   getOpSize();//set: OpSize
   CodeSize=OpSize;
 
-  getOp1();//0, IMM, REG, DIR, IND
+  Op1=getOp1();//0, IMM, REG, DIR, IND
   if (Op1 == 0) error1("Name of operand expected");
-  if (Op1 == IMM) {imme=SymbolInt; return;}                  //1
+  if (Op1 == IMM) {imme=SymbolInt; return;}//need OpSize     //1
   if (Op1 == REG) {                                          //2
     validateOpSize();
     if (RegType != BYTE) wflag=1;
@@ -112,8 +111,9 @@ int getLeftOp() {//get single operand with error checking
     return;
   }
   if (Op1 == IND) {                                          //4
+    //getIND();
     setTokeType();
-    getOp1();
+    Op1=getOp1(); //todo
     if (TokeType != ALNUM) error1("reg/mem expected");
 
     if (Op1==DIR) {
@@ -121,13 +121,19 @@ int getLeftOp() {//get single operand with error checking
       if (isToken(']')) {modrm=6;//mod=00, r/m=110
         return; }
       if (Op1 == REG) getIndReg();
-      if (Op1 == DIR) {//only 1 ind reg
-
+      if (Op1 == DIR) {//only 1 ind reg  //todo
       }
     }
     return;
   }
   error1("Name of operand expected #1");
+}
+int getIND() {// get var, reg and imm inside []
+  int v; char r1; char rt1; char r2; char rt2; char i; char Op2;
+  setTokeType();// 0, DIGIT, ALNUM, no alnum
+  op2=getOp1();
+
+
 }
 int getIndReg() {
   if (RegType !=WORD) error1("invalid index register #1");
@@ -138,7 +144,7 @@ int getIndReg() {
   if (modrm==0) error1("invalid index register #2");
   if (isToken(']')) return;
   if (isToken('+')) {
-    setTokeType(); getOp1();
+    setTokeType(); Op1=getOp1();
     if(Op1==REG) {
       if (RegType !=WORD) error1("invalid index register #3");
       if (RegNo==7) if (modrm==6) modrm=3;//BP+DI
@@ -150,16 +156,16 @@ int getIndReg() {
   }
 }
 int getOp1() {//scan for a single operand, set:Op1
-  if (TokeType == 0)     {Op1=0;     return;}
-  if (TokeType == DIGIT) {Op1=IMM; return;}
+  if (TokeType == 0)      return 0;
+  if (TokeType == DIGIT)  return IMM;
   if (TokeType == ALNUM) {
     testReg();
-    if (RegType)         {Op1=REG; return;}
+    if (RegType)          return REG;
     LabelIx=searchLabel(VARIABLE);
-    if (LabelIx)         {Op1=DIR;return;}
+    if (LabelIx)          return DIR;
     else error1("variable not found"); }
-  if (isToken('['))      {Op1=IND;return;}
-  Op1=0;
+  if (isToken('['))       return IND;
+  return 0;
 }
 int validateOpSize() {//with RegSize
   if (RegType==0) {error1("no register defined"); return; }
@@ -200,11 +206,6 @@ int genInstruction(char No, int loc) {char c;//set: OpCodePtr++
   if(loc) OpCodePtr=OpCodePtr+loc;
   c= *OpCodePtr + No; genCode8(c);
 }
-
-//int genAddr1(int i) { unsigned int j; 
-//  j = LabelAddr[i]; genCode16(j);      
-//}
-
 int genCodeInREG() {char x; //get Code for second byte
   OpCodePtr++; x= *OpCodePtr; writeEA(x);
 }
