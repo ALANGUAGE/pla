@@ -112,8 +112,8 @@ int getLeftOp() {char Op2; //get single operand with error checking
     return;
   }
   if (Op1 == IND) {                                          //4
-    //getIND();
-    setTokeType();
+    getIND();
+ /*   setTokeType();
     Op1=getOp1(); //todo
     if (TokeType != ALNUM) error1("reg/mem expected");
 
@@ -125,7 +125,7 @@ int getLeftOp() {char Op2; //get single operand with error checking
       if (Op1 == DIR) {//only 1 ind reg  //todo
       }
     }
-    return;
+    return;*/
   }
   error1("Name of operand expected #1");
 }
@@ -134,9 +134,13 @@ int getIND() {// get var, reg and imm inside []
   char op2; char r1; //int v; char rt1; char r2; char rt2; char i; 
   setTokeType();// 0, DIGIT, ALNUM, no alnum
   op2=getOp1();
-  if (op2 == 0) syntaxerror();
-  if (op2 ==IMM) implmerror();
+  if (op2 ==   0) syntaxerror();
+  if (op2 == IMM) implmerror();
   if (op2 == REG) r1=getIndReg1();
+  if (op2==DIR) {
+      disp=LabelAddr[LabelIx];
+      if (isToken(']')) {modrm=6; return; }
+  }
 
 }
 int getIndReg1() { char m; char op3;
@@ -160,7 +164,7 @@ int getIndReg1() { char m; char op3;
     }
   } indexerror();
 }
-
+/*
 int getIndReg() {
   if (RegType !=WORD) indexerror();
   if (RegNo==3) modrm=7;//BX
@@ -180,7 +184,7 @@ int getIndReg() {
       if (modrm > 3) indexerror();
     }
   }
-}
+}*/
 int getOp1() {//scan for a single operand, set:Op1
   if (TokeType == 0)      return 0;
   if (TokeType == DIGIT)  return IMM;// 1
