@@ -131,13 +131,36 @@ int getLeftOp() {char Op2; //get single operand with error checking
 }
 int getIND() {// get var, reg and imm inside []
 //out: disp, reg, MOD-r/m-reg???  
-  int v; char r1; char rt1; char r2; char rt2; char i; char op2;
+  char op2; char r1; //int v; char rt1; char r2; char rt2; char i; 
   setTokeType();// 0, DIGIT, ALNUM, no alnum
   op2=getOp1();
   if (op2 == 0) syntaxerror();
   if (op2 ==IMM) implmerror();
+  if (op2 == REG) r1=getIndReg1();
 
 }
+int getIndReg1() { char m; char op3;
+  if (RegType !=WORD) indexerror();
+  if (RegNo==3) m=7;//BX
+  if (RegNo==5) m=6;//BP change to BP+0
+  if (RegNo==7) m=5;//DI
+  if (RegNo==6) m=4;//SI
+  if (m    ==0) indexerror();
+  if (isToken(']')) return m;
+  if (isToken('+')) {
+    setTokeType(); op3=getOp1();
+    if(op3==REG) {
+      if (RegType !=WORD) indexerror();
+      if (RegNo==7) if (m==6) m=3;//BP+DI
+               else if (m==7) m=1;//BX+DI
+      if (RegNo==6) if (m==6) m=2;//BP+SI
+               else if (m==7) m=0;//BX+DI
+      if (m > 3) indexerror();
+      return m;
+    }
+  } indexerror();
+}
+
 int getIndReg() {
   if (RegType !=WORD) indexerror();
   if (RegNo==3) modrm=7;//BX
