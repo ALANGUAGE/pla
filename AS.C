@@ -24,7 +24,7 @@ char CodeSize;     //66h: 0 BYTE, WORD, DWORD
 #define IMM      1 //const  ,123
 #define REG      2 //       ,BX    mode=11
 #define DIR      3 //VALUE  ,var1  mod=00, r/m=110
-#define IND      8 //indirec,[var1], [BX+SI], [table+BX], [bp-4]  disp 0,8,16
+//#define IND      4 //indirec,[var1], [BX+SI], [table+BX], [bp-4]  disp 0,8,16
 char Op1;          //0, IMM, REG, DIR, IND
 int  CodeType;     //1-207 by searchSymbol()
 
@@ -110,7 +110,7 @@ int getLeftOp() {char Op2; //get single operand with error checking
     disp=LabelAddr[LabelIx]; wflag=1;//todo 
     return;
   }
-  if (Op1 == IND) {                                          //4
+    if (isToken('[')) {//IND                                 //4
     //getIND();
     setTokeType();
     Op1=getOp1(); //todo
@@ -158,14 +158,13 @@ int getIndReg() {
 }
 int getOp1() {//scan for a single operand, set:Op1
   if (TokeType == 0)      return 0;
-  if (TokeType == DIGIT)  return IMM;
+  if (TokeType == DIGIT)  return IMM;// 1
   if (TokeType == ALNUM) {
     testReg();
-    if (RegType)          return REG;
+    if (RegType)          return REG;// 2
     LabelIx=searchLabel(VARIABLE);
-    if (LabelIx)          return DIR;
+    if (LabelIx)          return DIR;// 3
     else error1("variable not found"); }
-  if (isToken('['))       return IND;
   return 0;
 }
 int validateOpSize() {//with RegSize
