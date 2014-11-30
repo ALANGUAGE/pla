@@ -86,7 +86,7 @@ int getLine() {// make ASCIIZ, skip LF=10 and CR=13
   *InputPtr=0;//if last line is empty
   do {
     DOS_NoBytes=readRL(&DOS_ByteRead, asm_fd, 1);
-    if (DOS_ERR) error1("Reading Source");
+    if (DOS_ERR) errorexit("Reading Source");
     if (DOS_NoBytes == 0) return;
     *InputPtr = DOS_ByteRead; 
     InputPtr++;
@@ -360,13 +360,9 @@ int error1(char *s) {
   prs("\n; ******* in next line ERROR: "); prs(s);
   prs(", Symbol: "); prs(Symbol); //prs("\n");
 }
-int synerror(){
-  error1("syntax");
-}
-int errorexit(char *s) {
-  error1(s);
-  end1(1);
-}
+int synerror(){error1("syntax");}
+int inderror(){error1("invalid index register");}
+int errorexit(char *s) { error1(s); end1(1);}
 
 //int main() {getarg(); parse(); epilog(); end1();}//NB AS, AS TE
 char *arglen=0x80; char *argv=0x82;

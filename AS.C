@@ -24,7 +24,7 @@ char CodeSize;     //66h: 0 BYTE, WORD, DWORD
 #define IMM      1 //const  ,123
 #define REG      2 //       ,BX    mode=11
 #define DIR      3 //VALUE  ,var1  mod=00, r/m=110
-//#define IND      4 //indirec,[var1], [BX+SI], [table+BX], [bp-4]  disp 0,8,16
+#define IND      4 //indirec,[var1], [BX+SI], [table+BX], [bp-4]  disp 0,8,16
 char Op1;          //0, IMM, REG, DIR, IND
 int  CodeType;     //1-207 by searchSymbol()
 
@@ -99,6 +99,7 @@ int getLeftOp() {char Op2; //get single operand with error checking
   CodeSize=OpSize;
 
   Op1=getOp1();//0, IMM, REG, DIR, IND
+  if (isToken('[')) Op1 = IND;
   if (Op1 == 0) error1("Name of operand expected");
   if (Op1 == IMM) {imme=SymbolInt; return;}//need OpSize     //1
   if (Op1 == REG) {                                          //2
@@ -110,7 +111,7 @@ int getLeftOp() {char Op2; //get single operand with error checking
     disp=LabelAddr[LabelIx]; wflag=1;//todo 
     return;
   }
-    if (isToken('[')) {//IND                                 //4
+  if (Op1 == IND) {                                          //4
     //getIND();
     setTokeType();
     Op1=getOp1(); //todo
@@ -215,10 +216,7 @@ int writeEA(char xxx) { char len; //need: Op1, disp
   if (Op1 ==   0) errorexit("illegal addressing");  
   if (Op1 == REG) {xxx |= 0xC0; xxx = xxx + RegNo;}
   if (Op1 == DIR) {xxx |= 6; len=2; }
-  if (Op1 == IND) {
-
-
-  }
+//  if (Op1 == IND) {}
   genCode8(xxx);// gen second byte
   if (len == 1) genCode8 (    );
   if (len == 2) genCode16(disp);
