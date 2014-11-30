@@ -164,27 +164,6 @@ int getIndReg1() { char m; char op3;
     }
   } indexerror();
 }
-/*
-int getIndReg() {
-  if (RegType !=WORD) indexerror();
-  if (RegNo==3) modrm=7;//BX
-  if (RegNo==5) modrm=6;//BP change to BP+0
-  if (RegNo==7) modrm=5;//DI
-  if (RegNo==6) modrm=4;//SI
-  if (modrm==0) indexerror();
-  if (isToken(']')) return;
-  if (isToken('+')) {
-    setTokeType(); Op1=getOp1();
-    if(Op1==REG) {
-      if (RegType !=WORD) indexerror();
-      if (RegNo==7) if (modrm==6) modrm=3;//BP+DI
-               else if (modrm==7) modrm=1;//BX+DI
-      if (RegNo==6) if (modrm==6) modrm=2;//BP+SI
-               else if (modrm==7) modrm=0;//BX+DI
-      if (modrm > 3) indexerror();
-    }
-  }
-}*/
 int getOp1() {//scan for a single operand, set:Op1
   if (TokeType == 0)      return 0;
   if (TokeType == DIGIT)  return IMM;// 1
@@ -218,8 +197,7 @@ int isToken(char c) {
 /*int need(char c) {
   if (isToken(c) == 0) {
     prs("\n; ************** expected >> "); prc(c);
-    prs(" <<\\n"); errorexit("token expected"); }
-}*/
+    prs(" <<\\n"); errorexit("token expected"); }  }*/
 int skipRest() {
   setTokeType(); if (TokeType != 0) prs("\n; ********** extra char ignored");
 }
