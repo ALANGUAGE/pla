@@ -1,5 +1,5 @@
 int main() {getarg(); parse(); epilog(); end1();}
-char Version1[]="AS.C V0.06 28.11.2014";
+char Version1[]="AS.C V0.06 30.11.2014";
 char LIST;
 char Symbol[80]; char SymbolUpper[80]; unsigned int SymbolInt;
 char InputBuf[128];  unsigned char *InputPtr;
@@ -129,7 +129,8 @@ int getLeftOp() {char Op2; //get single operand with error checking
   error1("Name of operand expected #1");
 }
 int getIND() {// get var, reg and imm inside []
-  int v; char r1; char rt1; char r2; char rt2; char i; char Op2;
+//out: disp, reg  
+  int v; char r1; char rt1; char r2; char rt2; char i; char op2;
   setTokeType();// 0, DIGIT, ALNUM, no alnum
   op2=getOp1();
 
@@ -233,6 +234,7 @@ VA dw 8
 dec cl        ;FE C9
 dec byte [bx] ;FE 0F
 dec word [bx] ;FF 0F
+;dec word [cx];invalid effective address 
 ;inc word  VA ;invalid comb opcode+operands
 inc byte [VA]        ;FE 06 [300F]
 inc word [VA]        ;FF 06 [300F]
