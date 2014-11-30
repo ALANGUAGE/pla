@@ -134,26 +134,27 @@ int getIND() {// get var, reg and imm inside []
   int v; char r1; char rt1; char r2; char rt2; char i; char op2;
   setTokeType();// 0, DIGIT, ALNUM, no alnum
   op2=getOp1();
-
+  if (op2 == 0) syntaxerror();
+  if (op2 ==IMM) implmerror();
 
 }
 int getIndReg() {
-  if (RegType !=WORD) error1("invalid index register #1");
+  if (RegType !=WORD) indexerror();
   if (RegNo==3) modrm=7;//BX
   if (RegNo==5) modrm=6;//BP change to BP+0
   if (RegNo==7) modrm=5;//DI
   if (RegNo==6) modrm=4;//SI
-  if (modrm==0) error1("invalid index register #2");
+  if (modrm==0) indexerror();
   if (isToken(']')) return;
   if (isToken('+')) {
     setTokeType(); Op1=getOp1();
     if(Op1==REG) {
-      if (RegType !=WORD) error1("invalid index register #3");
+      if (RegType !=WORD) indexerror();
       if (RegNo==7) if (modrm==6) modrm=3;//BP+DI
                else if (modrm==7) modrm=1;//BX+DI
       if (RegNo==6) if (modrm==6) modrm=2;//BP+SI
                else if (modrm==7) modrm=0;//BX+DI
-      if (modrm > 3) error1("invalid index register #4");
+      if (modrm > 3) indexerror();
     }
   }
 }

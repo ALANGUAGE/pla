@@ -354,14 +354,12 @@ int printIntU(unsigned int n) { unsigned int e;
     s++;
   }
 } */
-int error1(char *s) {
-  LIST=1; ErrorCount++;
-//  printLine();
+int error1(char *s) { LIST=1; ErrorCount++;
   prs("\n; ******* in next line ERROR: "); prs(s);
-  prs(", Symbol: "); prs(Symbol); //prs("\n");
-}
-int synerror(){error1("syntax");}
-int inderror(){error1("invalid index register");}
+  prs(", Symbol: "); prs(Symbol);}
+int syntaxerror(){error1("syntax");}
+int indexerror (){error1("invalid index register");}
+int implmerror(){error1("not implemented");}
 int errorexit(char *s) { error1(s); end1(1);}
 
 //int main() {getarg(); parse(); epilog(); end1();}//NB AS, AS TE
