@@ -1,4 +1,4 @@
-//AS1.C  25.11.2014  BAS,  AS TE
+//AS1.C  30.11.2014  BAS,  AS TE
 int parse() {
   LabelNamePtr= &LabelNames;
   do {
@@ -357,8 +357,11 @@ int printIntU(unsigned int n) { unsigned int e;
 int error1(char *s) {
   LIST=1; ErrorCount++;
 //  printLine();
-  prs("\n; *********** ERROR: "); prs(s);
+  prs("\n; ******* in next line ERROR: "); prs(s);
   prs(", Symbol: "); prs(Symbol); //prs("\n");
+}
+int synerror(){
+  error1("syntax");
 }
 int errorexit(char *s) {
   error1(s);

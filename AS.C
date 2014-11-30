@@ -129,7 +129,7 @@ int getLeftOp() {char Op2; //get single operand with error checking
   error1("Name of operand expected #1");
 }
 int getIND() {// get var, reg and imm inside []
-//out: disp, reg  
+//out: disp, reg, MOD-r/m-reg???  
   int v; char r1; char rt1; char r2; char rt2; char i; char op2;
   setTokeType();// 0, DIGIT, ALNUM, no alnum
   op2=getOp1();
