@@ -23,15 +23,6 @@ int parse() {
     printLine();
   } while (DOS_NoBytes != 0 );
 }
-int setTokeType() { char c; //set: TokeType
-  skipBlank();
-  c = *InputPtr;
-  if (c == 0)   {TokeType=0; return; }//last line or empty line
-  if (c == ';') {TokeType=0; return; }//comment
-  if (digit(c)) {getDigit(c); TokeType=DIGIT; return;}//ret:1=SymbolInt
-  if (alnum (c)) {getName(c); TokeType=ALNUM; return;}//ret:2=Symbol
-  TokeType=3; return;               //no alnum
-}
 int storeLabel(char LabType) {
   if(searchLabel(LabType)) error1("duplicate symbol");
   LabelNamePtr=strcpy(LabelNamePtr, Symbol);

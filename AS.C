@@ -88,15 +88,23 @@ int process() { int i; char c;
     setTokeType(); if (TokeType != DIGIT) error1("only digit allowed");
     PC=SymbolInt;return;
   }
-  error1("unknown CodeType");//debug
+  error1("unknown CodeType");
 }
 
-// scan code XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+// scan code .....................................
+int setTokeType() { char c; //set: TokeType
+  skipBlank();
+  c = *InputPtr;
+  if (c == 0)   {TokeType=0; return; }//last line or empty line
+  if (c == ';') {TokeType=0; return; }//comment
+  if (digit(c)) {getDigit(c); TokeType=DIGIT; return;}//ret:1=SymbolInt
+  if (alnum (c)) {getName(c); TokeType=ALNUM; return;}//ret:2=Symbol
+  TokeType=3; return;               //no alnum
+}
 int getLeftOp() {char Op2; //get single operand with error checking
   disp=0; imme=0;   modrm=0; reg=0; wflag=0;
   setTokeType();
-  getOpSize();//set: OpSize
-  CodeSize=OpSize;
+  CodeSize=getCodeSize();
 
   Op1=getOp1();//0, IMM, REG, DIR, IND
   if (isToken('[')) Op1 = IND;
@@ -113,23 +121,11 @@ int getLeftOp() {char Op2; //get single operand with error checking
   }
   if (Op1 == IND) {                                          //4
     getIND();
- /*   setTokeType();
-    Op1=getOp1(); //todo
-    if (TokeType != ALNUM) error1("reg/mem expected");
-
-    if (Op1==DIR) {
-      disp=LabelAddr[LabelIx];
-      if (isToken(']')) {modrm=6;//mod=00, r/m=110
-        return; }
-      if (Op1 == REG) getIndReg();
-      if (Op1 == DIR) {//only 1 ind reg  //todo
-      }
-    }
-    return;*/
+ 
   }
   error1("Name of operand expected #1");
 }
-int getIND() {// get var, reg and imm inside []
+int getIND() {// e.g.  [array+bp+si-4]
 //out: disp, reg, MOD-r/m-reg???  
   char op2; char r1; //int v; char rt1; char r2; char rt2; char i; 
   setTokeType();// 0, DIGIT, ALNUM, no alnum
@@ -143,7 +139,8 @@ int getIND() {// get var, reg and imm inside []
   }
 
 }
-int getIndReg1() { char m; char op3;
+int getIndReg1() { char m; char op3;//split todo
+  m=0;
   if (RegType !=WORD) indexerror();
   if (RegNo==3) m=7;//BX
   if (RegNo==5) m=6;//BP change to BP+0
@@ -182,12 +179,12 @@ int validateOpSize() {//with RegSize
   if (OpSize==0) {OpSize=RegType; if (OpSize==SEGREG) OpSize=WORD; return; }
   error1("OpSize and RegSize(RegType) does not match");
 }
-int getOpSize() {//set: OpSize
+int getCodeSize() {
   if (TokeType ==ALNUM) {
-    if (eqstr(SymbolUpper,"BYTE")) {setTokeType();OpSize=BYTE; return;}
-    if (eqstr(SymbolUpper,"WORD")) {setTokeType();OpSize=WORD; return;}
-    if (eqstr(SymbolUpper,"DWORD")){setTokeType();OpSize=DWORD;return;}
-  } OpSize=0;
+    if (eqstr(SymbolUpper,"BYTE")) {setTokeType(); return BYTE;}
+    if (eqstr(SymbolUpper,"WORD")) {setTokeType(); return WORD;}
+    if (eqstr(SymbolUpper,"DWORD")){setTokeType();return DWORD;}
+  } return 0;
 }
 int isToken(char c) {
   skipBlank();
@@ -201,7 +198,7 @@ int isToken(char c) {
 int skipRest() {
   setTokeType(); if (TokeType != 0) prs("\n; ********** extra char ignored");
 }
-// generate code XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+// generate code ...........................................................
 int genCode8(char c) {//ret: BinLen++, OpPrintIndex++
   FileBin[BinLen]=c; BinLen++; PC++;
   if (OpPrintIndex < OPMAXLEN) {OpPos[OpPrintIndex]=c; OpPrintIndex++; }
