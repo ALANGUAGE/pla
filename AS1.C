@@ -1,4 +1,4 @@
-//AS1.C  30.11.2014  BAS,  AS TE
+//AS1.C  3.12.2014  BAS,  AS TE
 int parse() {
   LabelNamePtr= &LabelNames;
   do {
@@ -127,45 +127,45 @@ int getName(unsigned char c) {//ret: Symbol, SymbolUpper, isLabel
   toupper(SymbolUpper);
 }
 int testReg() {
-//set:RegNo: 0 - 7 AL, CL  RegType: 0=no reg,BYTE,WORD,SEGREG,DWORD
-  RegType=0; RegNo=0;
-  if (strlen(Symbol) < 2) return;
-  if (strlen(Symbol) > 3) return;
+//ret:RegNo: 0 - 7 AL, CL  set:RegType: 0=no reg,BYTE,WORD,SEGREG,DWORD
+  RegType=0;
+  if (strlen(Symbol) < 2) return 0;
+  if (strlen(Symbol) > 3) return 0;
   RegType=BYTE;
-  if (eqstr(SymbolUpper, "AL")) {RegNo=0; return;}
-  if (eqstr(SymbolUpper, "CL")) {RegNo=1; return;}
-  if (eqstr(SymbolUpper, "DL")) {RegNo=2; return;}
-  if (eqstr(SymbolUpper, "BL")) {RegNo=3; return;}
-  if (eqstr(SymbolUpper, "AH")) {RegNo=4; return;}
-  if (eqstr(SymbolUpper, "CH")) {RegNo=5; return;}
-  if (eqstr(SymbolUpper, "DH")) {RegNo=6; return;}
-  if (eqstr(SymbolUpper, "BH")) {RegNo=7; return;}
+  if (eqstr(SymbolUpper, "AL")) return 0;
+  if (eqstr(SymbolUpper, "CL")) return 1;
+  if (eqstr(SymbolUpper, "DL")) return 2;
+  if (eqstr(SymbolUpper, "BL")) return 3;
+  if (eqstr(SymbolUpper, "AH")) return 4;
+  if (eqstr(SymbolUpper, "CH")) return 5;
+  if (eqstr(SymbolUpper, "DH")) return 6;
+  if (eqstr(SymbolUpper, "BH")) return 7;
   RegType=WORD;
-  if (eqstr(SymbolUpper, "AX")) {RegNo=0; return;}
-  if (eqstr(SymbolUpper, "CX")) {RegNo=1; return;}
-  if (eqstr(SymbolUpper, "DX")) {RegNo=2; return;}
-  if (eqstr(SymbolUpper, "BX")) {RegNo=3; return;}
-  if (eqstr(SymbolUpper, "SP")) {RegNo=4; return;}
-  if (eqstr(SymbolUpper, "BP")) {RegNo=5; return;}
-  if (eqstr(SymbolUpper, "SI")) {RegNo=6; return;}
-  if (eqstr(SymbolUpper, "DI")) {RegNo=7; return;}
+  if (eqstr(SymbolUpper, "AX")) return 0;
+  if (eqstr(SymbolUpper, "CX")) return 1;
+  if (eqstr(SymbolUpper, "DX")) return 2;
+  if (eqstr(SymbolUpper, "BX")) return 3;
+  if (eqstr(SymbolUpper, "SP")) return 4;
+  if (eqstr(SymbolUpper, "BP")) return 5;
+  if (eqstr(SymbolUpper, "SI")) return 6;
+  if (eqstr(SymbolUpper, "DI")) return 7;
   RegType=SEGREG;
-  if (eqstr(SymbolUpper, "ES")) {RegNo=0; return;}
-  if (eqstr(SymbolUpper, "CS")) {RegNo=1; return;}
-  if (eqstr(SymbolUpper, "SS")) {RegNo=2; return;}
-  if (eqstr(SymbolUpper, "DS")) {RegNo=3; return;}
-  if (eqstr(SymbolUpper, "FS")) {RegNo=4; return;}
-  if (eqstr(SymbolUpper, "GS")) {RegNo=5; return;}
+  if (eqstr(SymbolUpper, "ES")) return 0;
+  if (eqstr(SymbolUpper, "CS")) return 1;
+  if (eqstr(SymbolUpper, "SS")) return 2;
+  if (eqstr(SymbolUpper, "DS")) return 3;
+  if (eqstr(SymbolUpper, "FS")) return 4;
+  if (eqstr(SymbolUpper, "GS")) return 5;
   RegType=DWORD;
-  if (eqstr(SymbolUpper, "EAX")) {RegNo=0; return;}
-  if (eqstr(SymbolUpper, "ECX")) {RegNo=1; return;}
-  if (eqstr(SymbolUpper, "EDX")) {RegNo=2; return;}
-  if (eqstr(SymbolUpper, "EBX")) {RegNo=3; return;}
-  if (eqstr(SymbolUpper, "ESP")) {RegNo=4; return;}
-  if (eqstr(SymbolUpper, "EBP")) {RegNo=5; return;}
-  if (eqstr(SymbolUpper, "ESI")) {RegNo=6; return;}
-  if (eqstr(SymbolUpper, "EDI")) {RegNo=7; return;}
-  RegType=0; RegNo=0;
+  if (eqstr(SymbolUpper, "EAX"))return 0;
+  if (eqstr(SymbolUpper, "ECX"))return 1;
+  if (eqstr(SymbolUpper, "EDX"))return 2;
+  if (eqstr(SymbolUpper, "EBX"))return 3;
+  if (eqstr(SymbolUpper, "ESP"))return 4;
+  if (eqstr(SymbolUpper, "EBP"))return 5;
+  if (eqstr(SymbolUpper, "ESI"))return 6;
+  if (eqstr(SymbolUpper, "EDI"))return 7;
+  RegType=0; return 0;
 }
 // opcodes XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 char I_START=0xF1;//OpName,0,CodeType,OpCode1,OpCodeN,F1h

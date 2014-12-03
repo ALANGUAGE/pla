@@ -165,7 +165,7 @@ int getOp1() {//scan for a single operand, set:Op1
   if (TokeType == 0)      return 0;
   if (TokeType == DIGIT)  return IMM;// 1
   if (TokeType == ALNUM) {
-    testReg();
+    RegNo=testReg();//set RegType
     if (RegType)          return REG;// 2
     LabelIx=searchLabel(VARIABLE);
     if (LabelIx)          return DIR;// 3
