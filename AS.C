@@ -1,5 +1,5 @@
 int main() {getarg(); parse(); epilog(); end1();}
-char Version1[]="AS.C V0.06 30.11.2014";
+char Version1[]="AS.C V0.06 4.12.2014";
 char LIST;
 char Symbol[80]; char SymbolUpper[80]; unsigned int SymbolInt;
 char InputBuf[128];  unsigned char *InputPtr;
@@ -107,65 +107,52 @@ int getLeftOp() {char Op2; //get single operand with error checking
   CodeSize=getCodeSize();
 
   Op1=getOp1();//0, IMM, REG, DIR, IND
-  if (isToken('[')) Op1 = IND;
+  if (isToken('[')) {Op1 = IND; getIND(); return; }          //4
   if (Op1 == 0) error1("Name of operand expected");
   if (Op1 == IMM) {imme=SymbolInt; return;}//need OpSize     //1
-  if (Op1 == REG) {                                          //2
-    validateOpSize();
-    if (RegType != BYTE) wflag=1;
-    return;
-  }
-  if (Op1 == DIR) {                                          //3
-    disp=LabelAddr[LabelIx]; wflag=1;//todo 
-    return;
-  }
-  if (Op1 == IND) {                                          //4
-    getIND();
- 
-  }
+  if (Op1 == REG) {validateOpSize();                         //2
+    if (RegType != BYTE) wflag=1; return;}
+  if (Op1 == DIR) {disp=LabelAddr[LabelIx]; wflag=1; return;}//3
   error1("Name of operand expected #1");
 }
-int getIND() {// e.g.  [array+bp+si-4]
-//out: disp, reg, MOD-r/m-reg???  
-  char op2; char r1; //int v; char rt1; char r2; char rt2; char i; 
-  setTokeType();// 0, DIGIT, ALNUM, no alnum
-  op2=getOp1();
-  if (op2 ==   0) syntaxerror();
-  if (op2 == IMM) implmerror();
-  if (op2 == REG) r1=getIndReg1();
-  if (op2==DIR) {
-      disp=LabelAddr[LabelIx];
-      if (isToken(']')) {modrm=6; return; }
-  }
+int getIND() {//out: disp, reg             e.g.  [array+bp+si-4]
+  char op2; char r1;  disp=0; r1=0; 
+  do {
+    setTokeType();// 0, DIGIT, ALNUM, no alnum
+    op2=getOp1();
+    if (op2 ==   0) syntaxerror();
+    if (op2 == IMM) disp=disp+SymbolInt;
+    if (op2 == REG) if (r1) r1=getIndReg2(r1); else r1=getIndReg1();
+    if (op2 == DIR) disp=disp+LabelAddr[LabelIx];
+    if (isToken('-')) {setTokeType(); 
+      if (TokeType != DIGIT) numbererror(); disp=disp-SymbolInt;}
+  } while (isToken('+'));
+  if (isToken(']') == 0) errorexit("] expected"); 
 
 }
-int getIndReg1() { char m; char op3;//split todo
-  m=0;
+int getIndReg1() {char m; m=0;
   if (RegType !=WORD) indexerror();
   if (RegNo==3) m=7;//BX
   if (RegNo==5) m=6;//BP change to BP+0
   if (RegNo==7) m=5;//DI
   if (RegNo==6) m=4;//SI
   if (m    ==0) indexerror();
-  if (isToken(']')) return m;
-  if (isToken('+')) {
-    setTokeType(); op3=getOp1();
-    if(op3==REG) {
-      if (RegType !=WORD) indexerror();
-      if (RegNo==7) if (m==6) m=3;//BP+DI
-               else if (m==7) m=1;//BX+DI
-      if (RegNo==6) if (m==6) m=2;//BP+SI
-               else if (m==7) m=0;//BX+DI
-      if (m > 3) indexerror();
-      return m;
-    }
-  } indexerror();
+  return m;
+}
+int getIndReg2(char r1) {char m; m=4;//because m=0 is BX+DI
+  if (RegType !=WORD) indexerror();
+  if (RegNo==7) if (r1==6) m=3;//BP+DI
+           else if (r1==7) m=1;//BX+DI
+  if (RegNo==6) if (r1==6) m=2;//BP+SI
+           else if (r1==7) m=0;//BX+DI
+  if (m > 3) indexerror();
+  return m;
 }
 int getOp1() {//scan for a single operand, set:Op1
   if (TokeType == 0)      return 0;
   if (TokeType == DIGIT)  return IMM;// 1
   if (TokeType == ALNUM) {
-    RegNo=testReg();//set RegType
+    RegNo=testReg();//set global RegType
     if (RegType)          return REG;// 2
     LabelIx=searchLabel(VARIABLE);
     if (LabelIx)          return DIR;// 3

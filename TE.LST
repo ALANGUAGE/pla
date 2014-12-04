@@ -1,4 +1,4 @@
-;AS.C V0.06 30.11.2014, Source: TE.S, Output: TE.LST, TE.COM
+;AS.C V0.06 4.12.2014, Source: TE.S, Output: TE.LST, TE.COM
 
 0000                org 256
 0100 90             nop;  comment
@@ -8,13 +8,12 @@
 0106 F6 D1          not cl
 0108 F7 D1          not cx
 010A 41 42 06       VB db "AB",6
-; ******* in next line ERROR: Name of operand expected #1, Symbol: VA
 ; ******* in next line ERROR: only reg or value allowed, Symbol: VA
 010D                inc word [VA]
 010D                L7: ; comment
 010D C2 0B 00       ret 11
 0110 C3             ret
 0111                
-;END Errors: 2 ***ERROR*** , LabelNamesChar: 12. >>L1 VA VB L7 << 
+;END Errors: 1 ***ERROR*** , LabelNamesChar: 12. >>L1 VA VB L7 << 
 L1 L.0101,  VA V.0104,  VB V.010A,  L7 L.010D,  
 ;COM file: 90 FE C9 49 08 00 F6 D1 F7 D1 41 42 06 C2 0B 00 C3

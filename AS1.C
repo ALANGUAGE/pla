@@ -348,9 +348,10 @@ int printIntU(unsigned int n) { unsigned int e;
 int error1(char *s) { LIST=1; ErrorCount++;
   prs("\n; ******* in next line ERROR: "); prs(s);
   prs(", Symbol: "); prs(Symbol);}
-int syntaxerror(){error1("syntax");}
-int indexerror (){error1("invalid index register");}
 int implmerror(){error1("not implemented");}
+int indexerror (){error1("invalid index register");}
+int numbererror(){error1("number expected");}  
+int syntaxerror(){error1("syntax");}
 int errorexit(char *s) { error1(s); end1(1);}
 
 //int main() {getarg(); parse(); epilog(); end1();}//NB AS, AS TE
