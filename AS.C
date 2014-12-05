@@ -219,6 +219,7 @@ add ax, bx    ;01 D8
 add word ax, [bx] ;03 07
 VA dw 8
 dec cl        ;FE C9
+dec ecx       ;66 49 
 dec byte [bx] ;FE 0F
 dec word [bx] ;FF 0F
 ;dec word [cx];invalid effective address 

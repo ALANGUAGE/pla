@@ -1,4 +1,4 @@
-//AS1.C  3.12.2014  BAS,  AS TE
+//AS1.C  5.12.2014  BAS,  AS TE
 int parse() {
   LabelNamePtr= &LabelNames;
   do {
@@ -350,6 +350,7 @@ int error1(char *s) { LIST=1; ErrorCount++;
   prs(", Symbol: "); prs(Symbol);}
 int implmerror(){error1("not implemented");}
 int indexerror (){error1("invalid index register");}
+int notallowederror(){error1("not allowed here"); }
 int numbererror(){error1("number expected");}  
 int syntaxerror(){error1("syntax");}
 int errorexit(char *s) { error1(s); end1(1);}
