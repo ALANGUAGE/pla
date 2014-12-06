@@ -14,4 +14,4 @@
 0117 C2 0B 00       ret 11
 011A                
 ;END Errors: 0, Label & Var: VA 0100,  VB 0102,  L1 0104,  
-;COM file: 08 00 41 06 FE C9 49 FE 0F FE 4F 03 FE 4F FC F6 D1 FF 00 FE 80 02 01 C2 0B 00
+;COM file 26 bytes: 08 00 41 06 FE C9 49 FE 0F FE 4F 03 FE 4F FC F6 D1 FF 00 FE 80 02 01 C2 0B 00
