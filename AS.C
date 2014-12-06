@@ -223,7 +223,7 @@ VA dw 8
 dec cl        ;FE C9
 dec ecx       ;66 49 
 dec byte [bx] ;FE 0F
-dec word [bx] ;FF 0F
+dec byte [bx+3] ;FE 4F 03
 ;dec word [cx];invalid effective address 
 ;inc word  VA ;invalid comb opcode+operands
 inc byte [VA]        ;FE 06 [300F]
