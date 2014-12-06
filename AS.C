@@ -69,13 +69,14 @@ int process() { int i; char c;
     regmemerror(); return;
   }
 //todo
-  if (CodeType ==  52) {//not, neg    //// mul, imul, div, idiv
+  if (CodeType ==  52) {//not, neg, mul, imul, div, idiv
     getLeftOp();
     if (Op1 == REG) {
+      if (RegType == SEGREG) {segregerror(); return;}
       if (RegType == DWORD) gen66h();
       genInstruction(wflag, 1); genCodeInREG(); return; }
     if (Op1 == IND) {
-      genInstruction(0, 1); genCodeInREG(); return; }
+      genInstruction(wflag, 1); genCodeInREG(); return; }
     regmemerror(); return;
   }
 

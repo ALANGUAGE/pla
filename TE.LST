@@ -12,6 +12,19 @@
 0110 F6 D1          not cl
 0112 FF 80 01 01    inc word [VA]
 0116 FE 80 01 01    inc byte [VA]
-011A                
+011A FE C9          dec cl        ;FE C9
+011C 66 49          dec ecx       ;66 49 
+011E FE 0F          dec byte [bx] ;FE 0F
+0120 FE 4F 03       dec byte [bx+3] ;FE 4F 03
+0123 FE 4F FC       dec byte [bx-4] ;FE 4F FC
+0126                ;dec word [cx];invalid effective address 
+0126                ;inc word  VA ;invalid comb opcode+operands
+0126 FE 80 01 01    inc byte [VA]        ;FE 06 [300F]
+012A FF 80 01 01    inc word [VA]        ;FF 06 [300F]
+012E FE 06          inc byte [bp]        ;FE 46 00
+0130 FE 46 04       inc byte [bp+4]      ;FE 46 04
+0133 FE 86 02 01    inc byte [bp+258]    ;FE 86 02 01
+0137 FE 46 FC       inc byte [bp-4]      ;FE 46 FC
+013A                
 ;END Errors: 0, Label & Var: VA 0101,  VB 0103,  L1 0105,  
-;COM file 26 bytes: 90 08 00 41 06 FE C9 49 FE 0F FE 4F 03 FE 4F FC F6 D1 FF 80 01 01 FE 80 01 01
+;COM file 58 bytes: 90 08 00 41 06 FE C9 49 FE 0F FE 4F 03 FE 4F FC F6 D1 FF 80 01 01 FE 80 01 01 FE C9 66 49 FE 0F FE 4F 03 FE 4F FC FE 80 01 01 FF 80 01 01 FE 06 FE 46 04 FE 86 02 01 FE 46 FC
