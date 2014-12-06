@@ -348,12 +348,15 @@ int printIntU(unsigned int n) { unsigned int e;
 int error1(char *s) { LIST=1; ErrorCount++;
   prs("\n; ******* in next line ERROR: "); prs(s);
   prs(", Symbol: "); prs(Symbol);}
+int allowederror(){error1("not allowed here"); }
 int implmerror(){error1("not implemented");}
 int indexerror (){error1("invalid index register");}
-int notallowederror(){error1("not allowed here"); }
 int numbererror(){error1("number expected");}  
+int regmemerror(){error1("only register or memory allowed");}
+int segregerror(){error1("segment register not allowed");}
 int syntaxerror(){error1("syntax");}
 int errorexit(char *s) { error1(s); end1(1);}
+int addrexit(){errorexit("illegal addres");}
 
 //int main() {getarg(); parse(); epilog(); end1();}//NB AS, AS TE
 char *arglen=0x80; char *argv=0x82;
@@ -385,20 +388,20 @@ int getarg() { int arglen1; int i; char *c;
 int epilog() { int i; int j; char c;
   prs("\n;END Errors: "); printIntU(ErrorCount);
   if (ErrorCount) prs(" ***ERROR*** ");
-  prs(", LabelNamesChar: ");
-  i= &LabelNames; i=LabelNamePtr-i; printIntU(i); prs(". >>");
+  prs(", Label & Var: ");
+/*  i= &LabelNames; i=LabelNamePtr-i; printIntU(i); prs(". >>");
   i= &LabelNames;
   do { c=*i; if (c==0) c=' '; prc(c); i++;
-  } while (i < LabelNamePtr); prs("<< \n");
+  } while (i < LabelNamePtr); prs("<< \n"); */
   if (LabelMaxIx) {
     i = 1;
     LabelNamePtr= &LabelNames;
     do {
       prs(LabelNamePtr); prc(' ');
-      j=LabelType[i]; //printIntU(j);
+ /*     j=LabelType[i]; //printIntU(j);
       if (j == 1) prc('L');
       if (j == 2) prc('V');
-      prc('.');
+      prc('.'); */
       j=LabelAddr[i]; printhex16(j); prs(",  ");
       j=strlen(LabelNamePtr);//get end of act. name
       LabelNamePtr=LabelNamePtr+j;

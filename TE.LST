@@ -4,16 +4,14 @@
 0100 90             nop;  comment
 0101 FE C9          L1: dec byte cl
 0103 49             dec word cx
-0104 08 00          VA dw 8
-0106 F6 D1          not cl
-0108 F7 D1          not cx
-010A 41 42 06       VB db "AB",6
-; ******* in next line ERROR: only reg or value allowed, Symbol: VA
-010D                inc word [VA]
-010D                L7: ; comment
-010D C2 0B 00       ret 11
-0110 C3             ret
-0111                
-;END Errors: 1 ***ERROR*** , LabelNamesChar: 12. >>L1 VA VB L7 << 
-L1 L.0101,  VA V.0104,  VB V.010A,  L7 L.010D,  
-;COM file: 90 FE C9 49 08 00 F6 D1 F7 D1 41 42 06 C2 0B 00 C3
+0104 66 49          dec ecx
+0106 08 00          VA dw 8
+0108 F6 D1          not cl
+010A F7 D1          not cx
+010C 41 42 06       VB db "AB",6
+010F FF 80 06 01    inc word [VA]
+0113 FF 88 0C 01    dec [VB]
+0117 C3             L7: ret 
+0118                
+;END Errors: 0, Label & Var: L1 0101,  VA 0106,  VB 010C,  L7 0117,  
+;COM file: 90 FE C9 49 66 49 08 00 F6 D1 F7 D1 41 42 06 FF 80 06 01 FF 88 0C 01 C3

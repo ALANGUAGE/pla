@@ -56,13 +56,14 @@ int process() { int i; char c;
   }
   if (CodeType ==  2) {//inc, dec
     getLeftOp();
-    if (Op1 == REG) {
+    if (Op1 == REG) {//2
       if (RegType == BYTE) {genInstruction(0, 1); genCodeInREG(); return; }
       if (RegType == WORD) {genInstruction(RegNo, 3); return; }//short form
-    error1("only byte or word reg allowed");return; }
-    if (Op1 == DIR) { 
+      if (RegType ==DWORD) {gen66h(); genInstruction(RegNo, 3); return;}
+      segregerror();return; }
+    if (Op1 == IND) {//4 
       genInstruction(1, 1); genCodeInREG(); return; }
-    error1("only reg or value allowed"); return;
+    regmemerror(); return;
   }
 //todo
   if (CodeType ==  52) {//not, neg, mul, imul, div, idiv
@@ -71,7 +72,7 @@ int process() { int i; char c;
       genInstruction(wflag, 1); genCodeInREG(); return; }
     if (Op1 == DIR) {
       genInstruction(0, 1); genCodeInREG(); return; }
-    error1("only reg or value allowed"); return;
+    regmemerror(); return;
   }
 
   if (CodeType==  8) {// ret
@@ -115,7 +116,7 @@ int getLeftOp() {char Op2; //get single operand with error checking
   if (Op1 == DIR) {disp=LabelAddr[LabelIx]; wflag=1; return;}//3
   error1("Name of operand expected #1");
 }
-int getIND() {//out: disp, reg             e.g.  [array+bp+si-4]
+int getIND() {//ret: disp, reg             e.g.  [array+bp+si-4]
   char op2; char r1;  disp=0; r1=0; 
   do {
     setTokeType();// 0, DIGIT, ALNUM, no alnum
@@ -128,7 +129,7 @@ int getIND() {//out: disp, reg             e.g.  [array+bp+si-4]
       if (TokeType != DIGIT) numbererror(); disp=disp-SymbolInt;}
   } while (isToken('+'));
   if (isToken(']') == 0) errorexit("] expected"); 
-
+  reg=r1;
 }
 int getIndReg1() {char m; m=0;
   if (RegType !=WORD) indexerror();
@@ -186,6 +187,7 @@ int skipRest() {
   setTokeType(); if (TokeType != 0) prs("\n; ********** extra char ignored");
 }
 // generate code ...........................................................
+int gen66h() {genCode8(0x66);}
 int genCode8(char c) {//ret: BinLen++, OpPrintIndex++
   FileBin[BinLen]=c; BinLen++; PC++;
   if (OpPrintIndex < OPMAXLEN) {OpPos[OpPrintIndex]=c; OpPrintIndex++; }
@@ -200,19 +202,21 @@ int genInstruction(char No, int loc) {char c;//set: OpCodePtr++
 int genCodeInREG() {char x; //get Code for second byte
   OpCodePtr++; x= *OpCodePtr; writeEA(x);
 }
-int writeEA(char xxx) { char len; //need: Op1, disp
+int genModRegRM(){ writeEA(reg);//todo
+}
+int writeEA(char xxx) { char len; //need: Op1, disp, RegNo, reg
   len=0; di=0;
   xxx = xxx << 3;//in reg field of mod r/m
-  if (Op1 ==   0) errorexit("illegal addressing");  
-  if (Op1 == REG) {xxx |= 0xC0; xxx = xxx + RegNo;}
-  if (Op1 == DIR) {xxx |= 6; len=2; }
-//  if (Op1 == IND) {}
+  if (Op1 ==   0) addrexit();  
+  if (Op1 == REG) {xxx |= 0xC0; xxx = xxx + RegNo;}        //2
+  if (Op1 == DIR) {xxx |= 6; len=2; }                      //3
+  if (Op1 == IND) { xxx = xxx + reg;                       //4
+    if (disp) {xxx |= 0x80; len=2;}//todo
+  }
   genCode8(xxx);// gen second byte
   if (len == 1) genCode8 (    );
   if (len == 2) genCode16(disp);
 }
-#include "AS1.C"
-
 int test1() { __asm {
 add bx, ax    ;01 C3
 add ax, bx    ;01 D8
@@ -233,3 +237,4 @@ inc byte [bp-4]      ;FE 46 FC
 mov byte [bp- 4], al ;88 46 FC
 mov      [VA+bx], al ;88 87 [300F]
 }  }
+#include "AS1.C"
