@@ -1,4 +1,4 @@
-char Version1[]="AS.C V0.06 5.12.2014";
+char Version1[]="AS.C V0.06 6.12.2014";
 int main() {getarg(); parse(); epilog(); end1();}
 char LIST;
 char Symbol[80]; char SymbolUpper[80]; unsigned int SymbolInt;
@@ -18,9 +18,9 @@ char isLabel;      //by getName()
 char TokeType;     //0, DIGIT, ALNUM, noalnum
 #define BYTE     1
 #define WORD     2
-#define DWORD    4
-#define SEGREG   8
-char CodeSize;     //66h: 0 BYTE, WORD, DWORD
+#define DWORD    3
+#define SEGREG   4
+char CodeSize;     //0, BYTE, WORD, DWORD
 #define IMM      1 //const  ,123
 #define REG      2 //       ,BX    mode=11
 #define DIR      3 //VALUE  ,var1  mod=00, r/m=110
@@ -28,7 +28,7 @@ char CodeSize;     //66h: 0 BYTE, WORD, DWORD
 char Op1;          //0, IMM, REG, DIR, IND
 int  CodeType;     //1-207 by searchSymbol()
 
-char RegType;      //0=no reg, BYTE, WORD, SEGREG, DWORD
+char RegType;      //0=no reg, BYTE, WORD, DWORD, SEGREG
 char RegNo;        //0 - 7 AL, CL, ...  by testReg()
 char OpSize;       //0, BYTE, WORD, DWORD
 //char AddrSize;   //67h:
@@ -209,11 +209,16 @@ int writeEA(char xxx) { char len; //need: Op1, disp, RegNo, reg
   if (Op1 == REG) {xxx |= 0xC0; xxx = xxx + RegNo;}        //2
   if (Op1 == DIR) {xxx |= 6; len=2; }                      //3
   if (Op1 == IND) { xxx = xxx + reg;                       //4
-    if (disp) {xxx |= 0x80; len=2;}//todo
-  }
+    if (disp) {len=getSize(disp);
+      if (len == 1) xxx |= 0x40; else xxx |= 0x80;}
+    }
   genCode8(xxx);// gen second byte
-  if (len == 1) genCode8 (    );
+  if (len == 1) genCode8 (disp);
   if (len == 2) genCode16(disp);
+}
+int getSize(unsigned int u) {// int seen as unsigned int
+  if (u > 127)  return 2;
+  return 1;
 }
 int test1() { __asm {
 add bx, ax    ;01 C3
@@ -223,7 +228,8 @@ VA dw 8
 dec cl        ;FE C9
 dec ecx       ;66 49 
 dec byte [bx] ;FE 0F
-dec word [bx] ;FF 0F
+dec byte [bx+3] ;FE 4F 03
+dec byte [bx-4] ;FE 4F FC
 ;dec word [cx];invalid effective address 
 ;inc word  VA ;invalid comb opcode+operands
 inc byte [VA]        ;FE 06 [300F]
