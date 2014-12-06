@@ -209,11 +209,17 @@ int writeEA(char xxx) { char len; //need: Op1, disp, RegNo, reg
   if (Op1 == REG) {xxx |= 0xC0; xxx = xxx + RegNo;}        //2
   if (Op1 == DIR) {xxx |= 6; len=2; }                      //3
   if (Op1 == IND) { xxx = xxx + reg;                       //4
-    if (disp) {xxx |= 0x80; len=2;}//todo
-  }
+    if (disp) {len=getdispSize();
+      if (len == 1) xxx |= 0x40; else xxx |= 0x80;}
+    }
   genCode8(xxx);// gen second byte
-  if (len == 1) genCode8 (    );
+  if (len == 1) genCode8 (disp);
   if (len == 2) genCode16(disp);
+}
+int getdispSize() {
+  if (disp > 127)  return 2;
+//  if (disp < 0x80) return 2;
+  return 1;
 }
 int test1() { __asm {
 add bx, ax    ;01 C3

@@ -6,11 +6,11 @@
 0104 FE C9          L1: dec byte cl ;com
 0106 49             dec word cx
 0107 FE 0F          dec byte [bx]
-0109 FE 8F 03 00    dec byte [bx+3]
-010D F6 D1          not cl
-010F FF 00          inc word [VA]
-0111 FE 80 02 01    inc byte [VB]
-0115 C2 0B 00       ret 11
-0118                
+0109 FE 4F 03       dec byte [bx+3]
+010C F6 D1          not cl
+010E FF 00          inc word [VA]
+0110 FE 80 02 01    inc byte [VB]
+0114 C2 0B 00       ret 11
+0117                
 ;END Errors: 0, Label & Var: VA 0100,  VB 0102,  L1 0104,  
-;COM file: 08 00 41 06 FE C9 49 FE 0F FE 8F 03 00 F6 D1 FF 00 FE 80 02 01 C2 0B 00
+;COM file: 08 00 41 06 FE C9 49 FE 0F FE 4F 03 F6 D1 FF 00 FE 80 02 01 C2 0B 00
