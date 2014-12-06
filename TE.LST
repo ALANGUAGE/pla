@@ -1,17 +1,17 @@
 ;AS.C V0.06 5.12.2014, Source: TE.S, Output: TE.LST, TE.COM
 
 0000                org 256;com
-0100 08 00          VA dw 8
-0102 41 06          VB db "A",6
-0104 FE C9          L1: dec byte cl ;com
-0106 49             dec word cx
-0107 FE 0F          dec byte [bx]
-0109 FE 4F 03       dec byte [bx+3]
-010C FE 4F FC       dec byte [bx-4]
-010F F6 D1          not cl
-0111 FF 00          inc word [VA]
-0113 FE 80 02 01    inc byte [VB]
-0117 C2 0B 00       ret 11
+0100 90             nop
+0101 08 00          VA dw 8
+0103 41 06          VB db "A",6
+0105 FE C9          L1: dec byte cl ;com
+0107 49             dec word cx
+0108 FE 0F          dec byte [bx]
+010A FE 4F 03       dec byte [bx+3]
+010D FE 4F FC       dec byte [bx-4]
+0110 F6 D1          not cl
+0112 FF 80 01 01    inc word [VA]
+0116 FE 80 01 01    inc byte [VA]
 011A                
-;END Errors: 0, Label & Var: VA 0100,  VB 0102,  L1 0104,  
-;COM file 26 bytes: 08 00 41 06 FE C9 49 FE 0F FE 4F 03 FE 4F FC F6 D1 FF 00 FE 80 02 01 C2 0B 00
+;END Errors: 0, Label & Var: VA 0101,  VB 0103,  L1 0105,  
+;COM file 26 bytes: 90 08 00 41 06 FE C9 49 FE 0F FE 4F 03 FE 4F FC F6 D1 FF 80 01 01 FE 80 01 01

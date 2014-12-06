@@ -1,4 +1,4 @@
-char Version1[]="AS.C V0.06 5.12.2014";
+char Version1[]="AS.C V0.06 6.12.2014";
 int main() {getarg(); parse(); epilog(); end1();}
 char LIST;
 char Symbol[80]; char SymbolUpper[80]; unsigned int SymbolInt;
@@ -18,9 +18,9 @@ char isLabel;      //by getName()
 char TokeType;     //0, DIGIT, ALNUM, noalnum
 #define BYTE     1
 #define WORD     2
-#define DWORD    4
-#define SEGREG   8
-char CodeSize;     //66h: 0 BYTE, WORD, DWORD
+#define DWORD    3
+#define SEGREG   4
+char CodeSize;     //0, BYTE, WORD, DWORD
 #define IMM      1 //const  ,123
 #define REG      2 //       ,BX    mode=11
 #define DIR      3 //VALUE  ,var1  mod=00, r/m=110
@@ -28,7 +28,7 @@ char CodeSize;     //66h: 0 BYTE, WORD, DWORD
 char Op1;          //0, IMM, REG, DIR, IND
 int  CodeType;     //1-207 by searchSymbol()
 
-char RegType;      //0=no reg, BYTE, WORD, SEGREG, DWORD
+char RegType;      //0=no reg, BYTE, WORD, DWORD, SEGREG
 char RegNo;        //0 - 7 AL, CL, ...  by testReg()
 char OpSize;       //0, BYTE, WORD, DWORD
 //char AddrSize;   //67h:
