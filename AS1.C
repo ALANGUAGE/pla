@@ -17,6 +17,7 @@ int parse() {
       lookCode();// and OpCodePtr
       if(CodeType) process();
       else getVariable();
+      skipRest();
     }
     else if (TokeType >  ALNUM) error1("Label or instruction expected");
     else if (TokeType == DIGIT) error1("No digit allowed at start of line");
