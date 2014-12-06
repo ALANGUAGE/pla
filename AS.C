@@ -57,12 +57,14 @@ int process() { int i; char c;
   if (CodeType ==  2) {//inc, dec
     getLeftOp();
     if (Op1 == REG) {//2
-      if (RegType == BYTE) {genInstruction(0, 1); genCodeInREG(); return; }
+      if (RegType == BYTE) {genInstruction(wflag, 1); genCodeInREG(); return; }
       if (RegType == WORD) {genInstruction(RegNo, 3); return; }//short form
       if (RegType ==DWORD) {gen66h(); genInstruction(RegNo, 3); return;}
       segregerror();return; }
     if (Op1 == IND) {//4 
-      genInstruction(1, 1); genCodeInREG(); return; }
+      if (CodeSize == 0) error1("need BYTE, WORD, DWORD CodeSize");
+      if (CodeSize != BYTE) wflag=1;
+      genInstruction(wflag, 1); genCodeInREG(); return; }
     regmemerror(); return;
   }
 //todo
@@ -77,11 +79,7 @@ int process() { int i; char c;
 
   if (CodeType==  8) {// ret
     setTokeType(); 
-    if (TokeType == DIGIT) {
-      genInstruction(0, 2);
-      genCode16(SymbolInt); return;
-    }
-    skipRest();
+    if (TokeType == DIGIT) {genInstruction(0, 2); genCode16(SymbolInt); return; }
     genInstruction(0, 1); return; 
   }
 
