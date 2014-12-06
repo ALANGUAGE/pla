@@ -209,16 +209,15 @@ int writeEA(char xxx) { char len; //need: Op1, disp, RegNo, reg
   if (Op1 == REG) {xxx |= 0xC0; xxx = xxx + RegNo;}        //2
   if (Op1 == DIR) {xxx |= 6; len=2; }                      //3
   if (Op1 == IND) { xxx = xxx + reg;                       //4
-    if (disp) {len=getdispSize();
+    if (disp) {len=getSize(disp);
       if (len == 1) xxx |= 0x40; else xxx |= 0x80;}
     }
   genCode8(xxx);// gen second byte
   if (len == 1) genCode8 (disp);
   if (len == 2) genCode16(disp);
 }
-int getdispSize() {
-  if (disp > 127)  return 2;
-//  if (disp < 0x80) return 2;
+int getSize(unsigned int u) {// int seen as unsigned int
+  if (u > 127)  return 2;
   return 1;
 }
 int test1() { __asm {
@@ -230,6 +229,7 @@ dec cl        ;FE C9
 dec ecx       ;66 49 
 dec byte [bx] ;FE 0F
 dec byte [bx+3] ;FE 4F 03
+dec byte [bx-4] ;FE 4F FC
 ;dec word [cx];invalid effective address 
 ;inc word  VA ;invalid comb opcode+operands
 inc byte [VA]        ;FE 06 [300F]
