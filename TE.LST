@@ -1,17 +1,19 @@
-;AS.C V0.06 4.12.2014, Source: TE.S, Output: TE.LST, TE.COM
+;AS.C V0.06 5.12.2014, Source: TE.S, Output: TE.LST, TE.COM
 
-0000                org 256
-0100 90             nop;  comment
-0101 FE C9          L1: dec byte cl
-0103 49             dec word cx
-0104 66 49          dec ecx
-0106 08 00          VA dw 8
-0108 F6 D1          not cl
-010A F7 D1          not cx
-010C 41 42 06       VB db "AB",6
-010F FF 80 06 01    inc word [VA]
-0113 FF 88 0C 01    dec [VB]
-0117 C3             L7: ret 
-0118                
-;END Errors: 0, Label & Var: L1 0101,  VA 0106,  VB 010C,  L7 0117,  
-;COM file: 90 FE C9 49 66 49 08 00 F6 D1 F7 D1 41 42 06 FF 80 06 01 FF 88 0C 01 C3
+0000 90             nop
+0001 FE C9          dec byte cl
+0003 49             dec word cx
+0004 08 00          VA dw 8
+0006 F6 D1          not cl
+0008 F7 D1          not cx
+000A 41 42 06       VB db "AB",6
+000D FF 80 04 00    inc [VA]
+; ******* in next line ERROR: only register or memory allowed, Symbol: VB
+0011                dec VB
+0011                org 10
+000A                L7:
+000A C2 0B 00       ret 11
+000D C3             ret
+000E                
+;END Errors: 1 ***ERROR*** , Label & Var: VA 0004,  VB 000A,  L7 000A,  
+;COM file: 90 FE C9 49 08 00 F6 D1 F7 D1 41 42 06 FF 80 04 00 C2 0B 00 C3

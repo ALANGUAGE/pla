@@ -1,5 +1,5 @@
+char Version1[]="AS.C V0.06 5.12.2014";
 int main() {getarg(); parse(); epilog(); end1();}
-char Version1[]="AS.C V0.06 4.12.2014";
 char LIST;
 char Symbol[80]; char SymbolUpper[80]; unsigned int SymbolInt;
 char InputBuf[128];  unsigned char *InputPtr;
