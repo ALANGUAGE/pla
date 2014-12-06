@@ -35,7 +35,7 @@ char OpSize;       //0, BYTE, WORD, DWORD
 char numop;        // 1-3 bytes
 char wflag;        //0=byte, 1=word/dword
 char dflag;        //0=source is reg,  1=dest is reg
-char modrm;        //mod, r/m
+//char modrm;        //mod, r/m
 char reg;          //combination of index and base reg
 int disp;          //displacement      0-8 bytes
 int imme;          //immediate         0-8 bytes
@@ -57,10 +57,11 @@ int process() { int i; char c;
   if (CodeType ==  2) {//inc, dec
     getLeftOp();
     if (Op1 == REG) {//2
+      if (RegType == SEGREG) {segregerror(); return;}
       if (RegType == BYTE) {genInstruction(wflag, 1); genCodeInREG(); return; }
       if (RegType == WORD) {genInstruction(RegNo, 3); return; }//short form
       if (RegType ==DWORD) {gen66h(); genInstruction(RegNo, 3); return;}
-      segregerror();return; }
+      internexit(); }
     if (Op1 == IND) {//4 
       if (CodeSize == 0) error1("need BYTE, WORD, DWORD CodeSize");
       if (CodeSize != BYTE) wflag=1;
@@ -68,11 +69,12 @@ int process() { int i; char c;
     regmemerror(); return;
   }
 //todo
-  if (CodeType ==  52) {//not, neg, mul, imul, div, idiv
+  if (CodeType ==  52) {//not, neg    //// mul, imul, div, idiv
     getLeftOp();
     if (Op1 == REG) {
+      if (RegType == DWORD) gen66h();
       genInstruction(wflag, 1); genCodeInREG(); return; }
-    if (Op1 == DIR) {
+    if (Op1 == IND) {
       genInstruction(0, 1); genCodeInREG(); return; }
     regmemerror(); return;
   }
@@ -100,8 +102,8 @@ int setTokeType() { char c; //set: TokeType
   if (alnum (c)) {getName(c); TokeType=ALNUM; return;}//ret:2=Symbol
   TokeType=3; return;               //no alnum
 }
-int getLeftOp() {char Op2; //get single operand with error checking
-  disp=0; imme=0;   modrm=0; reg=0; wflag=0;
+int getLeftOp() {char Op2;
+  disp=0; imme=0; reg=0; wflag=0;//modrm=0;
   setTokeType();
   CodeSize=getCodeSize();
 
@@ -203,7 +205,7 @@ int genCodeInREG() {char x; //get Code for second byte
 int genModRegRM(){ writeEA(reg);//todo
 }
 int writeEA(char xxx) { char len; //need: Op1, disp, RegNo, reg
-  len=0; di=0;
+  len=0;
   xxx = xxx << 3;//in reg field of mod r/m
   if (Op1 ==   0) addrexit();  
   if (Op1 == REG) {xxx |= 0xC0; xxx = xxx + RegNo;}        //2

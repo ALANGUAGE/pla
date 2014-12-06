@@ -263,8 +263,8 @@ char I_JG []={'J','G',0,                6,15,     0xF1};
 //  8: ret
 char I_RET[]=  {'R','E','T',0,          8,0xC3,0xC2,0xF1};
 //  9: seg, r/m
-char I_POP[]={'P','O','P',0,            9,0x58,   0xF1};//r16
 char I_PUSH[]={'P','U','S','H',0,       9,0x50,   0xF1};//r16
+char I_POP[]={'P','O','P',0,            9,0x58,   0xF1};//r16
 //  100 directives
 char I_ORG[]=  {'O','R','G',0,        101,        0xF1};
 char I_DB[]=   {'D','B',0,            200,        0xF1};
@@ -356,8 +356,10 @@ int numbererror(){error1("number expected");}
 int regmemerror(){error1("only register or memory allowed");}
 int segregerror(){error1("segment register not allowed");}
 int syntaxerror(){error1("syntax");}
+
 int errorexit(char *s) { error1(s); end1(1);}
 int addrexit(){errorexit("illegal addres");}
+int internexit(){errorexit("intern compiler error");}
 
 //int main() {getarg(); parse(); epilog(); end1();}//NB AS, AS TE
 char *arglen=0x80; char *argv=0x82;
