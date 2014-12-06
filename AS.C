@@ -20,7 +20,7 @@ char TokeType;     //0, DIGIT, ALNUM, noalnum
 #define WORD     2
 #define DWORD    3
 #define SEGREG   4
-char CodeSize;     //0, BYTE, WORD, DWORD
+//char CodeSize;     //0, BYTE, WORD, DWORD
 #define IMM      1 //const  ,123
 #define REG      2 //       ,BX    mode=11
 #define DIR      3 //VALUE  ,var1  mod=00, r/m=110
@@ -63,8 +63,8 @@ int process() { int i; char c;
       if (RegType ==DWORD) {gen66h(); genInstruction(RegNo, 3); return;}
       internexit(); }
     if (Op1 == IND) {//4 
-      if (CodeSize == 0) error1("need BYTE, WORD, DWORD CodeSize");
-      if (CodeSize != BYTE) wflag=1;
+      if (OpSize == 0) error1("need BYTE, WORD, DWORD OpSize");
+      if (OpSize != BYTE) wflag=1;
       genInstruction(wflag, 1); genCodeInREG(); return; }
     regmemerror(); return;
   }
@@ -105,7 +105,7 @@ int setTokeType() { char c; //set: TokeType
 int getLeftOp() {char Op2;
   disp=0; imme=0; reg=0; wflag=0;//modrm=0;
   setTokeType();
-  CodeSize=getCodeSize();
+  OpSize=getCodeSize();
 
   Op1=getOp1();//0, IMM, REG, DIR, IND
   if (isToken('[')) {Op1 = IND; getIND(); return; }          //4
