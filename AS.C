@@ -1,4 +1,4 @@
-char Version1[]="AS.C V0.06 6.12.2014";
+char Version1[]="AS.C V0.06 12.12.2014";//alt-re 5[  7|  8{  N~  7Caps \
 int main() {getarg(); parse(); epilog(); end1();}
 char LIST;
 char Symbol[80]; char SymbolUpper[80]; unsigned int SymbolInt;
@@ -69,7 +69,7 @@ int process() { int i; char c;
     regmemerror(); return;
   }
 //todo
-  if (CodeType ==  52) {//not, neg, mul, imul, div, idiv
+  if (CodeType ==  52) {//not, neg,  //mul, imul, div, idiv
     getLeftOp();
     if (Op1 == REG) {
       if (RegType == SEGREG) {segregerror(); return;}
@@ -103,12 +103,23 @@ int setTokeType() { char c; //set: TokeType
   if (alnum (c)) {getName(c); TokeType=ALNUM; return;}//ret:2=Symbol
   TokeType=3; return;               //no alnum
 }
-int getLeftOp() {char Op2;
-  disp=0; imme=0; reg=0; wflag=0;//modrm=0;
+int Op() {
+//numop==2, seg reg not allowed
+//size: 1.declaration CodeSize, 2.reg size, 3.error1
+//1. acc, imm 04  if (imm) acc,imm; else rm,imm(sign extended);
+//2. rm , imm 80  
+//2a sign ext 83
+//3. reg, rm  02  if (dest==reg) set direction bit; else default;
+//4. rm , reg 00
+//5. error1(mem2mem)
+}
+int getLeftOp() {char Op2;//0,IMM,REG,DIR,IND(IMM,REG,DIR)
+//out: opt, disp->imm, reg, regt->size  
+  disp=0; imme=0; reg=0; wflag=0;
   setTokeType();
   OpSize=getCodeSize();
 
-  Op1=getOp1();//0, IMM, REG, DIR, IND
+  Op1=getOp1();
   if (isToken('[')) {Op1 = IND; getIND(); return; }          //4
   if (Op1 == 0) error1("Name of operand expected");
   if (Op1 == IMM) {imme=SymbolInt; return;}//need OpSize     //1
@@ -116,6 +127,17 @@ int getLeftOp() {char Op2;
     if (RegType != BYTE) wflag=1; return;}
   if (Op1 == DIR) {disp=LabelAddr[LabelIx]; wflag=1; return;}//3
   error1("Name of operand expected #1");
+}
+int getOp1() {//scan for a single operand, set:Op1
+  if (TokeType == 0)      return 0;
+  if (TokeType == DIGIT)  return IMM;// 1
+  if (TokeType == ALNUM) {
+    RegNo=testReg();//set global RegType
+    if (RegType)          return REG;// 2
+    LabelIx=searchLabel(VARIABLE);//disp=LabelAddr[LabelIx];
+    if (LabelIx)          return DIR;// 3
+    else error1("variable not found"); }
+  return 0;
 }
 int getIND() {//ret: disp, reg             e.g.  [array+bp+si-4]
   char op2; char r1;  disp=0; r1=0; 
@@ -125,7 +147,7 @@ int getIND() {//ret: disp, reg             e.g.  [array+bp+si-4]
     if (op2 ==   0) syntaxerror();
     if (op2 == IMM) disp=disp+SymbolInt;
     if (op2 == REG) if (r1) r1=getIndReg2(r1); else r1=getIndReg1();
-    if (op2 == DIR) disp=disp+LabelAddr[LabelIx];
+    if (op2 == DIR) disp=disp+LabelAddr[LabelIx];//is IND variable
     if (isToken('-')) {setTokeType(); 
       if (TokeType != DIGIT) numbererror(); disp=disp-SymbolInt;}
   } while (isToken('+'));
@@ -149,17 +171,6 @@ int getIndReg2(char r1) {char m; m=4;//because m=0 is BX+DI
            else if (r1==7) m=0;//BX+DI
   if (m > 3) indexerror();
   return m;
-}
-int getOp1() {//scan for a single operand, set:Op1
-  if (TokeType == 0)      return 0;
-  if (TokeType == DIGIT)  return IMM;// 1
-  if (TokeType == ALNUM) {
-    RegNo=testReg();//set global RegType
-    if (RegType)          return REG;// 2
-    LabelIx=searchLabel(VARIABLE);
-    if (LabelIx)          return DIR;// 3
-    else error1("variable not found"); }
-  return 0;
 }
 int validateOpSize() {//with RegSize
   if (RegType==0) {error1("no register defined"); return; }
