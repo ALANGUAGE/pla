@@ -32,7 +32,7 @@ char RegType;      //0=no reg, BYTE, WORD, DWORD, SEGREG
 char RegNo;        //0 - 7 AL, CL, ...  by testReg()
 char OpSize;       //0, BYTE, WORD, DWORD
 //char AddrSize;   //67h:
-char numop;        // 1-3 bytes
+//char numop;        // 1-3 bytes
 char wflag;        //0=byte, 1=word/dword
 char dflag;        //0=source is reg,  1=dest is reg
 //char modrm;        //mod, r/m
