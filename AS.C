@@ -51,13 +51,15 @@ int LabelMaxIx=0;  int LabelIx;
 char FileBin  [2000]; unsigned int BinLen=0;
 
 int process() { int i; char c;
+  setTokeType();
+  OpSize=getCodeSize();
+
   if (CodeType ==  1) {//1 byte opcode
     genInstruction(0, 1); skipRest(); return;
   }
   if (CodeType ==  2) {//inc, dec
-    getLeftOp();
+    LeftOpwCheck();
     if (Op1 == REG) {//2
-      if (RegType == SEGREG) {segregerror(); return;}
       if (RegType == BYTE) {genInstruction(wflag, 1); genCodeInREG(); return; }
       if (RegType == WORD) {genInstruction(RegNo, 3); return; }//short form
       if (RegType ==DWORD) {gen66h(); genInstruction(RegNo, 3); return;}
@@ -70,9 +72,8 @@ int process() { int i; char c;
   }
 //todo
   if (CodeType ==  52) {//not, neg,  //mul, imul, div, idiv
-    getLeftOp();
+    LeftOpwCheck();
     if (Op1 == REG) {
-      if (RegType == SEGREG) {segregerror(); return;}
       if (RegType == DWORD) gen66h();
       genInstruction(wflag, 1); genCodeInREG(); return; }
     if (Op1 == IND) {
@@ -81,13 +82,12 @@ int process() { int i; char c;
   }
 
   if (CodeType==  8) {// ret
-    setTokeType(); 
     if (TokeType == DIGIT) {genInstruction(0, 2); genCode16(SymbolInt); return; }
     genInstruction(0, 1); return; 
   }
 
   if (CodeType==101) {// ORG nn
-    setTokeType(); if (TokeType != DIGIT) error1("only digit allowed");
+    if (TokeType != DIGIT) error1("only digit allowed");
     PC=SymbolInt;return;
   }
   error1("unknown CodeType");
@@ -114,11 +114,14 @@ int Ops() {
 //4. rm , reg 00
 //5. error1(mem2mem)
 }
+int LeftOpwCheck() {
+  getLeftOp();
+  if (RegType == SEGREG) {segregerror(); return;}
+}
 int getLeftOp() {//0,IMM,REG,DIR,IND(disp,reg,RegType)
 //set: op1, disp->imm, reg, regt->size  
-  disp=0; imme=0; reg=0; wflag=0;
-  setTokeType();
-  OpSize=getCodeSize();
+  disp=0; imme=0; reg=0; 
+  wflag=0;//todo
 
   Op1=getOp1();
   if (isToken('[')) {Op1 = IND; getIND(); return; }          //4
@@ -128,6 +131,13 @@ int getLeftOp() {//0,IMM,REG,DIR,IND(disp,reg,RegType)
     if (RegType != BYTE) wflag=1; return;}
   if (Op1 == DIR) {disp=LabelAddr[LabelIx]; wflag=1; return;}//3
   error1("Name of operand expected #1");
+}
+int validateOpSize() {//with RegSize
+  if (RegType==0) {error1("no register defined"); return; }
+  if (OpSize==RegType) return;
+  if (OpSize==WORD) {if (RegType==SEGREG) return; }
+  if (OpSize==0) {OpSize=RegType; if (OpSize==SEGREG) OpSize=WORD; return; }
+  error1("OpSize and RegSize(RegType) does not match");
 }
 int getOp1() {//scan for a single operand 
   //set:Op1, imme, disp, RegType, TegNo, reg
@@ -175,13 +185,6 @@ int getIndReg2(char r1) {char m; m=4;//because m=0 is BX+DI
   return m;
 }
 
-int validateOpSize() {//with RegSize
-  if (RegType==0) {error1("no register defined"); return; }
-  if (OpSize==RegType) return;
-  if (OpSize==WORD) {if (RegType==SEGREG) return; }
-  if (OpSize==0) {OpSize=RegType; if (OpSize==SEGREG) OpSize=WORD; return; }
-  error1("OpSize and RegSize(RegType) does not match");
-}
 int getCodeSize() {
   if (TokeType ==ALNUM) {
     if (eqstr(SymbolUpper,"BYTE")) {setTokeType(); return BYTE;}
