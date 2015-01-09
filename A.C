@@ -1,5 +1,5 @@
-//   simplexpr-test-prleft-prrigth   22.05.2011 21.09.2014
-char Version1[]="F.COM CComp V0.6";
+//   simplexpr-test-prleft-prrigth   22.05.2011 21.09.2014 1.1.2015
+char Version1[]="A.COM CComp V0.6";
 #define BSS
 #define ARCHIVE "AR.C"
 #define ORGDATA     30000
