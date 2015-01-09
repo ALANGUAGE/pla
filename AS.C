@@ -1,5 +1,10 @@
-int main() {getarg(); parse(); epilog(); end1();}//BAS   AS TE
-char Version1[]="AS.C V0.06 4.1.2015";//alt-re 5[  7|  8{  N~  7Caps \
+<<<<<<< HEAD
+int main() {getarg(); parse(); epilog(); end1();}
+char Version1[]="AS.C V0.06 15.11.2014";
+=======
+char Version1[]="AS.C V0.06 30.12.2014";//alt-re 5[  7|  8{  N~  7Caps \
+int main() {getarg(); parse(); epilog(); end1();}
+>>>>>>> parent of b5a7baa... Ansät working
 char LIST;
 char Symbol[80]; char SymbolUpper[80]; unsigned int SymbolInt;
 char InputBuf[128];  unsigned char *InputPtr;
@@ -15,30 +20,27 @@ char isLabel;      //by getName()
 #define VARIABLE 2
 #define DIGIT    1 //0-9
 #define ALNUM    2 //0-9 _ a-z A-Z
-char TokeType;     //0, DIGIT, ALNUM, noalnum
+char TokeType;     //0-3 ret:getToken1()  by oper()
 #define BYTE     1
 #define WORD     2
-#define DWORD    3
 #define SEGREG   4
-//char CodeSize;     //0, BYTE, WORD, DWORD
-#define IMM      1 //const  ,123
-#define REG      2 //       ,BX    mode=11
-#define DIR      3 //VALUE  ,var1  mod=00, r/m=110
-#define IND      4 //indirec,[var1], [BX+SI], [table+BX], [bp-4]  disp 0,8,16
-char Op1;          //0, IMM, REG, DIR, IND
-int  CodeType;     //1-207 by searchSymbol()
-
-char RegType;      //0=no reg, BYTE, WORD, DWORD, SEGREG
+#define DWORD    8
+char RegType;      //0=no reg, BYTE, WORD, SEGREG, DWORD
 char RegNo;        //0 - 7 AL, CL, ...  by testReg()
-char OpSize;       //0, BYTE, WORD, DWORD
+char OpSize;       //66h: 0=no length, BYTE, WORD, DWORD
 //char AddrSize;   //67h:
-char NumOprns;     //0-2
+unsigned int OpCode;// 1-3 bytes
 char wflag;        //0=byte, 1=word/dword
 char dflag;        //0=source is reg,  1=dest is reg
-//char modrm;        //mod, r/m
-char reg;          //combination of index and base reg
+char Op1;          //ret: REGIS,ADDRES,CONTNS,IMMED
+char modrm;        //mod, r/m
 int disp;          //displacement      0-8 bytes
 int imme;          //immediate         0-8 bytes
+#define IMMED  1   //immediate const  ,123
+#define REGIS  2   //simple reg       ,BX
+#define ADDRES 4   //VALUE direct     ,var1
+#define CONTNS 8   //indexed r/m      ,[var1] [BX+SI],[table+BX], [bp-4]
+int  OpType;       //1-207 by searchSymbol()
 
 #define OPMAXLEN  5
 char OpPos[OPMAXLEN];
@@ -49,39 +51,153 @@ char LabelNames[1000]; char *LabelNamePtr;
 char LabelType  [100]; unsigned int LabelAddr[100];
 int LabelMaxIx=0;  int LabelIx;
 char FileBin  [2000]; unsigned int BinLen=0;
+int test1() { __asm {
+add bx, ax    ;01 C3
+add ax, bx    ;01 D8
+add word ax, [bx] ;03 07
+VA dw 8
+dec cl        ;FE C9
+dec byte [bx] ;FE 0F
+;dec word [cx] ;invalid effective address
+;inc word  VA ;invalid comb opcode+operands
+inc word [VA] ;FF 06 [300F]
+inc byte [bp]        ;FE 46 00
+inc byte [bp+4]      ;FE 46 04
+inc byte [bp+258]    ;FE 86 02 01
+inc byte [bp-4]      ;FE 46 FC
+mov byte [bp- 4], al ;88 46 FC
+mov      [VA+bx], al ;88 87 [300F]
+}  }
 
 int process() { int i; char c;
+<<<<<<< HEAD
+  if (OpType ==  1) {//1 byte opcode
+    genInstruction(0, 1); return;
+  }
+
+  if (OpType ==  2) {//inc, dec
+    oper3();
+    if (Op1 == REGIS) {
+      if (RegType == BYTE) {genInstruction(0, 1); genMod(); return; }
+      if (RegType == WORD) {genInstruction(RegNo, 3); return; }
+    error1("only byte or word reg allowed");return; }
+    if (Op1 == ADDRES) {  //CONSTNS
+      genInstruction(0, 1); genMod(); genAddr16(LabelIx); return; }
+    error1("only reg or value allowed"); return;
+  }
+  if (OpType ==  52) {//not, neg, mul, imul, div, idiv
+    oper3();
+    if (Op1 == REGIS) {
+      genInstruction(wflag, 1); genMod(); return; }
+    if (Op1 == ADDRES) {
+      genInstruction(0, 1); genMod(); genAddr16(LabelIx); return; }
+    error1("only reg or value allowed"); return;
+=======
   setTokeType();
   OpSize=getCodeSize();
 
   if (CodeType ==  1) {//1 byte opcode
-    genInstruction(0, 1); return;
+    genInstruction(0, 1); skipRest(); return;
   }
   if (CodeType ==  2) {//inc, dec
     LeftOpwCheck();
-    	if (Op1 == REG) {
-        if (RegType == WORD) {genInstruction(RegNo, 3); return; }//short form
-        if (RegType ==DWORD) {genInstruction(RegNo, 3); return; } }
-      genInstruction(wflag, 1); genCodeInREG(); return; 
+    if (Op1 == REG) {//2
+      if (RegType == BYTE) {genInstruction(wflag, 1); genCodeInREG(); return; }
+      if (RegType == WORD) {genInstruction(RegNo, 3); return; }//short form
+      if (RegType ==DWORD) {gen66h(); genInstruction(RegNo, 3); return;}
+      internexit(); }
+    if (Op1 == IND) {//4 
+      if (OpSize == 0) error1("need BYTE, WORD, DWORD OpSize");
+      if (OpSize != BYTE) wflag=1;
+      genInstruction(wflag, 1); genCodeInREG(); return; }
+    regmemerror(); return;
   }
-
-  if (CodeType ==  52) {//not,neg,mul,div,idiv, no ext. imul
+//todo
+  if (CodeType ==  52) {//not, neg,  //mul, imul, div, idiv
     LeftOpwCheck();
-    genInstruction(wflag, 1); genCodeInREG(); return; 
+    if (Op1 == REG) {
+      if (RegType == DWORD) gen66h();
+      genInstruction(wflag, 1); genCodeInREG(); return; }
+    if (Op1 == IND) {
+      genInstruction(wflag, 1); genCodeInREG(); return; }
+    regmemerror(); return;
   }
 
   if (CodeType==  8) {// ret
-    if (TokeType == DIGIT) {genInstruction(0, 2); genCode16(SymbolInt);return;}
+    if (TokeType == DIGIT) {genInstruction(0, 2); genCode16(SymbolInt); return; }
     genInstruction(0, 1); return; 
+>>>>>>> parent of b5a7baa... Ansät working
   }
-
-  if (CodeType==101) {// ORG nn
-    if (TokeType != DIGIT) error1("only digit allowed");
+  if (OpType==  8) {// ret
+    getToken1(); if (TokeType != DIGIT) {genInstruction(0, 1); return; }
+    genInstruction(0, 2);
+    genCode16(SymbolInt); return;
+  }
+  if (OpType==101) {// ORG nn
+    getToken1(); if (TokeType != DIGIT) error1("only digit allowed");
     PC=SymbolInt;return;
   }
-  error1("unknown CodeType");
+  error1("unknown OpType");//debug
 }
 
+<<<<<<< HEAD
+// scan code XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+int oper3() {//get single operand with error checking
+//get:
+//set: wflag, modrm, disp,  imme?
+char sign;    //0=no sign, 1=+,  2=-
+int r; char r1; char r2;//temp-register
+  disp=0; r=0; sign=0;
+  getToken1();//set: TokeType
+  getOpSize();//set: OpSize
+  oper1();
+//  if (Op1 == 0) errorexit("Name of operand expected");
+//  if (Op1 == IMMED) return;
+  if (Op1 == REGIS) {
+    validateOpSize();
+    if (RegType == BYTE) wflag=0; else wflag=1;
+    return;
+  }
+  if (Op1 == ADDRES) {disp=LabelAddr[LabelIx]; wflag=1; return;}
+
+  if (Op1 == CONTNS) {
+    getToken1();
+    oper1();
+    if (TokeType != ALNUM) error1("reg/mem expected");
+
+    if (Op1==ADDRES) {
+      disp=LabelAddr[LabelIx];
+      if (isToken(']')) {modrm=6;//mod=00, r/m=110
+        return; }
+      if (Op1 == REGIS) getIndReg();
+      if (Op1 == ADDRES) {//only 1 ind reg
+
+      }
+    }
+    return;
+  }
+  error1("Name of operand expected #1");
+}
+int getIndReg() {
+  if (RegType !=WORD) error1("invalid index register #1");
+  if (RegNo==3) modrm=7;//BX
+  if (RegNo==5) modrm=6;//BP change to BP+0
+  if (RegNo==7) modrm=5;//DI
+  if (RegNo==6) modrm=4;//SI
+  if (modrm==0) error1("invalid index register #2");
+  if (isToken(']')) return;
+  if (isToken('+')) {
+    getToken1(); oper1();
+    if(Op1==REGIS) {
+      if (RegType !=WORD) error1("invalid index register #3");
+      if (RegNo==7) if (modrm==6) modrm=3;//BP+DI
+               else if (modrm==7) modrm=1;//BX+DI
+      if (RegNo==6) if (modrm==6) modrm=2;//BP+SI
+               else if (modrm==7) modrm=0;//BX+DI
+      if (modrm > 3) error1("invalid index register #4");
+    }
+  }
+=======
 // scan code .....................................
 int setTokeType() { char c; //set: TokeType
   skipBlank();
@@ -105,101 +221,67 @@ int Ops() {
 }
 int LeftOpwCheck() {
   getLeftOp();
-  if (RegType == SEGREG) {segregerror(); return;}//only move,push,pop
-  setwflag();
-  if (OpSize == 0) error1("no op size declared");
-  if (OpSize == RegType) return;
-  if (OpSize){if (Op1 == IND) return; 
-    error1("Conflict OpSize and RegSize"); }
-  if (RegType==0) error1("no register defined");
+  if (RegType == SEGREG) {segregerror(); return;}
 }
 int getLeftOp() {//0,IMM,REG,DIR,IND(disp,reg,RegType)
 //set: op1, disp->imm, reg, regt->size  
   disp=0; imme=0; reg=0; 
+  wflag=0;//todo
 
   Op1=getOp1();
   if (isToken('[')) {Op1 = IND; getIND(); return; }          //4
   if (Op1 == 0) error1("Name of operand expected");
   if (Op1 == IMM) {imme=SymbolInt; return;}//need OpSize     //1
-  if (Op1 == REG) return;                                    //2
-  if (Op1 == DIR) {disp=LabelAddr[LabelIx]; return;}         //3
+  if (Op1 == REG) {validateOpSize();                         //2
+    if (RegType != BYTE) wflag=1; return;}
+  if (Op1 == DIR) {disp=LabelAddr[LabelIx]; wflag=1; return;}//3
   error1("Name of operand expected #1");
 }
-int setwflag() {//only Op1 (first operand)
-  wflag=0;
-  if (OpSize == 0) {//do not override OpSize
-    if (Op1 == REG) {OpSize=RegType; if (RegType == SEGREG) OpSize=WORD;}
-  }
-  if (OpSize  == DWORD) {gen66h(); wflag=1;}
-  if (OpSize  ==  WORD) wflag=1;
+int validateOpSize() {//with RegSize
+  if (RegType==0) {error1("no register defined"); return; }
+  if (OpSize==RegType) return;
+  if (OpSize==WORD) {if (RegType==SEGREG) return; }
+  if (OpSize==0) {OpSize=RegType; if (OpSize==SEGREG) OpSize=WORD; return; }
+  error1("OpSize and RegSize(RegType) does not match");
+>>>>>>> parent of b5a7baa... Ansät working
 }
-int getOp1() {//scan for a single operand 
-  //set:Op1, imme, disp, RegType, TegNo, reg
-  if (TokeType == 0)      return 0;
-  if (TokeType == DIGIT)  return IMM;// 1
+int oper1() {//scan for a single operand, set:Op1
+  if (TokeType == 0)     {Op1=0;     return;}
+  if (TokeType == DIGIT) {Op1=IMMED; return;}
   if (TokeType == ALNUM) {
-    RegNo=testReg();//set global RegType
-    if (RegType)          return REG;// 2
-    LabelIx=searchLabel(VARIABLE);//disp=LabelAddr[LabelIx];
-    if (LabelIx)          return DIR;// 3
+    testReg();
+    if (RegType)         {Op1=REGIS; return;}
+    LabelIx=searchLabel(VARIABLE);
+    if (LabelIx)         {Op1=ADDRES;return;}
     else error1("variable not found"); }
-  return 0;
+  if (isToken('['))      {Op1=CONTNS;return;}
+  Op1=0;
 }
-int getIND() {//set: disp, reg, RegType          e.g.  [array+bp+si-4]
-  char op2; char r1;  disp=0; r1=0; RegType=0;//because reg=0 is BX+DI
-  do {
-    setTokeType();// 0, DIGIT, ALNUM, no alnum
-    op2=getOp1();
-    if (op2 ==   0) syntaxerror();
-    if (op2 == IMM) disp=disp+SymbolInt;
-    if (op2 == REG) if (r1) r1=getIndReg2(r1); else r1=getIndReg1();
-    if (op2 == DIR) disp=disp+LabelAddr[LabelIx];//is IND variable
-    if (isToken('-')) {setTokeType(); 
-      if (TokeType != DIGIT) numbererror(); disp=disp-SymbolInt;}
-  } while (isToken('+'));
-  if (isToken(']') == 0) errorexit("] expected"); 
-  reg=r1;
+int validateOpSize() {//with RegSize
+  if (RegType==0) {error1("no register defined"); return; }
+  if (OpSize==RegType) return;
+  if (OpSize==WORD) {if (RegType==SEGREG) return; }
+  if (OpSize==0) {OpSize=RegType; if (OpSize==SEGREG) OpSize=WORD; return; }
+  error1("OpSize and RegSize(RegType) does not match");
 }
-int getIndReg1() {char m; m=0;
-  if (RegType !=WORD) indexerror();
-  if (RegNo==3) m=7;//BX
-  if (RegNo==5) m=6;//BP change to BP+0
-  if (RegNo==7) m=5;//DI
-  if (RegNo==6) m=4;//SI
-  if (m    ==0) indexerror();
-  return m;
-}
-int getIndReg2(char r1) {char m; m=4;//because m=0 is BX+DI
-  if (RegType !=WORD) indexerror();
-  if (RegNo==7) if (r1==6) m=3;//BP+DI
-           else if (r1==7) m=1;//BX+DI
-  if (RegNo==6) if (r1==6) m=2;//BP+SI
-           else if (r1==7) m=0;//BX+DI
-  if (m > 3) indexerror();
-  return m;
-}
-
-int getCodeSize() {
+int getOpSize() {//set: OpSize
   if (TokeType ==ALNUM) {
-    if (eqstr(SymbolUpper,"BYTE")) {setTokeType(); return BYTE;}
-    if (eqstr(SymbolUpper,"WORD")) {setTokeType(); return WORD;}
-    if (eqstr(SymbolUpper,"DWORD")){setTokeType(); return DWORD;}
-  } return 0;
+    if (eqstr(SymbolUpper,"BYTE")) {getToken1();OpSize=BYTE; return;}
+    if (eqstr(SymbolUpper,"WORD")) {getToken1();OpSize=WORD; return;}
+    if (eqstr(SymbolUpper,"DWORD")){getToken1();OpSize=DWORD;return;}
+  } OpSize=0;
 }
 int isToken(char c) {
   skipBlank();
   if (*InputPtr == c) {
     InputPtr++; return 1;} return 0;
 }
-/*int need(char c) {
+int need(char c) {
   if (isToken(c) == 0) {
-    prs("\n; ************** expected >> "); prc(c);
-    prs(" <<\\n"); errorexit("token expected"); }  }*/
-int skipRest() {
-  setTokeType(); if (TokeType != 0) prs("\n; ********** extra char ignored");
+    prs("\\; ************** expected >> "); prc(c);
+    prs(" <<\\n"); errorexit("token expected"); }
 }
-// generate code ...........................................................
-int gen66h() {genCode8(0x66);}
+// generate code XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 int genCode8(char c) {//ret: BinLen++, OpPrintIndex++
   FileBin[BinLen]=c; BinLen++; PC++;
   if (OpPrintIndex < OPMAXLEN) {OpPos[OpPrintIndex]=c; OpPrintIndex++; }
@@ -207,36 +289,48 @@ int genCode8(char c) {//ret: BinLen++, OpPrintIndex++
 int genCode16(int i) {
   genCode8(i); i=i >> 8; genCode8(i);
 }
-int genInstruction(char No, int loc) {char c;//set: OpCodePtr++
-  if(loc) OpCodePtr=OpCodePtr+loc;
+int genInstruction(char No, int i) {char c;//set: OpCodePtr++
+  if(i) OpCodePtr=OpCodePtr+i;
   c= *OpCodePtr + No; genCode8(c);
 }
-int genCodeInREG() {char x; //get Code for second byte
+int genAddr16(int i) { unsigned int j; 
+  j = LabelAddr[i]; genCode16(j);      
+}
+int genMod() {char x;
   OpCodePtr++; x= *OpCodePtr; writeEA(x);
 }
-int genModRegRM(){ writeEA(reg);//todo
-}
-int writeEA(char xxx) { char len; //need: Op1, disp, RegNo, reg
-  len=0;
+int writeEA(char xxx) {
   xxx = xxx << 3;//in reg field of mod r/m
-  if (Op1 ==   0) addrexit();  
-  if (Op1 == REG) {xxx |= 0xC0; xxx = xxx + RegNo;}        //2
-  if (Op1 == DIR) {xxx |= 6; len=2; }                      //3
-  if (Op1 == IND) { xxx = xxx + reg;                       //4
-    if (disp) {disp; if(ax > 127) len=2; else len=1;
-      if (len == 1) xxx |= 0x40; else xxx |= 0x80;}
-    }
-  genCode8(xxx);// gen second byte
-  if (len == 1) genCode8 (disp);
-  if (len == 2) genCode16(disp);
+  if (Op1 == REGIS ) {xxx |= 0xC0; xxx = xxx + RegNo; }
+  if (Op1 == ADDRES) {xxx |= 6; }
+//errorcheck
+  genCode8(xxx);
 }
+<<<<<<< HEAD
+=======
+
 int test1() { __asm {
-inc byte [Version1]   ;FE 06 [1000]
 add bx, ax    ;01 C3
 add ax, bx    ;01 D8
 add word ax, [bx] ;03 07
 VA dw 8
+dec cl        ;FE C9
+dec ecx       ;66 49 
+dec byte [bx] ;FE 0F
+dec byte [bx+3] ;FE 4F 03
+dec byte [bx-4] ;FE 4F FC
+;dec word [cx];invalid effective address 
+;inc word  VA ;invalid comb opcode+operands
+inc byte [VA]        ;FE 06 [300F]
+inc word [VA]        ;FF 06 [300F]
+inc byte [bp]        ;FE 46 00
+inc byte [bp+4]      ;FE 46 04
+inc byte [bp+258]    ;FE 86 02 01
+inc byte [bp-4]      ;FE 46 FC
 mov byte [bp- 4], al ;88 46 FC
 mov      [VA+bx], al ;88 87 [300F]
 }  }
+>>>>>>> parent of b5a7baa... Ansät working
 #include "AS1.C"
+// mk_const  mk_addr  simplify_add
+// emitByte  emitWord  emitModRM

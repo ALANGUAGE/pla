@@ -1,28 +1,53 @@
-//AS1.C  5.12.2014  BAS,  AS TE
+//AS1.C  16.11.2014 00:30  BAS,  AS TE
+// parse: getLine. getToken1 storeLabel. getOpType process 
+//        getVariable printLine
 int parse() {
   LabelNamePtr= &LabelNames;
   do {
     PCStart=PC; OpSize=0; OpPrintIndex=0; PrReloc=' ';
     getLine();
+ //   printLineHex(InputBuf);
     InputPtr = &InputBuf;
-    setTokeType();// getCode in SymbolUpper, set TokeType, set isLabel by getName
+    getToken1();// getCode in SymbolUpper, set TokeType, set isLabel by getName
     if (TokeType == ALNUM) {
       if (isLabel) {
         storeLabel(LABEL); 
         InputPtr++;//remove :
-        setTokeType();
+        getToken1();
       }
     }
     if (TokeType == ALNUM) {
-      lookCode();// and OpCodePtr
-      if(CodeType) process();
+      getOpType();// and OpCodePtr
+      if(OpType) process();
       else getVariable();
-      skipRest();
     }
     else if (TokeType >  ALNUM) error1("Label or instruction expected");
     else if (TokeType == DIGIT) error1("No digit allowed at start of line");
     printLine();
   } while (DOS_NoBytes != 0 );
+}
+/*int printLineHex(unsigned char *s) { int L; char c;
+  L = strlen(s);
+  prs(" L:");
+  printIntU(L);  
+  if (L <= 0) return;
+  if (L > 80) errorexit("Line > 80 char");
+  while ( *s ) {
+    c = *s;
+    prc(' ');
+    printhex8a(c);
+    s++;
+  }
+} */
+int getToken1() { char c; //set: TokeType
+  skipBlank();
+  c = *InputPtr;
+  if (c == 10)  {TokeType=0; return; }//empty line
+  if (c == 0)   {TokeType=0; return; }//last line
+  if (c == ';') {TokeType=0; return; }//comment
+  if (digit(c)) {getDigit(c); TokeType=DIGIT; return;}//ret:1=SymbolInt
+  if (alnum (c)) {getName(c); TokeType=ALNUM; return;}//ret:2=Symbol
+  TokeType=3; return;               //no alnum
 }
 int storeLabel(char LabType) {
   if(searchLabel(LabType)) error1("duplicate symbol");
@@ -45,12 +70,12 @@ int searchLabel(char searchType) {
 }
 int getVariable() { char c;
   storeLabel(VARIABLE);
-  setTokeType(); if(TokeType==ALNUM) {// getName
-    lookCode();
-    if (CodeType < 200) errorexit("D or RES B,W,D expected");
-    if (CodeType > 207) errorexit("D or RES B,W,D expected");
-    if (CodeType== 200) {// DB
-      do { setTokeType();
+  getToken1(); if(TokeType==ALNUM) {// getName
+    getOpType();
+    if (OpType < 200) errorexit("D or RES B,W,D expected");
+    if (OpType > 207) errorexit("D or RES B,W,D expected");
+    if (OpType== 200) {// DB
+      do { getToken1();
         if (TokeType ==DIGIT) genCode8(SymbolInt);
         else {
           skipBlank();
@@ -64,8 +89,8 @@ int getVariable() { char c;
         }
       } while (isToken(','));
     }
-    if (CodeType== 201) {// DW
-      do { setTokeType();
+    if (OpType== 201) {// DW
+      do { getToken1();
         if (TokeType ==DIGIT) genCode16(SymbolInt);
       } while (isToken(','));
     }
@@ -78,7 +103,7 @@ int getLine() {// make ASCIIZ, skip LF=10 and CR=13
   *InputPtr=0;//if last line is empty
   do {
     DOS_NoBytes=readRL(&DOS_ByteRead, asm_fd, 1);
-    if (DOS_ERR) errorexit("Reading Source");
+    if (DOS_ERR) error1("Reading Source");
     if (DOS_NoBytes == 0) return;
     *InputPtr = DOS_ByteRead; 
     InputPtr++;
@@ -128,48 +153,48 @@ int getName(unsigned char c) {//ret: Symbol, SymbolUpper, isLabel
   toupper(SymbolUpper);
 }
 int testReg() {
-//ret:RegNo: 0 - 7 AL, CL  set:RegType: 0=no reg,BYTE,WORD,SEGREG,DWORD
-  RegType=0;
-  if (strlen(Symbol) < 2) return 0;
-  if (strlen(Symbol) > 3) return 0;
+//set:RegNo: 0 - 7 AL, CL  RegType: 0=no reg,BYTE,WORD,SEGREG,DWORD
+  RegType=0; RegNo=0;
+  if (strlen(Symbol) < 2) return;
+  if (strlen(Symbol) > 3) return;
   RegType=BYTE;
-  if (eqstr(SymbolUpper, "AL")) return 0;
-  if (eqstr(SymbolUpper, "CL")) return 1;
-  if (eqstr(SymbolUpper, "DL")) return 2;
-  if (eqstr(SymbolUpper, "BL")) return 3;
-  if (eqstr(SymbolUpper, "AH")) return 4;
-  if (eqstr(SymbolUpper, "CH")) return 5;
-  if (eqstr(SymbolUpper, "DH")) return 6;
-  if (eqstr(SymbolUpper, "BH")) return 7;
+  if (eqstr(SymbolUpper, "AL")) {RegNo=0; return;}
+  if (eqstr(SymbolUpper, "CL")) {RegNo=1; return;}
+  if (eqstr(SymbolUpper, "DL")) {RegNo=2; return;}
+  if (eqstr(SymbolUpper, "BL")) {RegNo=3; return;}
+  if (eqstr(SymbolUpper, "AH")) {RegNo=4; return;}
+  if (eqstr(SymbolUpper, "CH")) {RegNo=5; return;}
+  if (eqstr(SymbolUpper, "DH")) {RegNo=6; return;}
+  if (eqstr(SymbolUpper, "BH")) {RegNo=7; return;}
   RegType=WORD;
-  if (eqstr(SymbolUpper, "AX")) return 0;
-  if (eqstr(SymbolUpper, "CX")) return 1;
-  if (eqstr(SymbolUpper, "DX")) return 2;
-  if (eqstr(SymbolUpper, "BX")) return 3;
-  if (eqstr(SymbolUpper, "SP")) return 4;
-  if (eqstr(SymbolUpper, "BP")) return 5;
-  if (eqstr(SymbolUpper, "SI")) return 6;
-  if (eqstr(SymbolUpper, "DI")) return 7;
+  if (eqstr(SymbolUpper, "AX")) {RegNo=0; return;}
+  if (eqstr(SymbolUpper, "CX")) {RegNo=1; return;}
+  if (eqstr(SymbolUpper, "DX")) {RegNo=2; return;}
+  if (eqstr(SymbolUpper, "BX")) {RegNo=3; return;}
+  if (eqstr(SymbolUpper, "SP")) {RegNo=4; return;}
+  if (eqstr(SymbolUpper, "BP")) {RegNo=5; return;}
+  if (eqstr(SymbolUpper, "SI")) {RegNo=6; return;}
+  if (eqstr(SymbolUpper, "DI")) {RegNo=7; return;}
   RegType=SEGREG;
-  if (eqstr(SymbolUpper, "ES")) return 0;
-  if (eqstr(SymbolUpper, "CS")) return 1;
-  if (eqstr(SymbolUpper, "SS")) return 2;
-  if (eqstr(SymbolUpper, "DS")) return 3;
-  if (eqstr(SymbolUpper, "FS")) return 4;
-  if (eqstr(SymbolUpper, "GS")) return 5;
+  if (eqstr(SymbolUpper, "ES")) {RegNo=0; return;}
+  if (eqstr(SymbolUpper, "CS")) {RegNo=1; return;}
+  if (eqstr(SymbolUpper, "SS")) {RegNo=2; return;}
+  if (eqstr(SymbolUpper, "DS")) {RegNo=3; return;}
+  if (eqstr(SymbolUpper, "FS")) {RegNo=4; return;}
+  if (eqstr(SymbolUpper, "GS")) {RegNo=5; return;}
   RegType=DWORD;
-  if (eqstr(SymbolUpper, "EAX"))return 0;
-  if (eqstr(SymbolUpper, "ECX"))return 1;
-  if (eqstr(SymbolUpper, "EDX"))return 2;
-  if (eqstr(SymbolUpper, "EBX"))return 3;
-  if (eqstr(SymbolUpper, "ESP"))return 4;
-  if (eqstr(SymbolUpper, "EBP"))return 5;
-  if (eqstr(SymbolUpper, "ESI"))return 6;
-  if (eqstr(SymbolUpper, "EDI"))return 7;
-  RegType=0; return 0;
+  if (eqstr(SymbolUpper, "EAX")) {RegNo=0; return;}
+  if (eqstr(SymbolUpper, "ECX")) {RegNo=1; return;}
+  if (eqstr(SymbolUpper, "EDX")) {RegNo=2; return;}
+  if (eqstr(SymbolUpper, "EBX")) {RegNo=3; return;}
+  if (eqstr(SymbolUpper, "ESP")) {RegNo=4; return;}
+  if (eqstr(SymbolUpper, "EBP")) {RegNo=5; return;}
+  if (eqstr(SymbolUpper, "ESI")) {RegNo=6; return;}
+  if (eqstr(SymbolUpper, "EDI")) {RegNo=7; return;}
+  RegType=0; RegNo=0;
 }
 // opcodes XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-char I_START=0xF1;//OpName,0,CodeType,OpCode1,OpCodeN,F1h
+char I_START=0xF1;//OpName,0,OpType,OpCode1,OpCodeN,F1h
 //  1:   1 byte opcode
 char I_PUSHA[]={'P','U','S','H','A',0,  1,0x60,   0xF1};
 char I_POPA[]= {'P','O','P','A',0,      1,0x61,   0xF1};
@@ -217,7 +242,7 @@ char I_NEG[]={'N','E','G',0,           52,0xF6, 3,0xF1};
 char I_MUL[]={'M','U','L',0,           52,0xF6, 4,0xF1};
 char I_IMUL[]={'I','M','U','L',0,      52,0xF6, 5,0xF1};//only acc
 char I_DIV[]={'D','I','V',0,           52,0xF6, 6,0xF1};
-char I_IDIV[]={'I','D','I','V',0,      52,0xF6, 7,0xF1};
+char I_IDIV[]={'I','D','I','V',0,      52,0xF6, 7,0xF1};//only acc
 //  3: les, lda, lea
 char I_LES[]={'L','E','S',0,            3,0xC4,   0xF1};// /r, a16
 char I_LDS[]={'L','D','S',0,            3,0xC5,   0xF1};// /r, a16
@@ -263,8 +288,8 @@ char I_JG []={'J','G',0,                6,15,     0xF1};
 //  8: ret
 char I_RET[]=  {'R','E','T',0,          8,0xC3,0xC2,0xF1};
 //  9: seg, r/m
-char I_PUSH[]={'P','U','S','H',0,       9,0x50,   0xF1};//r16
 char I_POP[]={'P','O','P',0,            9,0x58,   0xF1};//r16
+char I_PUSH[]={'P','U','S','H',0,       9,0x50,   0xF1};//r16
 //  100 directives
 char I_ORG[]=  {'O','R','G',0,        101,        0xF1};
 char I_DB[]=   {'D','B',0,            200,        0xF1};
@@ -275,14 +300,14 @@ char I_RESW[]= {'R','E','S','W',0,    206,        0xF1};
 char I_RESD[]= {'R','E','S','D',0,    207,        0xF1};
 char I_END=0;// end of table char
 
-int lookCode() { // ret: CodeType, OpCodePtr
-  CodeType=0;
+int getOpType() { // ret: OpType, OpCodePtr
+  OpType=0;
   OpCodePtr= &I_START;
   OpCodePtr++;
   do  {
     if (eqstr(SymbolUpper, OpCodePtr))  {
       while(*OpCodePtr!=0) OpCodePtr++;
-      OpCodePtr++; CodeType =*OpCodePtr;
+      OpCodePtr++; OpType =*OpCodePtr;
       return;
     }
   while(*OpCodePtr!=0xF1) OpCodePtr++;
@@ -333,6 +358,18 @@ int printIntU(unsigned int n) { unsigned int e;
     n = n % 10; //unsigned mod
     n += '0'; prc(n);
 }
+<<<<<<< HEAD
+int error1(char *s) {
+  LIST=1; ErrorCount++;
+//  printLine();
+  prs("\n; *********** ERROR: "); prs(s);
+  prs(", Symbol: "); prs(Symbol); //prs("\n");
+}
+int errorexit(char *s) {
+  error1(s);
+  end1(1);
+}
+=======
 /*int printLineHex(unsigned char *s) { int L; char c;
   L = strlen(s);
   prs(" L:");
@@ -347,7 +384,7 @@ int printIntU(unsigned int n) { unsigned int e;
   }
 } */
 int error1(char *s) { LIST=1; ErrorCount++;
-  prs("\n;***** next line ERROR: "); prs(s);
+  prs("\n; ******* in next line ERROR: "); prs(s);
   prs(", Symbol: "); prs(Symbol);}
 int allowederror(){error1("not allowed here"); }
 int implmerror(){error1("not implemented");}
@@ -360,6 +397,7 @@ int syntaxerror(){error1("syntax");}
 int errorexit(char *s) { error1(s); end1(1);}
 int addrexit(){errorexit("illegal addres");}
 int internexit(){errorexit("intern compiler error");}
+>>>>>>> parent of b5a7baa... Ansät working
 
 //int main() {getarg(); parse(); epilog(); end1();}//NB AS, AS TE
 char *arglen=0x80; char *argv=0x82;
@@ -391,20 +429,20 @@ int getarg() { int arglen1; int i; char *c;
 int epilog() { int i; int j; char c;
   prs("\n;END Errors: "); printIntU(ErrorCount);
   if (ErrorCount) prs(" ***ERROR*** ");
-  prs(", Label & Var: ");
-/*  i= &LabelNames; i=LabelNamePtr-i; printIntU(i); prs(". >>");
+  prs(", LabelNamesChar: ");
+  i= &LabelNames; i=LabelNamePtr-i; printIntU(i); prs(". >>");
   i= &LabelNames;
   do { c=*i; if (c==0) c=' '; prc(c); i++;
-  } while (i < LabelNamePtr); prs("<< \n"); */
+  } while (i < LabelNamePtr); prs("<< \n");
   if (LabelMaxIx) {
     i = 1;
     LabelNamePtr= &LabelNames;
     do {
       prs(LabelNamePtr); prc(' ');
- /*     j=LabelType[i]; //printIntU(j);
+      j=LabelType[i]; //printIntU(j);
       if (j == 1) prc('L');
       if (j == 2) prc('V');
-      prc('.'); */
+      prc('.');
       j=LabelAddr[i]; printhex16(j); prs(",  ");
       j=strlen(LabelNamePtr);//get end of act. name
       LabelNamePtr=LabelNamePtr+j;
@@ -412,14 +450,12 @@ int epilog() { int i; int j; char c;
       i++;
     } while (i <= LabelMaxIx);
   }
-  prs("\n;COM file "); printIntU(BinLen); prs(" bytes:");
-  i=0;
-  do { prc(' '); j = FileBin[i]; printhex8a(j); i++;
-  } while (i < BinLen);
+  prs("\n;COM file:");
   i=0;
   do {
-    c = FileBin[i];
-    fputcR(c, bin_fd);
+    prc(' ');
+    j = FileBin[i];
+    printhex8a(j);
     i++;
   } while (i < BinLen);
 }
@@ -428,10 +464,10 @@ int end1(int n) {fcloseR(asm_fd); fcloseR(lst_fd); fcloseR(bin_fd);exitR(n);
 /*
 Hierarchical software diagram, except string & DOS functions,  .=end
 main:  getarg. parse epilog. end1.
-parse: getLine. getToken storeLabel. searchLabel. lookCode. process
+parse: getLine. getToken storeLabel. searchLabel. getOpType. process
        getVariable printLine.
 getToken: skipBlank. getDigit. getName.
 process: genInstruction getToken testReg. genAddr16.
 genInstruction: genCode8.
-getVariable: storeLabel. getToken lookCode. skipBlank. isToken. genAddr16.
+getVariable: storeLabel. getToken getOpType. skipBlank. isToken. genAddr16.
 */
