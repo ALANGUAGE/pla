@@ -1,5 +1,5 @@
-char Version1[]="AS.C V0.06 30.12.2014";//alt-re 5[  7|  8{  N~  7Caps \
-int main() {getarg(); parse(); epilog(); end1();}
+int main() {getarg(); parse(); epilog(); end1();}//BAS   AS TE
+char Version1[]="AS.C V0.06 4.1.2015";//alt-re 5[  7|  8{  N~  7Caps \
 char LIST;
 char Symbol[80]; char SymbolUpper[80]; unsigned int SymbolInt;
 char InputBuf[128];  unsigned char *InputPtr;
@@ -55,34 +55,23 @@ int process() { int i; char c;
   OpSize=getCodeSize();
 
   if (CodeType ==  1) {//1 byte opcode
-    genInstruction(0, 1); skipRest(); return;
+    genInstruction(0, 1); return;
   }
   if (CodeType ==  2) {//inc, dec
     LeftOpwCheck();
-    if (Op1 == REG) {//2
-      if (RegType == BYTE) {genInstruction(wflag, 1); genCodeInREG(); return; }
-      if (RegType == WORD) {genInstruction(RegNo, 3); return; }//short form
-      if (RegType ==DWORD) {gen66h(); genInstruction(RegNo, 3); return;}
-      internexit(); }
-    if (Op1 == IND) {//4 
-      if (OpSize == 0) error1("need BYTE, WORD, DWORD OpSize");
-      if (OpSize != BYTE) wflag=1;
-      genInstruction(wflag, 1); genCodeInREG(); return; }
-    regmemerror(); return;
+    	if (Op1 == REG) {
+        if (RegType == WORD) {genInstruction(RegNo, 3); return; }//short form
+        if (RegType ==DWORD) {genInstruction(RegNo, 3); return; } }
+      genInstruction(wflag, 1); genCodeInREG(); return; 
   }
-//todo
-  if (CodeType ==  52) {//not, neg,  //mul, imul, div, idiv
+
+  if (CodeType ==  52) {//not,neg,mul,div,idiv, no ext. imul
     LeftOpwCheck();
-    if (Op1 == REG) {
-      if (RegType == DWORD) gen66h();
-      genInstruction(wflag, 1); genCodeInREG(); return; }
-    if (Op1 == IND) {
-      genInstruction(wflag, 1); genCodeInREG(); return; }
-    regmemerror(); return;
+    genInstruction(wflag, 1); genCodeInREG(); return; 
   }
 
   if (CodeType==  8) {// ret
-    if (TokeType == DIGIT) {genInstruction(0, 2); genCode16(SymbolInt); return; }
+    if (TokeType == DIGIT) {genInstruction(0, 2); genCode16(SymbolInt);return;}
     genInstruction(0, 1); return; 
   }
 
@@ -116,28 +105,33 @@ int Ops() {
 }
 int LeftOpwCheck() {
   getLeftOp();
-  if (RegType == SEGREG) {segregerror(); return;}
+  if (RegType == SEGREG) {segregerror(); return;}//only move,push,pop
+  setwflag();
+  if (OpSize == 0) error1("no op size declared");
+  if (OpSize == RegType) return;
+  if (OpSize){if (Op1 == IND) return; 
+    error1("Conflict OpSize and RegSize"); }
+  if (RegType==0) error1("no register defined");
 }
 int getLeftOp() {//0,IMM,REG,DIR,IND(disp,reg,RegType)
 //set: op1, disp->imm, reg, regt->size  
   disp=0; imme=0; reg=0; 
-  wflag=0;//todo
 
   Op1=getOp1();
   if (isToken('[')) {Op1 = IND; getIND(); return; }          //4
   if (Op1 == 0) error1("Name of operand expected");
   if (Op1 == IMM) {imme=SymbolInt; return;}//need OpSize     //1
-  if (Op1 == REG) {validateOpSize();                         //2
-    if (RegType != BYTE) wflag=1; return;}
-  if (Op1 == DIR) {disp=LabelAddr[LabelIx]; wflag=1; return;}//3
+  if (Op1 == REG) return;                                    //2
+  if (Op1 == DIR) {disp=LabelAddr[LabelIx]; return;}         //3
   error1("Name of operand expected #1");
 }
-int validateOpSize() {//with RegSize
-  if (RegType==0) {error1("no register defined"); return; }
-  if (OpSize==RegType) return;
-  if (OpSize==WORD) {if (RegType==SEGREG) return; }
-  if (OpSize==0) {OpSize=RegType; if (OpSize==SEGREG) OpSize=WORD; return; }
-  error1("OpSize and RegSize(RegType) does not match");
+int setwflag() {//only Op1 (first operand)
+  wflag=0;
+  if (OpSize == 0) {//do not override OpSize
+    if (Op1 == REG) {OpSize=RegType; if (RegType == SEGREG) OpSize=WORD;}
+  }
+  if (OpSize  == DWORD) {gen66h(); wflag=1;}
+  if (OpSize  ==  WORD) wflag=1;
 }
 int getOp1() {//scan for a single operand 
   //set:Op1, imme, disp, RegType, TegNo, reg
@@ -236,25 +230,12 @@ int writeEA(char xxx) { char len; //need: Op1, disp, RegNo, reg
   if (len == 1) genCode8 (disp);
   if (len == 2) genCode16(disp);
 }
-
 int test1() { __asm {
+inc byte [Version1]   ;FE 06 [1000]
 add bx, ax    ;01 C3
 add ax, bx    ;01 D8
 add word ax, [bx] ;03 07
 VA dw 8
-dec cl        ;FE C9
-dec ecx       ;66 49 
-dec byte [bx] ;FE 0F
-dec byte [bx+3] ;FE 4F 03
-dec byte [bx-4] ;FE 4F FC
-;dec word [cx];invalid effective address 
-;inc word  VA ;invalid comb opcode+operands
-inc byte [VA]        ;FE 06 [300F]
-inc word [VA]        ;FF 06 [300F]
-inc byte [bp]        ;FE 46 00
-inc byte [bp+4]      ;FE 46 04
-inc byte [bp+258]    ;FE 86 02 01
-inc byte [bp-4]      ;FE 46 FC
 mov byte [bp- 4], al ;88 46 FC
 mov      [VA+bx], al ;88 87 [300F]
 }  }

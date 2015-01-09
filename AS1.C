@@ -347,7 +347,7 @@ int printIntU(unsigned int n) { unsigned int e;
   }
 } */
 int error1(char *s) { LIST=1; ErrorCount++;
-  prs("\n; ******* in next line ERROR: "); prs(s);
+  prs("\n;***** next line ERROR: "); prs(s);
   prs(", Symbol: "); prs(Symbol);}
 int allowederror(){error1("not allowed here"); }
 int implmerror(){error1("not implemented");}
