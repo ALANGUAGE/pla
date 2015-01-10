@@ -1,4 +1,5 @@
 :de: [Wikipedia](http://de.wikipedia.org/wiki/Programming_language_A)
+
 :us: see the following explanation:
 ####Programming Language A (PLA) 
 Programming Language A is an assembly language with C-like syntax for x86 processors. the language is particularly well suited for **system programming**, because it has the freedom and all possibilities from assembly and the compact notation of the C programming language.
@@ -26,22 +27,23 @@ For system and low level programming, the C syntax is changed to include the fol
 1. all processor registers are reserved names and can be addressed as basic data types without an address.
 2. the almost orthogonal interface of the X86 CPU allows only 2-address instructions.
 3. assembly source code may be used inline, line or block oriented.
-4. Additional keywords like *ifzero*, **ifcarry*, *inth*, **emit** facilitate communication with the BIOS or operating system.
-5. Additional syntax checks before transfering to the assembler.
-6. Adjustable locations for uninitialized data or array data types.
-7. If an operating system is present, only the file functions *create*, *open*, *read* and *write* are needed.
-Functions for BIOS calls or direct I / O for textual input and output are available.
-Required functions are automatically integrated from a source code library.
-In the intermediate code data types, functions, and calls are listed and commented.
-As output intermediate code for NASM is generated, which can be easily changed for different operating systems.
-The minimum software requirements in all versions of DOS or virtualizer such as VirtualBox, VirtualPC or DOSBox.
-Limitations [Edit]
-It has the following limitations:
+4. additional keywords like *ifzero*, *ifcarry*, *inth*, *emit* facilitate communication with the BIOS or operating system.
+5. additional syntax checks before transfering to the assembler.
+6. adjustable locations for uninitialized data or array data types.
+7. if an operating system is present, only the file functions *create*, *open*, *read* and *write* are needed.
+8. functions for BIOS calls or direct screen I/O for textual input and output are available.
+9. required functions are automatically integrated from a source code archive library.
+10.a cross reference listing with all data, functions and calls are listed and commented in the assembly output file.
+11. output code is generated for NASM, which can be changed for different operating systems.
+12. the minimum software requirements is DOS or virtualizer such as VirtualBox, Boxer or DOSBox.
+###Limitations
+PLA has the following limitations:
+* only two address assign operations. Long expressions must be parted in multiple expressions.
+* only a small portion of the C-keywords are supported.
+* no multidimensional arrays,floating point numbers, complex numbers, structure data and complex data types.
+* a very simple preprocessor
 
-No 3 or more address operations. Long expressions must be dismantled.
-Only a portion of the C-key is supported.
-No floating point numbers, complex numbers, and no complex data types.
-Example program in PLA [Edit]
+###Example program in PLA
 With the cdecl calling convention parameters, local variables and function results are compiled. Also comply with C syntax, the declaration of variables, #define, include files, loop constructs such if..then..else, do, while, goto or label.
 
 The main changes relate to the expressions, which are limited by the 2-address machine. See the following code snippet:
