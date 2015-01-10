@@ -47,17 +47,19 @@ PLA has the following limitations:
 ###Example program in PLA
 With the cdecl calling convention parameters, local variables and function results are compiled. Also comply with C syntax, the declaration of *variables*, *#define*, *include* files, loop constructs such *if..then..else*, *do*, *while*, *goto* or *label*.
 
-The main changes relate to the expressions, which are limited by the two-address machine. As an sample see the following code snippets:
+The main changes relate to the expressions, which are limited by the two-address machine. As a sample see the following code snippets:
 
 1. Addition of a constant to a byte variable
+```C
 charvar + = 7;
 -> Add byte [charvar], 7
-
-2. Assignment of a constant to the contents of a pointer variable. This is usually used at the end of a string. The compiler automatically uses the ebx register to latch the address because not emerge two memory accesses in a command.
+```
+2. Assignment of a constant to the contents of a pointer variable. This is usually used at the end of a string. PLA uses the ebx register for address calculation, because two memory address accesses in one operation is not allowed.
+```
 ptrvar * = 0;
 -> Mov ebx word, [ptrvar]; Address of the variable in ebx
 -> Mov byte [ebx], 0; One byte is in the main memory with the address, which is located in ebx stored.
-
+```
 3. Allocation of a local variable to a global variable, the compiler automatically takes care of the accumulator as a buffer.
 globalVar = localvar;
 -> Mov eax, dword [bp-8]
