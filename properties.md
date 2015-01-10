@@ -7,9 +7,17 @@ PLA receives from assembly language the speed of execution, the low code size an
 
 PLA receives from the C language the portability, flexible and compact structure of the source code with the clarity and checks of an additional parser. Source code is available under the MIT license. The  compiler generates Netwide Assembler [NASM](http://www.nasm.us) source code.
 ###History
-Was inspired by the language of portable high-level assembly language RISC [1], the terse Programming Language [2] and HLA [3]. The development took place in the direction of the C language, new low-level language elements were added, and the expansion of 8/16 bit to 32 bit done. Other projects such as C Intermediate Language (CIL) [4] and Low Level Virtual Machine (LLVM) affected the development. Further change occurred on available for multiple platforms free assembler NASM.
+PLA was inspired by the language of 
+1. the portable high-level assembly language risC, The portable, object oriented, high-level assembler programming tool with a flexible C-like syntax, 1987 by International Microcomputer Software Inc. (IMSI), 
+2. The TERSE Programming Language 1996 Jim Nail, ISBN 0-9652660-0-1 and 
+3. the famous book HLA (High Level Assembly) in Randall Hyde: The Art of Assembly Language, ISBN 1-886411-97-2. 
 
-Properties [Edit]
+The development took place in the direction of the C language, new low-level language elements were added, and the expansion of 8/16 bit to 32 bit has begun. Other projects such as 
+4. the [C Intermediate Language (CIL)](http://www.eecs.berkeley.edu/~necula/cil/) and 
+5. the [Low Level Virtual Machine (LLVM)](http://llvm.org) affected the development. 
+The development start with [Borland Turbo Assembler](http://en.wikipedia.org/wiki/Turbo_Assembler), then changed to Netwide Assembler [NASM](http://www.nasm.us). I started to build a very small clone AS written in PLA, less than 64 KByte in a COM file, with NASM compatible syntax.
+
+###Properties
 For system programming, the C syntax is amended to include the following elements:
 
 All processor registers are reserved names and can be addressed as basic data types without an address.
@@ -55,7 +63,7 @@ var1 var2 + =;
 -> Add byte [var1], al
 
 External links [edit]
-Jumping Up ↑ RISC, The portable, object oriented, high-level assembler programming tool with a flexible C-like syntax, 1987 by International Microcomputer Software Inc. (IMSI)
-Jumping Up ↑ The terse Programming Language 1996 Jim Nail, ISBN 0-9652660-0-1.
-Jumping Up ↑ HLA (High Level Assembly) in Randall Hyde: The Art of Assembly Language, ISBN 1-886411-97-2.
+Jumping Up ↑ 
+Jumping Up ↑ .
+Jumping Up ↑ .
 Jumping Up ↑ C Intermediate Language
