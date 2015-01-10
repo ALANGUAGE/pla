@@ -36,13 +36,13 @@ For system and low level programming, the C syntax is changed to include the fol
 10. a cross reference listing with all data, functions and calls are listed and commented in the assembly output file.
 11. output code is generated for NASM, which can be changed for different operating systems.
 12. the minimum software requirements is DOS or virtualizer such as VirtualBox, Boxer or DOSBox.
-13. 
+
 ###Limitations
 PLA has the following limitations:
 * only two address assign operations. Long expressions must be parted in multiple expressions.
 * only a small portion of the C-keywords are supported.
-* no multidimensional arrays,floating point numbers, complex numbers, structure data and complex data types.
-* a very simple preprocessor
+* no multidimensional arrays, floating point numbers, complex numbers, structure data and complex data types.
+* a very simple preprocessor.
 
 ###Example program in PLA
 With the cdecl calling convention parameters, local variables and function results are compiled. Also comply with C syntax, the declaration of variables, #define, include files, loop constructs such if..then..else, do, while, goto or label.
