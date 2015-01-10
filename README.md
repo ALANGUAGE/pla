@@ -8,10 +8,9 @@ Assembly language with C style syntax for X86 processors with the freedom of ass
 ####License
 The MIT License (MIT) starting 1.1.2015
 ####Properties and how to run
-
-See at >files.md. Start the small Batch file BA.BAT. The compiler compiles itself and calls the Netwide Assembler(NASM). 
-For an introduction see at 
->documentation.md.
+* properties.md  German readers look at [Wikipedia](http://de.wikipedia.org/wiki/Programming_language_A)
+* files.md description of all files.
+* documentation.md introduction for developers and collaborators.
 ####History
 I (Helmut Guenther) started the project in MS-DOS times to learn how a compiler works.
 As of 1.1.2015 I set the software as free software under the MIT license.
