@@ -47,30 +47,29 @@ PLA has the following limitations:
 ###Example program in PLA
 With the cdecl calling convention parameters, local variables and function results are compiled. Also comply with C syntax, the declaration of *variables*, *#define*, *include* files, loop constructs such *if..then..else*, *do*, *while*, *goto* or *label*.
 
-The main changes relate to the expressions, which are limited by the two-address machine. As a sample see the following code snippets:
+The major changes relate to the expressions, which are limited by the two-address machine. As a sample see the following code snippets:
 
-1. Addition of a constant to a byte variable.
+Addition of a constant to a byte variable.
 ```C
 charvar + = 7;
 -> Add byte [charvar], 7
 ```
-2. Assignment of a constant to the contents of a pointer variable. This is usually used at the end of a string. PLA uses the ebx register for address calculation, because two memory address accesses in one operation are not allowed.
+Assignment of a constant to the contents of a pointer variable. This is usually used at the end of a string. PLA uses the ebx register for address calculation, because two memory address accesses in one operation are not allowed.
 ```C
-ptrvar * = 0;
+*ptrvar = 0;
 -> Mov ebx word, [ptrvar]; Address of the variable in ebx
--> Mov byte [ebx], 0; One byte is in the main memory with the address, which is located in ebx stored.
+-> Mov byte [ebx], 0; Store a constant byte to a address, which is stored in ebx
 ```
-3. Allocation of a local variable to a global variable, PLA takes care of the accumulator as a buffer.
+Allocation of a local variable to a global variable, PLA takes care of the accumulator as a buffer.
 ```C
-globalVar = localvar;
+globalvar = localvar;
 -> Mov eax, dword [bp-8]
--> Mov dword [globalVar], eax
+-> Mov dword [globalvar], eax
 ```
-
-4. Addition from a variable to a variable
+Addition from a variable to a variable
 ```C
-var1 var2 + =;
--> Mov al, byte [var2]; The accumulator is used as a buffer memory.
+var1 += var2;
+-> Mov al, byte [var2]; The accumulator is used as a buffer
 -> Add byte [var1], al
 ```
 
