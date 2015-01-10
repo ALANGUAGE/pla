@@ -5,8 +5,8 @@ Programming Language A, assembly language with C style syntax for X86 processors
 The MIT License (MIT) starting 1.1.2015
 ####Properties and how to run
 * [properties.md](properties.md),  German readers look at [Wikipedia](http://de.wikipedia.org/wiki/Programming_language_A)
-* [files.md](https://github.com/ALANGUAGE/pla/blob/master/files.md), description of all files.
-* documentation.md, introduction for developers and collaborators.
+* [files.md](files.md), description of all files.
+* [documentation.md](documentation.md), introduction for developers and collaborators.
 
 ####History
 I (Helmut Guenther) started the project in MS-DOS times to learn how a compiler works.
