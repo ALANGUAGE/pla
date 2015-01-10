@@ -1,9 +1,9 @@
-// AR.C Archive
+// AR.C Archive file for PLA.DE The MIT License (MIT) starting 1.1.2015  (c) 2015 Helmut Guenther
 //int DOS_ERR=0;  char ext;  // Extended Key
                         //  at - pipe  \   '   "   ;   ,   [   {        PROMPT.C
 /*unsigned char KeybGer1[]={64,45,124,92, 39, 34, 59, 58, 91,123};
   unsigned char Keybtmp1[]="yYzZ#^&*()_\]}/?><";
-                        //   "  \   >  <   ä   Ä   ö   Ö   ü   Ü
+                        //   "  \   >  <   Ã¤   Ã„   Ã¶   Ã–   Ã¼   Ãœ
 /*unsigned char KeybGer2[]={34,92, 62,60,132,142,148,153,129,154};
   unsigned char Keybtmp2[]="zZyY$&/()=?<+*-_:;";
   char direcord[]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};// do not change
@@ -177,38 +177,38 @@ int uitoaR(unsigned int n, char *s) { int i;  int re;
   do { re = n % 10;  *s = re + '0';  n = n / 10;  s--;  } while (n > 0); }
 int ultoaR(int lo1, int hi1, char *s ) {
   _DX = hi1; _AX = lo1; _DI=s;   __asm{
-  add di,10     ;add statt mov
+  add di,10     ;add instead of mov
   mov byte ptr [di+1], 0
-  mov si,10     ;Divisor
-  mov bx,ax     ;AX retten
+  mov si,10     ;divisor
+  mov bx,ax     ;save ax
   div1:
-  mov ax,dx     ;für erste Division
+  mov ax,dx     ;first division
   xor dx,dx
-  or  ax,ax     ;Ende High-Teil
+  or  ax,ax     ;End of high part
   jz  div2
   div si
   div2:
-  mov cx,ax     ;AX retten High-Teil
-  mov ax,bx     ;Low-Anteil
-  mov bx,cx     ;BX = Wert High
+  mov cx,ax     ;save ax high part
+  mov ax,bx     ;Low part
+  mov bx,cx     ;bx = value high
   div si
-  mov cl,dl     ;DX erhalten
+  mov cl,dl     ;keep dx
   add cl,48
-  mov [di],cl   ;statt mov asc_str[di],cl
+  mov [di],cl   ;means mov asc_str[di],cl
   dec di
-  mov dx,ax     ;Anteil Low
-  mov cx,dx     ;DX zwischenspeichern
-  mov dx,bx     ;DX = High
-  mov bx,cx     ;BX = Low
-  mov ax,dx     ;AX = High
-  or  ax,bx     ;Ende?
+  mov dx,ax     ;low part
+  mov cx,dx     ;save dx
+  mov dx,bx     ;dx = high
+  mov bx,cx     ;bx = low
+  mov ax,dx     ;ax = high
+  or  ax,bx     ;end?
   jnz div1
-  inc di        ; neu eingeführt
+  inc di        ;new
   mov ax,di
 }  }
 int ultoa2(unsigned int l, unsigned int h, char *s) { int i;
   i=0;  while(i<10) { *s = '0'; s++; i++; }   *s = 0;   s--;
-  asm mov eax, dword ptr [bp+4]  ; l   /* edx:eax DIV ebx = eax Rest edx */
+  asm mov eax, dword ptr [bp+4]  ; l  /* edx:eax DIV ebx = eax remainder edx */
   asm ultoaL1:
   asm xor edx, edx
   asm mov ebx, 10
@@ -222,7 +222,4 @@ int ultoa2(unsigned int l, unsigned int h, char *s) { int i;
   asm jnz ultoaL1
   asm mov ax, [bp+6]
 }
-/*char LastFunctionB;  int LastFunction() {&LastFunctionB;}
-/* while(expr) stmt; do stmt while(expr); FOR: i=0; while(i<10){stmt; i++;}*/
-/* DIV SI= dx:ax/si= ax,Rest dx;  dividend / divisor = quotient, remainder */
-//
+/*char LastFunctionB;  int LastFunction() {&LastFunctionB;}*/
