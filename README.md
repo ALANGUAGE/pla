@@ -4,7 +4,7 @@ PLA
 Programming Language A, assembly language with C style syntax for X86 processors with the freedom of assembly and the notation of the C language.
 The MIT License (MIT) starting 1.1.2015
 ####Properties and how to run
-* look at properties.md,  German readers look at [Wikipedia](http://de.wikipedia.org/wiki/Programming_language_A)
+* [properties.md](https://github.com/ALANGUAGE/pla/blob/master/properties.md),  German readers look at [Wikipedia](http://de.wikipedia.org/wiki/Programming_language_A)
 * [files.md](https://github.com/ALANGUAGE/pla/blob/master/files.md), description of all files.
 * documentation.md, introduction for developers and collaborators.
 
