@@ -23,13 +23,13 @@ The development start with using the [Borland Turbo Assembler](http://en.wikiped
 ###Properties
 For system and low level programming, the C syntax is changed to include the following elements:
 
-1. All processor registers are reserved names and can be addressed as basic data types without an address.
-2. The almost orthogonal interface of the X86 CPU allows only 2-address instructions.
-Assembler source code is in rows or blocks einstreubar.
-Additional keywords like ifzero, if carry, lin, emit facilitate communication with the BIOS or operating system.
-Additional syntax and Parserchecks before transfer to the assembler.
-Adjustable locations for uninitialized fields or data types.
-If an operating system is present, only the file functions to create, open, read, write, are needed.
+1. all processor registers are reserved names and can be addressed as basic data types without an address.
+2. the almost orthogonal interface of the X86 CPU allows only 2-address instructions.
+3. assembly source code may be used inline, line or block oriented.
+4. Additional keywords like *ifzero*, **ifcarry*, *inth*, **emit** facilitate communication with the BIOS or operating system.
+5. Additional syntax checks before transfering to the assembler.
+6. Adjustable locations for uninitialized data or array data types.
+7. If an operating system is present, only the file functions *create*, *open*, *read* and *write* are needed.
 Functions for BIOS calls or direct I / O for textual input and output are available.
 Required functions are automatically integrated from a source code library.
 In the intermediate code data types, functions, and calls are listed and commented.
