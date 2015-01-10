@@ -40,14 +40,14 @@ For system and low level programming, the C syntax is changed to include the fol
 ###Limitations
 PLA has the following limitations:
 * only two address assign operations. Long expressions must be parted in multiple expressions.
-* only a small portion of the C-keywords are supported.
+* only a small portion of C-keywords are supported.
 * no multidimensional arrays, floating point numbers, complex numbers, structure data and complex data types.
 * a very simple preprocessor.
 
 ###Example program in PLA
-With the cdecl calling convention parameters, local variables and function results are compiled. Also comply with C syntax, the declaration of variables, #define, include files, loop constructs such if..then..else, do, while, goto or label.
+With the cdecl calling convention parameters, local variables and function results are compiled. Also comply with C syntax, the declaration of *variables*, *#define*, *include* files, loop constructs such *if..then..else*, *do*, *while*, *goto* or *label*.
 
-The main changes relate to the expressions, which are limited by the 2-address machine. See the following code snippet:
+The main changes relate to the expressions, which are limited by the two-address machine. As an sample see the following code snippets:
 
 1. Addition of a constant to a byte variable
 charvar + = 7;
