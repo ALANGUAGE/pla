@@ -1,8 +1,6 @@
-PLA
+PLA Programming Language A
 =
-
-Programming Language A, assembly language with C style syntax for X86 processors with the freedom of assembly and the notation of the C language.
-The MIT License (MIT) starting 1.1.2015
+assembly language with C style syntax for X86 processors with the freedom of assembly and the notation of the C language with the MIT License (MIT) starting from 1.1.2015
 ####Properties and how to run
 * [properties.md](properties.md) for a short description,  German readers look at [Wikipedia](http://de.wikipedia.org/wiki/Programming_language_A)
 * [files.md](files.md), description of all files.
@@ -28,4 +26,4 @@ I am looking for comments, suggestions and of  course bugs. I start the document
 * I used no version control system and printed out the code. 
 So I wrote the code very dense. With the code folding features of the editors 
 there is no need any more. Beautifying the code is necessary.
-* remove the old Borland TASM code.
+* remove the old Borland Turbo Assembler(TASM) code.
