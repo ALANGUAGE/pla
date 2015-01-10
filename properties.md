@@ -33,9 +33,10 @@ For system and low level programming, the C syntax is changed to include the fol
 7. if an operating system is present, only the file functions *create*, *open*, *read* and *write* are needed.
 8. functions for BIOS calls or direct screen I/O for textual input and output are available.
 9. required functions are automatically integrated from a source code archive library.
-10.a cross reference listing with all data, functions and calls are listed and commented in the assembly output file.
+10. a cross reference listing with all data, functions and calls are listed and commented in the assembly output file.
 11. output code is generated for NASM, which can be changed for different operating systems.
 12. the minimum software requirements is DOS or virtualizer such as VirtualBox, Boxer or DOSBox.
+13. 
 ###Limitations
 PLA has the following limitations:
 * only two address assign operations. Long expressions must be parted in multiple expressions.
