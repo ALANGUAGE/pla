@@ -16,7 +16,7 @@ As of 1.1.2015 I set the software as free software under the MIT license.
 You find a very old version from 2009 here: http://sourceforge.net/projects/pla/
 It includes with source compiler, command interpreter and the game [Towers of Hanoi](http://en.wikipedia.org/wiki/Tower_of_Hanoi).
 ####Home
-Website: https://github.com/drguenther/A
+Website: https://github.com/ALANGUAGE/pla
 
 Email: help@pla.de
 
