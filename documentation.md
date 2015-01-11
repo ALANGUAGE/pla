@@ -1,12 +1,12 @@
 #PLA documentation.md 
 MIT license 2015 (C) Helmut Guenther. 
 This is the main documentation file for developers and programmers and will be continued...
-##Design considerations
+##Introduction
+###Design considerations
 I do not like segments and selectors in developing x86 software. I love flat binary files like the old CP/M or the DOS COM files. But you have only 64 KB for your text segment. For big date I have found a solution (see below). Even the PLA compiler needs only 26 KB for the code and works. 
 
 Today the computers are so fast, that you need no precompiled libraries for small programs. On my MacBook Pro it takes only two seconds to compile, including the source libraries, writing a huge listing file with a cross reference listing and statistics. I put all library stuff in an archive source file and the compiler takes only the needed funcions to keep the binary small. The following netwide assembler needs more time to produce the binary. So I started to write an x86 assembler, it will be an COM file, too.
 
-###Introduction
 ###Program Structure
 ###Variables
 All names are case sensitive.
@@ -34,5 +34,6 @@ This file collects all handy, old and well tested (and not so well tested) routi
 8. DIRECTIO (line 89) Direct write to the screen with the help of the es register, which is saved and *not* changed.
 9. STRING (line 96) Some of the C library string routines. Some are untested and waiting to be tested.
 10. DUMP (line 132) Two routines for register and memory dump. There are not a real debugger, but helped me in many situations.
-11. DOSINT (line 147) This is the main function for the following DOS fucntions and is called by them. 
+11. DOSINT (line 147) This is the main function for the following DOS fucntions and is called by them. The PLA statement *ifcarry* increment the vraiable *DOS_ERR*. This **must** be the first statement after a DOS call, because otherwise the *carry flag* gets lost.
+12. ATOI (line173) A family of functions to convert from ascii to integer. The function ultoa2() is a test bed for 32 bit processing.
 
