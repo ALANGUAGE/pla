@@ -10,9 +10,10 @@ PLA receives from the C language the portability, flexible and compact structure
 ###History
 PLA was inspired by the language of 
 
-1. the portable high-level assembly language risC, The portable, object oriented, high-level assembler programming tool with a flexible C-like syntax, 1987 by International Microcomputer Software Inc. (IMSI), 
-2. the TERSE Programming Language 1996 Jim Nail, ISBN 0-9652660-0-1 and 
-3. the famous book HLA (High Level Assembly) in Randall Hyde: The Art of Assembly Language, ISBN 1-886411-97-2. 
+1. the portable high-level assembly language risC, The portable, object oriented, high-level assembler programming tool with a flexible C-like syntax, 1987 by International Microcomputer Software Inc. (IMSI)
+2. the TERSE Programming Language 1996 Jim Nail, ISBN 0-9652660-0-1
+3. the famous book HLA (High Level Assembly) Randall Hyde: The Art of Assembly Language, ISBN 1-886411-97-2. 
+4. a Small C Compiler 1988 James E. Hendrix ISBN 0-934375-88-7
 
 The development took place in the direction of the C language, new low-level language elements were added, and the expansion of 8/16 bit to 32 bit has begun. Other projects such as 
 
