@@ -7,8 +7,9 @@ assembly language with C style syntax for X86 processors with the freedom of ass
 * [documentation.md](documentation.md), introduction for developers and collaborators.
 
 ####Home
-Website: https://github.com/ALANGUAGE/pla  
+Website: https://github.com/ALANGUAGE/pla or http://pla.de
 Email: help@pla.de
+
 It is my first free software and I am new to Github. Contrubutors are heartily wellcome! 
 I am looking for comments, suggestions and of  course bugs. I start the documentation, which I have never done before and will explain the functions. If it holds interests to you, please come back or write me an email. pla@HelmutGuenther.de
 
