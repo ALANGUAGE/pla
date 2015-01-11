@@ -2,8 +2,14 @@
 MIT license 2015 (C) Helmut Guenther. 
 This is the main documentation file for developers and programmers and will be continued...
 ##Introduction
+xxx means, that there is work to do. I call you to give enhancement.
 ###Design considerations
-I do not like segments and selectors in developing x86 software. I love *flat binary files* like the old CP/M or the DOS COM files. But you have only 64 KB for your text segment. For big data I have found a solution (see below). Even the PLA compiler needs only 26 KB for the code and works. There is no need for a linker. You load the program as it is into memory and starts at location 100h. Thats all.
+I do not like segments and selectors in developing x86 software. I love *flat binary files* like the old CP/M or the DOS COM files. But you have only 64 KB for your text segment. For big data I have found a solution (see below). Even the PLA compiler needs only 26 KB for the code and constant data and works. There is no need for a linker. You load the program without changing anything into memory and it starts at location 100h. Thats all.
+####memory mapping of COM Flat Model
+All COM file starts with only one segment and setting all the segment registers to the same address. This is the beginning of the 64 kbyte block of memory you can work with. The segment registers never change as long as the program is running and you can forget about them. The loader sets *CS=DS=SS=ES* and sets the intraction pointer *IP* to 100h. The COM flat model is the "little brother" of protected mode flat model. 
+
+There are two exception: 
+1. For storing the names of the variables and functions I needed a space of about 64 kbyte. So I reserved 64 kbyte and sets the *es* segment register to the beginning of that block. 
 
 Today the computers are so fast, that you need no precompiled libraries for small programs. On my MacBook Pro it takes only two seconds to compile, including the source libraries, writing a huge listing file with a cross reference listing and statistics. I put all library stuff in an *archive source file* **AR.C** and the compiler takes only the needed funcions to keep the binary small. The following netwide assembler needs more time to produce the binary. So I started to write an x86 assembler, it will be an COM file, too.
 
@@ -18,16 +24,16 @@ int main() { getarg();
   callrecursive=0; checkcalls(); epilog();
 }
 ```
-The main function is kept short and calls only some other functions. The last function called, except on errors,  is  **epilog**() (line 1011), which finishes with calling the function **end1**() in line 947. This function cloes all handles and calls **exitR**(). This function is in the archive file (line 157) and return to DOS. The letter R means that it is a real mode function. So I have a namepsace left for the protected mode function.
+The main function is kept short and calls only some other functions. The last function called, except on errors,  is  **epilog**() (line 1011), which finishes with calling the function **end1**() in line 947. This function cloes all handles and calls **exitR**(). This function is in the archive file (line 157) and returns to DOS. The letter R means that it is a real mode function. So I have a namepsace left for the protected mode function.
 The main function start by calling the following routines:
 
 1. **getarg**() line 628. This function gets the parameter from the command line and parses them. It write the help screen, opens the input and list file. The function checks protected mode and writes the header to the listing file.
-2. **memresize**() line 1044. When a COM program starts, it reserves all the memory. As the maximum size of a COM program is only 64 Kbyte, we reserve only 4096 paragraphs, which are 64 kbyte. So we have place for another 64 kbyte, which will be addressed by the es register by the function **memalloc**() in line 1046. This is done to store the label and variable names. 
+2. **memresize**() line 1044. When a COM program starts, it reserves all the memory. As the maximum size of a COM program is only 64 Kbyte, we reserve only 4096 paragraphs, which are 64 kbyte for code, data and stack. So we have place for another 64 kbyte, which will be addressed by the *es register* by the function **memalloc**() in line 1046. This is done to store the label and variable names. 
 3. **getfirstchar**() line 625 is called to initialize the input buffer.
 4. After sending a notice only to the screen "Compiling", **parse**() line 672 is called. this function has the endless loop *while(1)* in line 680. it returns to the main program, when all token are processed in line 673. The primary function is to look for a**#** and then calls the two preprocessors *dodefine* or *doinclude*. Otherwise it gets the next name. A PLA program consists either of a declaration of global variables or a function. If the name follows a **(**, then *dofunc*() is called, otherwise **doglob**() is called. The token **!** is a hack and calls the function **doLdata**() in line 110, which stores uninitialized data at the address *ldata*. This address starts at 2 MByte and stores big data in unreal mode.
 
 ###Variables
-All names are case sensitive.
+All names are case sensitive. I started with very short names like the [K&R Style](http://en.wikipedia.org/wiki/C_(programming_language)#K.26R_C) within the range of 1 to 6 letters. As the program becomes more complicated and I got extra 64 kbyte space for the names, I changed the constant **IDLENMAX** to 16 characters. It is much easy to program with long speaking variables and function names. Feel free to increase the constant.
 ###Functions
 ###Statements
 ###Expressions
