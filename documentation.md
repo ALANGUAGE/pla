@@ -3,11 +3,13 @@ MIT license 2015 (C) Helmut Guenther.
 This is the main documentation file for developers and programmers and will be continued...
 ##Introduction
 ###Design considerations
-I do not like segments and selectors in developing x86 software. I love flat binary files like the old CP/M or the DOS COM files. But you have only 64 KB for your text segment. For big date I have found a solution (see below). Even the PLA compiler needs only 26 KB for the code and works. 
+I do not like segments and selectors in developing x86 software. I love *flat binary files* like the old CP/M or the DOS COM files. But you have only 64 KB for your text segment. For big data I have found a solution (see below). Even the PLA compiler needs only 26 KB for the code and works. There is no need for a linker. You load the program as it is into memory and starts at location 100h. Thats all.
 
-Today the computers are so fast, that you need no precompiled libraries for small programs. On my MacBook Pro it takes only two seconds to compile, including the source libraries, writing a huge listing file with a cross reference listing and statistics. I put all library stuff in an archive source file and the compiler takes only the needed funcions to keep the binary small. The following netwide assembler needs more time to produce the binary. So I started to write an x86 assembler, it will be an COM file, too.
+Today the computers are so fast, that you need no precompiled libraries for small programs. On my MacBook Pro it takes only two seconds to compile, including the source libraries, writing a huge listing file with a cross reference listing and statistics. I put all library stuff in an *archive source file* **AR.C** and the compiler takes only the needed funcions to keep the binary small. The following netwide assembler needs more time to produce the binary. So I started to write an x86 assembler, it will be an COM file, too.
 
 ###Program Structure
+As every C program, so PLA starts with the function **main**() (line 618 after the eye catcher). The main function is kept short and calls only some other functions. The last function called, except on errors,  is  **epilog()** (line 1011), which finishes with calling the function **end1()** in line 947. This function cloes all handles and calls **exitR()**. This function is in the archive file (line 157) and return to DOS. The letter R means that it is a real mode function. So I have a namepsace left for the protected mode function.
+
 ###Variables
 All names are case sensitive.
 ###Functions
