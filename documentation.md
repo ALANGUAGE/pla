@@ -7,7 +7,7 @@ This is the main documentation file for developers and programmers and will be c
 The language consists of:
 
 1. **comments** *//* ist the comment for one line. /* ... */ is a multiline comment.
-2. **preprocessor** directives starting with #. there are only two directives:  *define* and *include*. Define axchanges a constant name with a fixed number. Include works as in "C" and includes files. The include file **AR.C** is hardcoded and will always included. But PLA takes only the **needed** functions from AR.C to keep the file small and does not search for other things like variables.   
+2. **preprocessor** directives starting with #. there are only two directives:  *define* and *include*. Define exchanges a constant name with a fixed number. Include works as in "C" and includes files. The include file **AR.C** is hardcoded and will always be included. But PLA takes only the **needed** functions from AR.C to keep the file small and does not search for other things like variables.   
 3. **global declarations** for *char*, *int* and *long*, which may be prefixed by *unsigned*. Declare *pointer* by preceeding the variable name with a *.  *arrays* are declared by []. If the array is initialized, then it goes into the code segment, otherwiese into the bss segment. There are no *structur* and no *unions*. You can declare only *one* variable in a statement.:round_pushpin: Please fixe me.
 4. **functions** are defined by either *void*, *char*, *int* or *long* before the function name. The name must be followed without any space by **(**. As PLA does not handle *prototypes*, it assumes that the return value is *int*.
 All of them can be used in any order until the program finishes.
