@@ -2,8 +2,13 @@
 MIT license 2015 (C) Helmut Guenther. 
 This is the main documentation file for developers and programmers and will be continued...
 ##Introduction
-xxx means, that there is work to do. I call you to give enhancement.
-###Design considerations
+:round_pushpin:  means, that there is work to do. I call you to give enhancements.
+##PLA Language
+The language consists of:
+1. **comments** *//* ist the comment for one line. /* ... */ is a multiline comment.
+2. **preprocessor** directives starting with #. there are only two directives:  *define* and *include*. Define axchanges a constant name with a fixed number. Include works as in "C" and includes files. The include file **AR.C** is hardcoded and will always included. But PLA takes only the **needed** functions from AR.C to keep the file small and does not search for other things like variables.   
+3. **global declarations** for *char*, *int* and *long*, which may be prefixed by *unsigned*. 
+##Program Structure
 I do not like segments and selectors in developing x86 software. I love *flat binary files* like the old CP/M or the DOS COM files. But you have only 64 KB for your text segment. For big data I have found a solution (see below). Even the PLA compiler needs only 26 KB for the code and constant data and works. There is no need for a linker. You load the program without changing anything into memory and it starts at location 100h. Thats all.
 ####memory mapping of COM Flat Model
 All COM file starts with only one segment and setting all the segment registers to the same address. This is the beginning of the 64 kbyte block of memory you can work with. The segment registers never change as long as the program is running and you can forget about them. The loader sets *CS=DS=SS=ES* and sets the intraction pointer *IP* to 100h. The COM flat model is the "little brother" of protected mode flat model. 
@@ -32,7 +37,7 @@ There are two exception:
 
 Today the computers are so fast, that you need no precompiled libraries for small programs. On my MacBook Pro it takes only two seconds to compile, including the source libraries, writing a huge listing file with a cross reference listing and statistics. I put all library stuff in an *archive source file* **AR.C** and the compiler takes only the needed funcions to keep the binary small. The following netwide assembler needs more time to produce the binary. So I started to write an x86 assembler, it will be an COM file, too.
 
-###Program Structure
+###functions
 As every C program, so PLA starts with the function **main**() (line 618 after the eye catcher). 
 ```C
 int main() { getarg();
@@ -53,7 +58,7 @@ The main function start by calling the following routines:
 
 ###Variables
 All names are case sensitive. I started with very short names like the [K&R Style](http://en.wikipedia.org/wiki/C_(programming_language)#K.26R_C) within the range of 1 to 6 letters. As the program becomes more complicated and I got extra 64 kbyte space for the names, I changed the constant **IDLENMAX** to 16 characters. It is much easy to program with long speaking variables and function names. Feel free to increase the constant.
-###Functions
+
 ###Statements
 ###Expressions
 ####pexpr()
@@ -62,9 +67,10 @@ All names are case sensitive. I started with very short names like the [K&R Styl
 
 ###Debugging
 
-##BA.BAT batch file
+#BA.BAT batch file
 The DOS batch file calls A.COM with its own source code A.C. If there is no errror, it calls the assembler NASM wich outputs the binary fiele A.COM again. If you call the batch file again, you see, if the new generated file ist working. Otherwise you start thinking and a debug session. Take attention for the parameter -t for Turbo Assembler compatibility of the NASM file. My first assembler was TASM and now it is difficult to get rid of the TASM compatibility.
-##AR.C archive source file
+
+#AR.C archive source file
 This file collects all handy, old and well tested (and not so well tested) routines in PLA language. I started collecting in the 1990 years and therefore it is sorted by date, starting with the oldest routines. There are mostly BIOS, DOS, direct I/O routines. Also parts of the C library with string routines, print and dump routines. It is divided in several blocks:
 
 1. (Line 2) Commented out of key mapping variables for a German keyboard. The small German keyboar driver KeybGer() in line 57 needs these variables. If you use a German keyboard, copy these variables to your program, because PLA looks only for functions and not for variables in the archive file.
