@@ -8,7 +8,17 @@ I do not like segments and selectors in developing x86 software. I love *flat bi
 Today the computers are so fast, that you need no precompiled libraries for small programs. On my MacBook Pro it takes only two seconds to compile, including the source libraries, writing a huge listing file with a cross reference listing and statistics. I put all library stuff in an *archive source file* **AR.C** and the compiler takes only the needed funcions to keep the binary small. The following netwide assembler needs more time to produce the binary. So I started to write an x86 assembler, it will be an COM file, too.
 
 ###Program Structure
-As every C program, so PLA starts with the function **main**() (line 618 after the eye catcher). The main function is kept short and calls only some other functions. The last function called, except on errors,  is  **epilog**() (line 1011), which finishes with calling the function **end1**() in line 947. This function cloes all handles and calls **exitR**(). This function is in the archive file (line 157) and return to DOS. The letter R means that it is a real mode function. So I have a namepsace left for the protected mode function.
+As every C program, so PLA starts with the function **main**() (line 618 after the eye catcher). 
+```C
+int main() { getarg();
+  memresize(4096);       if (DOS_ERR) error1("memresize");
+  segE=memalloc(4096);   if (DOS_ERR) error1("alloc memory");
+  CNameTop=0;            getfirstchar();
+  cputs("Compiling, ");   parse(); cputs("Check calls ");
+  callrecursive=0; checkcalls(); epilog();
+}
+```
+The main function is kept short and calls only some other functions. The last function called, except on errors,  is  **epilog**() (line 1011), which finishes with calling the function **end1**() in line 947. This function cloes all handles and calls **exitR**(). This function is in the archive file (line 157) and return to DOS. The letter R means that it is a real mode function. So I have a namepsace left for the protected mode function.
 The main function start by calling the following routines:
 
 1. **getarg**() line 628. This function gets the parameter from the command line and parses them. It write the help screen, opens the input and list file. The function checks protected mode and writes the header to the listing file.
