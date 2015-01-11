@@ -1,5 +1,7 @@
 PLA Programming Language A
 =
+######This is the frozen init state from 1.1.2015 and should not be changed. Of course it is outdated. For the newest release look at the branch PLA.
+
 assembly language with C style syntax for X86 processors with the freedom of assembly and the notation of the C language with the MIT License (MIT) starting from 1.1.2015
 ####Properties and how to run
 * [properties.md](properties.md) for a short description,  German readers look at [Wikipedia](http://de.wikipedia.org/wiki/Programming_language_A)
