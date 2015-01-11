@@ -9,11 +9,11 @@ I do not like segments and selectors in developing x86 software. I love *flat bi
 All COM file starts with only one segment and setting all the segment registers to the same address. This is the beginning of the 64 kbyte block of memory you can work with. The segment registers never change as long as the program is running and you can forget about them. The loader sets *CS=DS=SS=ES* and sets the intraction pointer *IP* to 100h. The COM flat model is the "little brother" of protected mode flat model. 
 
 16-bit offset|                    |
-------------:|--------------------|-----------------------
+------------:|--------------------|
 2,000,000    | ldata              | GS: segment register, declared in *LDATAORIG*
------------------------------------------------------
+-------------|--------------------|
 0 - 65,565   | uninitialized data | ES: segment register
----------------------------------------------------------
+-------------|--------------------|
 65,565=FFFFh | Start of stack     | SP:
              | unused memory      |
              | [.BSS](http://en.wikipedia.org/wiki/.bss)       | globally uninitialized data
@@ -22,7 +22,7 @@ All COM file starts with only one segment and setting all the segment registers 
              | code and constants |
 256=100h     |                    | IP: program starts here
 0            | PSP                | CS:, DS:, SS:
----------------------------------------------------------
+-------------|--------------------|
 
 There are two exception: 
 
