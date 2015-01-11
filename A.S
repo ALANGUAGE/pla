@@ -1,15 +1,15 @@
 
-; F.COM CComp V0.6, Arglen: 4, Argv: A.C, Source: A.C, Output asm: A.S
+; A.COM CComp V0.6, Arglen: 4, Argv: A.C, Source: A.C, Output asm: A.S
 ;PROTECTED: 0 V86 OFF.  32bit: ON. 
 org  256 ; NASM ON
 jmp main
 
-;-1 //   simplexpr-test-prleft-prrigth   22.05.2011 21.09.2014
+;-1 //A.C  The MIT License 2015 (c) 2015 Helmut Guenther
 
 
-;-2 char Version1[]="F.COM CComp V0.6";
+;-2 char Version1[]="A.COM CComp V0.6";
 
-Version1 db "F.COM CComp V0.6",0
+Version1 db "A.COM CComp V0.6",0
 
 ;-3 #define BSS
 
@@ -43,7 +43,7 @@ LIST db 0
 ;-11 #define IDLENMAX       16
 
 
-;-12 #define _  // Konstantvergleich
+;-12 #define _  // constant compare
 
 
 ;-13 #define T_NAME        256
@@ -2479,7 +2479,7 @@ un db 0
 
 ty db 0
 
-;-292 char md[3];  int mod1; int mod2; //typename       issign,iswidth  0=m, 1=*, 2=&
+;-292 char md[3];  int mod1; int mod2; //typename       issign,iswidth  0=m, 1=*,2=&
 
 section .bss
 absolute 46807
@@ -2772,7 +2772,7 @@ simplexpr:  ; *** PROC ***
  call getlex
  mov word [token], ax
 
-;-325   if (istoken(T_CONST)) { prs("\n mov eax, "); prL(lexvalL); return; }// 1const
+;-325   if (istoken(T_CONST)) { prs("\n mov eax, "); prL(lexvalL); return; }//1const
 
  push 257
  call istoken
@@ -2793,7 +2793,7 @@ simplexpr:  ; *** PROC ***
  call typeName
  mov word [mod1], ax
 
-;-327   if (token=='(')  {ids1=issign; idw1=iswidth; docall1(); return; }   // 2call
+;-327   if (token=='(')  {ids1=issign; idw1=iswidth; docall1(); return; }   //2call
 
  mov ax, [token]
  cmp ax, 40
@@ -2821,7 +2821,7 @@ simplexpr:  ; *** PROC ***
  call checkreg
  mov word [irg1], ax
 
-;-330   if (irg1)       {doreg1(0); return; }                               // 3reg
+;-330   if (irg1)       {doreg1(0); return; }                               //3reg
 
  mov ax, [irg1]
  or  al, al
@@ -2840,7 +2840,7 @@ simplexpr:  ; *** PROC ***
  call searchname
  mov word [idx1], ax
 
-;-332     gettypes(idx1); ids1=signi; idw1=wi; idt1=typei;                  // 4var
+;-332     gettypes(idx1); ids1=signi; idw1=wi; idt1=typei;                  //4var
 
  push word [idx1]
  call gettypes
@@ -2852,7 +2852,7 @@ simplexpr:  ; *** PROC ***
  mov ax, [typei]
  mov word [idt1], ax
 
-;-333     if (idt1==2)  error1("Array not allowed left side"); }//////      // 5arr
+;-333     if (idt1==2)  error1("Array not allowed left side"); }//todo     //5arr
 
  mov ax, [idt1]
  cmp ax, 2
@@ -2865,7 +2865,7 @@ simplexpr:  ; *** PROC ***
 ;-334 
 
 
-;-335   if (isrelational()) { error1("Relational not implemented yet"); ////////
+;-335   if (isrelational()) { error1("Relational not implemented yet"); //todo
 
 @@simplexpr132:
  call isrelational
@@ -3036,7 +3036,7 @@ simplexpr:  ; *** PROC ***
  mov ax, [typei]
  mov word [idt2], ax
 
-;-355     if (idt2 == 1)  error1("Array right side not implemented"); ///////
+;-355     if (idt2 == 1)  error1("Array right side not implemented"); //todo
 
  mov ax, [idt2]
  cmp ax, 1
@@ -3442,7 +3442,7 @@ doreg1:  ; *** PROC ***
  call getlex
  mov word [token], ax
 
-;-397       if (isrelational() ==0) error1("Relational expected");
+;-397       if (isrelational() ==0) error1("relational expected");
 
  call isrelational
  cmp ax, 0
@@ -3673,7 +3673,7 @@ cmp word [idw2], 2
 @@retn: LEAVE
  ret
 ; ENDP
-doreg1_0 db "Relational expected",0
+doreg1_0 db "relational expected",0
 doreg1_1 db "cmp",0
 doreg1_2 db ", ",0
 doreg1_3 db ", ",0
@@ -5956,7 +5956,7 @@ docall1:  ; *** PROC ***
  add  sp, 2
 @@docall1312:
 
-;-617 //////////////////////////////////////////////////////////////////////////////////
+;-617 //********************************************************************
 
 
 ;-618 int main() { getarg();
@@ -6108,7 +6108,7 @@ getarg:  ; *** PROC ***
  call cputs
  add  sp, 2
 
-;-632     cputs(" Usage: F.COM [/N/P] in_file[.C] (/N=NASM, /P=ProtMode): ");
+;-632     cputs(" Usage: A.COM [/N/P] in_file[.C] (/N=NASM, /P=ProtMode): ");
 
  push getarg_0
  call cputs
@@ -6171,7 +6171,7 @@ getarg:  ; *** PROC ***
  add  sp, 4
  mov word [bp-6], ax
 
-;-638   while (c != 0)  { c++;   //TODO only one parameter possible
+;-638   while (c != 0)  { c++;   //todo: only one parameter possible
 
 @@getarg318:
  mov ax, [bp-6]
@@ -6533,7 +6533,7 @@ getarg:  ; *** PROC ***
  LEAVE
  ret
 ; ENDP
-getarg_0 db " Usage: F.COM [/N/P] in_file[.C] (/N=NASM, /P=ProtMode): ",0
+getarg_0 db " Usage: A.COM [/N/P] in_file[.C] (/N=NASM, /P=ProtMode): ",0
 getarg_1 db ".C",0
 getarg_2 db "Source file missing (.C): ",0
 getarg_3 db "list file not creatable: ",0
@@ -6636,7 +6636,7 @@ parse:  ; *** PROC ***
 @@parse346:
  call typeName
 
-;-679     if (token=='(') dofunc(); else if (istoken('!')) doLdata(); else doglob(); }
+;-679     if (token=='(') dofunc(); else if (istoken('!')) doLdata();else doglob();}
 
  mov ax, [token]
  cmp ax, 40
@@ -6854,7 +6854,7 @@ doar:  ; *** PROC ***
  add  sp, 2
  mov word [fdin], ax
 
-;-701   if(DOS_ERR){cputs("Archive file missing: "); cputs(archivename); exitR(3); }
+;-701   if(DOS_ERR){cputs("Archive file missing: "); cputs(archivename); exitR(3);}
 
  mov ax, [DOS_ERR]
  or  al, al
@@ -7915,7 +7915,7 @@ cmpneg:  ; *** PROC ***
  call prs
  add  sp, 2
 
-;-799   else error1("Vergleich unbekannt in CMPNEG()");  }
+;-799   else error1("compare unknown in CMPNEG()");  }
 
  jmp @@cmpneg450
 @@cmpneg449:
@@ -7946,7 +7946,7 @@ cmpneg_6 db " ;unsigned : ",0
 cmpneg_7 db "\n jb  @@",0
 cmpneg_8 db "\n jge @@",0
 cmpneg_9 db "\n jle @@",0
-cmpneg_10 db "Vergleich unbekannt in CMPNEG()",0
+cmpneg_10 db "compare unknown in CMPNEG()",0
 
 prlabel:  ; *** PROC ***
 ;Function : prlabel, Number of local variables: 1
@@ -11005,13 +11005,10 @@ mov [bp-2], ax
  call end1
  add  sp, 2
 
-;-1043 // while(expr) stmt; do stmt while(expr); FOR: i=0; while(i<10){stmt; i++;}
+;-1043 
 
 
-;-1044 
-
-
-;-1045 int memresize(unsigned int i) {
+;-1044 int memresize(unsigned int i) {
  LEAVE
  ret
 ; ENDP
@@ -11050,11 +11047,11 @@ epilog_31 db "\nEND",0
 
 memresize:  ; *** PROC ***
 
-;-1046   _ DOS_ERR=0; bx=i; _ ax=cs; es=ax; ax=0x4A00; DosInt(); }
+;-1045   _ DOS_ERR=0; bx=i; _ ax=cs; es=ax; ax=0x4A00; DosInt(); }
 
 ;Function : memresize, Number of local variables: 1
 ;   # type sign width line used address name   list of local variables
-;  200 var unsg word  1045 NULL bp+4    i;
+;  200 var unsg word  1044 NULL bp+4    i;
  ENTER  0,0
 mov word [DOS_ERR], 0
  mov  bx, [bp+4]
@@ -11063,20 +11060,20 @@ mov word [DOS_ERR], 0
  mov  ax, 18944
  call DosInt
 
-;-1047 int memalloc(unsigned int i) { unsigned int vAX; unsigned int vBX;
+;-1046 int memalloc(unsigned int i) { unsigned int vAX; unsigned int vBX;
  LEAVE
  ret
 ; ENDP
 
 memalloc:  ; *** PROC ***
 
-;-1048   _ DOS_ERR=0; bx=i;  ax=0x4800; DosInt(); _ vAX=ax; _ vBX=bx;
+;-1047   _ DOS_ERR=0; bx=i;  ax=0x4800; DosInt(); _ vAX=ax; _ vBX=bx;
 
 ;Function : memalloc, Number of local variables: 3
 ;   # type sign width line used address name   list of local variables
-;  200 var unsg word  1047 NULL bp+4    i
-;  201 var unsg word  1047 NULL bp-2    vAX
-;  202 var unsg word  1047 NULL bp-4    vBX;
+;  200 var unsg word  1046 NULL bp+4    i
+;  201 var unsg word  1046 NULL bp-2    vAX
+;  202 var unsg word  1046 NULL bp-4    vBX;
  ENTER  4,0
 mov word [DOS_ERR], 0
  mov  bx, [bp+4]
@@ -11085,7 +11082,7 @@ mov word [DOS_ERR], 0
 mov [bp-2], ax
 mov [bp-4], bx
 
-;-1049   if(DOS_ERR) return vBX;   return vAX;  }
+;-1048   if(DOS_ERR) return vBX;   return vAX;  }
 
  mov ax, [DOS_ERR]
  or  al, al
@@ -11096,7 +11093,7 @@ mov [bp-4], bx
  mov ax, [bp-2]
  jmp @@retn
 
-;-1050 int copyF(char *dest, char *src, unsigned int sz) {
+;-1049 int copyF(char *dest, char *src, unsigned int sz) {
 
 @@retn: LEAVE
  ret
@@ -11104,13 +11101,13 @@ mov [bp-4], bx
 
 copyF:  ; *** PROC ***
 
-;-1051   segE;  _ es=ax;  _ si=src;  _ di=dest; _ cx=sz;  // ds:si   es:di
+;-1050   segE;  _ es=ax;  _ si=src;  _ di=dest; _ cx=sz;  // ds:si   es:di
 
 ;Function : copyF, Number of local variables: 3
 ;   # type sign width line used address name   list of local variables
-;  200 ptr sign byte  1050 NULL bp+4    dest
-;  201 ptr sign byte  1050 NULL bp+6    src
-;  202 var unsg word  1050 NULL bp+8    sz;
+;  200 ptr sign byte  1049 NULL bp+4    dest
+;  201 ptr sign byte  1049 NULL bp+6    src
+;  202 var unsg word  1049 NULL bp+8    sz;
  ENTER  0,0
  mov ax, [segE]
  mov  es, ax
@@ -11118,25 +11115,25 @@ copyF:  ; *** PROC ***
  mov  di, [bp+4]
  mov  cx, [bp+8]
 
-;-1052   __asm{cld} __asm{rep movsb} __asm{mov byte [es:di], 0}   }
+;-1051   __asm{cld} __asm{rep movsb} __asm{mov byte [es:di], 0}   }
 
 cld
 rep movsb
 mov byte [es:di], 0
 
-;-1053 int loadName(char *dest, int i) {
+;-1052 int loadName(char *dest, int i) {
  LEAVE
  ret
 ; ENDP
 
 loadName:  ; *** PROC ***
 
-;-1054   segE;  _ es=ax; _ di=dest;  GName[i]; _ si=ax;
+;-1053   segE;  _ es=ax; _ di=dest;  GName[i]; _ si=ax;
 
 ;Function : loadName, Number of local variables: 2
 ;   # type sign width line used address name   list of local variables
-;  200 ptr sign byte  1053 NULL bp+4    dest
-;  201 var sign word  1053 NULL bp+6    i;
+;  200 ptr sign byte  1052 NULL bp+4    dest
+;  201 var sign word  1052 NULL bp+6    i;
  ENTER  0,0
  mov ax, [segE]
  mov  es, ax
@@ -11146,7 +11143,7 @@ loadName:  ; *** PROC ***
  mov ax, [GName + bx]
  mov  si, ax
 
-;-1055   do{ __asm{mov al, [es:si]} si++; *di=al;  di++; } while (al != 0); }
+;-1054   do{ __asm{mov al, [es:si]} si++; *di=al;  di++; } while (al != 0); }
 
 @@loadName624:
 mov al, [es:si]
@@ -11158,26 +11155,26 @@ mov al, [es:si]
  jmp @@loadName624
 @@loadName625:
 
-;-1056 int to_far(char *dest, char *src) {
+;-1055 int to_far(char *dest, char *src) {
  LEAVE
  ret
 ; ENDP
 
 to_far:  ; *** PROC ***
 
-;-1057   segE;  _ es=ax;  _ si=src;  _ di=dest;  // ds:si   es:di
+;-1056   segE;  _ es=ax;  _ si=src;  _ di=dest;  // ds:si   es:di
 
 ;Function : to_far, Number of local variables: 2
 ;   # type sign width line used address name   list of local variables
-;  200 ptr sign byte  1056 NULL bp+4    dest
-;  201 ptr sign byte  1056 NULL bp+6    src;
+;  200 ptr sign byte  1055 NULL bp+4    dest
+;  201 ptr sign byte  1055 NULL bp+6    src;
  ENTER  0,0
  mov ax, [segE]
  mov  es, ax
  mov  si, [bp+6]
  mov  di, [bp+4]
 
-;-1058   do{ al= *si; si++; __asm{mov [es:di], al} di++; } while (al != 0); }
+;-1057   do{ al= *si; si++; __asm{mov [es:di], al} di++; } while (al != 0); }
 
 @@to_far626:
  mov  al, [si]
@@ -11189,26 +11186,26 @@ mov [es:di], al
  jmp @@to_far626
 @@to_far627:
 
-;-1059 int from_far(char *dest, char *src) {
+;-1058 int from_far(char *dest, char *src) {
  LEAVE
  ret
 ; ENDP
 
 from_far:  ; *** PROC ***
 
-;-1060   segE;  _ es=ax;  _ si=src;  _ di=dest;  // ds:si   es:di
+;-1059   segE;  _ es=ax;  _ si=src;  _ di=dest;  // ds:si   es:di
 
 ;Function : from_far, Number of local variables: 2
 ;   # type sign width line used address name   list of local variables
-;  200 ptr sign byte  1059 NULL bp+4    dest
-;  201 ptr sign byte  1059 NULL bp+6    src;
+;  200 ptr sign byte  1058 NULL bp+4    dest
+;  201 ptr sign byte  1058 NULL bp+6    src;
  ENTER  0,0
  mov ax, [segE]
  mov  es, ax
  mov  si, [bp+6]
  mov  di, [bp+4]
 
-;-1061   do{ __asm{mov al, [es:si]} si++; *di=al;  di++; } while (al != 0); }
+;-1060   do{ __asm{mov al, [es:si]} si++; *di=al;  di++; } while (al != 0); }
 
 @@from_far628:
 mov al, [es:si]
@@ -11220,23 +11217,23 @@ mov al, [es:si]
  jmp @@from_far628
 @@from_far629:
 
-;-1062 
+;-1061 
 
 
-;-1063 unsigned char GDT1[]={15,0,0,0,0,0,0,0, 0xFF,0xFF,0x00,0x00,0x00,0x92,0xCF,0};
+;-1062 unsigned char GDT1[]={15,0,0,0,0,0,0,0, 0xFF,0xFF,0x00,0x00,0x00,0x92,0xCF,0};
  LEAVE
  ret
 ; ENDP
 GDT1 db 15,0,0,0,0,0,0,0,255,255,0,0,0,146,207,0
 
-;-1064 int isvirtual86() { eax=cr0;  ax &= 1; }
+;-1063 int isvirtual86() { eax=cr0;  ax &= 1; }
 
 
 isvirtual86:  ; *** PROC ***
  mov  eax, cr0
  and  ax, 1
 
-;-1065 int is32bit() { ecx=0xFFFF; __asm{jmp $ + 2;} ecx++; ifzero return 0; return 1;}
+;-1064 int is32bit() { ecx=0xFFFF; __asm{jmp $ + 2;} ecx++; ifzero return 0; return 1;}
 
  ret
 ; ENDP
@@ -11252,7 +11249,7 @@ jmp $ + 2;
  mov eax, 1
  jmp @@retn
 
-;-1066 int INITCPU32() { eax=0;	ax=ds; eax << 4;
+;-1065 int INITCPU32() { eax=0;	ax=ds; eax << 4;
 
 @@retn:
  ret
@@ -11263,75 +11260,75 @@ INITCPU32:  ; *** PROC ***
  mov  ax, ds
  shl  eax, 4
 
-;-1067 	asm add eax, GDT1       ;//Offset GDT
+;-1066 	asm add eax, GDT1       ;//Offset GDT
 
  add eax, GDT1       ;//Offset GDT
 
-;-1068 	asm mov [GDT1+2], eax
+;-1067 	asm mov [GDT1+2], eax
 
  mov [GDT1+2], eax
 
-;-1069 	asm lgdt [GDT1]
+;-1068 	asm lgdt [GDT1]
 
  lgdt [GDT1]
 
-;-1070 	bx=8;
+;-1069 	bx=8;
 
  mov  bx, 8
 
-;-1071 	asm push ds
+;-1070 	asm push ds
 
  push ds
 
-;-1072 	asm cli
+;-1071 	asm cli
 
  cli
 
-;-1073 	eax=cr0; al++; cr0=eax;
+;-1072 	eax=cr0; al++; cr0=eax;
 
  mov  eax, cr0
  inc  al
  mov  cr0, eax
 
-;-1074 	asm use32
+;-1073 	asm use32
 
  use32
 
-;-1075 	__asm{jmp dword PROT_EN}   __asm{PROT_EN:}
+;-1074 	__asm{jmp dword PROT_EN}   __asm{PROT_EN:}
 
 jmp dword PROT_EN
 PROT_EN:
 
-;-1076 	fs=bx;	al--;	cr0=eax;
+;-1075 	fs=bx;	al--;	cr0=eax;
 
  mov  fs, bx
  dec  al
  mov  cr0, eax
 
-;-1077 	asm use16
+;-1076 	asm use16
 
  use16
 
-;-1078 	__asm{jmp word PROT_DI} __asm{PROT_DI:}
+;-1077 	__asm{jmp word PROT_DI} __asm{PROT_DI:}
 
 jmp word PROT_DI
 PROT_DI:
 
-;-1079 	asm sti
+;-1078 	asm sti
 
  sti
 
-;-1080 	asm pop ds
+;-1079 	asm pop ds
 
  pop ds
 
-;-1081 }
+;-1080 }
 
 
-;-1082 
+;-1081 
 
 
-;-1083 void to32  (long L,  char *src) { }
+;-1082 void to32  (long L,  char *src) { }
 
  ret
 ; ENDP
@@ -11339,11 +11336,11 @@ PROT_DI:
 to32:  ; *** PROC ***
 ;Function : to32, Number of local variables: 2
 ;   # type sign width line used address name   list of local variables
-;  200 var sign dwrd  1083 NULL bp+4    L
-;  201 ptr sign byte  1083 NULL bp+8    src;
+;  200 var sign dwrd  1082 NULL bp+4    L
+;  201 ptr sign byte  1082 NULL bp+8    src;
  ENTER  0,0
 
-;-1084 void from32(char *dest, long L) { }
+;-1083 void from32(char *dest, long L) { }
  LEAVE
  ret
 ; ENDP
@@ -11351,11 +11348,11 @@ to32:  ; *** PROC ***
 from32:  ; *** PROC ***
 ;Function : from32, Number of local variables: 2
 ;   # type sign width line used address name   list of local variables
-;  200 ptr sign byte  1084 NULL bp+4    dest
-;  201 var sign dwrd  1084 NULL bp+6    L;
+;  200 ptr sign byte  1083 NULL bp+4    dest
+;  201 var sign dwrd  1083 NULL bp+6    L;
  ENTER  0,0
 
-;-1085 void prLr(unsigned long L) {           ultoar(L, Ls); prs(Ls); }//right
+;-1084 void prLr(unsigned long L) {           ultoar(L, Ls); prs(Ls); }//right
  LEAVE
  ret
 ; ENDP
@@ -11363,7 +11360,7 @@ from32:  ; *** PROC ***
 prLr:  ; *** PROC ***
 ;Function : prLr, Number of local variables: 1
 ;   # type sign width line used address name   list of local variables
-;  200 var unsg dwrd  1085 NULL bp+4    L;
+;  200 var unsg dwrd  1084 NULL bp+4    L;
  ENTER  0,0
  lea  ax, [Ls]
  push ax
@@ -11375,7 +11372,7 @@ prLr:  ; *** PROC ***
  call prs
  add  sp, 2
 
-;-1086 void prL (unsigned long L) {char *p; p=ultoaL(L, Ls); prs(p ); }//left
+;-1085 void prL (unsigned long L) {char *p; p=ultoaL(L, Ls); prs(p ); }//left
  LEAVE
  ret
 ; ENDP
@@ -11383,8 +11380,8 @@ prLr:  ; *** PROC ***
 prL:  ; *** PROC ***
 ;Function : prL, Number of local variables: 2
 ;   # type sign width line used address name   list of local variables
-;  200 var unsg dwrd  1086 NULL bp+4    L
-;  201 ptr sign byte  1086 NULL bp-2    p;
+;  200 var unsg dwrd  1085 NULL bp+4    L
+;  201 ptr sign byte  1085 NULL bp-2    p;
  ENTER  2,0
  lea  ax, [Ls]
  push ax
@@ -11396,21 +11393,21 @@ prL:  ; *** PROC ***
  call prs
  add  sp, 2
 
-;-1087 void prf(unsigned long L, int w) {char len; char *p;            //format width
+;-1086 void prf(unsigned long L, int w) {char len; char *p;            //format width
  LEAVE
  ret
 ; ENDP
 
 prf:  ; *** PROC ***
 
-;-1088   p=ultoaL(L, Ls); len=strlen(p); if (w > len) do {prc(32); w--;} while (w>len);
+;-1087   p=ultoaL(L, Ls); len=strlen(p); if (w > len) do {prc(32); w--;} while (w>len);
 
 ;Function : prf, Number of local variables: 4
 ;   # type sign width line used address name   list of local variables
-;  200 var unsg dwrd  1087 NULL bp+4    L
-;  201 var sign word  1087 NULL bp+8    w
-;  202 var sign byte  1087 NULL bp-2    len
-;  203 ptr sign byte  1087 NULL bp-4    p;
+;  200 var unsg dwrd  1086 NULL bp+4    L
+;  201 var sign word  1086 NULL bp+8    w
+;  202 var sign byte  1086 NULL bp-2    len
+;  203 ptr sign byte  1086 NULL bp-4    p;
  ENTER  4,0
  lea  ax, [Ls]
  push ax
@@ -11437,26 +11434,26 @@ prf:  ; *** PROC ***
 @@prf633:
 @@prf631:
 
-;-1089   prs(p); }
+;-1088   prs(p); }
 
  push word [bp-4]
  call prs
  add  sp, 2
 
-;-1090 void ultoar(unsigned long L, char *s) { int i;//edx:eax DIV ebx = eax Modulo edx
+;-1089 void ultoar(unsigned long L, char *s) { int i;//edx:eax DIV ebx = eax Modulo edx
  LEAVE
  ret
 ; ENDP
 
 ultoar:  ; *** PROC ***
 
-;-1091   i=0;  while(i<10) { *s = '0'; s++; i++; }   *s = 0;   s--;  eax=L;
+;-1090   i=0;  while(i<10) { *s = '0'; s++; i++; }   *s = 0;   s--;  eax=L;
 
 ;Function : ultoar, Number of local variables: 3
 ;   # type sign width line used address name   list of local variables
-;  200 var unsg dwrd  1090 NULL bp+4    L
-;  201 ptr sign byte  1090 NULL bp+8    s
-;  202 var sign word  1090 NULL bp-2    i;
+;  200 var unsg dwrd  1089 NULL bp+4    L
+;  201 ptr sign byte  1089 NULL bp+8    s
+;  202 var sign word  1089 NULL bp-2    i;
  ENTER  2,0
  mov eax, 0
  mov word [bp-2], ax
@@ -11477,14 +11474,14 @@ ultoar:  ; *** PROC ***
  dec  word [bp+8]
  mov  eax, [bp+4]
 
-;-1092   do { edx=0;  ebx=10; ebx /= ;
+;-1091   do { edx=0;  ebx=10; ebx /= ;
 
 @@ultoar636:
  mov  edx, 0
  mov  ebx, 10
  div  ebx
 
-;-1093        dl+=48; bx=s;   *bx=dl;  s--; } while (eax != 0);  }
+;-1092        dl+=48; bx=s;   *bx=dl;  s--; } while (eax != 0);  }
 
  add  dl, 48
  mov  bx, [bp+8]
@@ -11495,19 +11492,19 @@ ultoar:  ; *** PROC ***
  jmp @@ultoar636
 @@ultoar637:
 
-;-1094 int ultoaL(unsigned long L, char *s) { // edx:eax DIV ebx = eax Modulo edx
+;-1093 int ultoaL(unsigned long L, char *s) { // edx:eax DIV ebx = eax Modulo edx
  LEAVE
  ret
 ; ENDP
 
 ultoaL:  ; *** PROC ***
 
-;-1095   s=s+10;  *s = 0;   s--;  eax=L;
+;-1094   s=s+10;  *s = 0;   s--;  eax=L;
 
 ;Function : ultoaL, Number of local variables: 2
 ;   # type sign width line used address name   list of local variables
-;  200 var unsg dwrd  1094 NULL bp+4    L
-;  201 ptr sign byte  1094 NULL bp+8    s;
+;  200 var unsg dwrd  1093 NULL bp+4    L
+;  201 ptr sign byte  1093 NULL bp+8    s;
  ENTER  0,0
  mov ax, [bp+8]
  add ax, 10
@@ -11518,14 +11515,14 @@ ultoaL:  ; *** PROC ***
  dec  word [bp+8]
  mov  eax, [bp+4]
 
-;-1096   do { edx=0;  ebx=10; ebx /= ;
+;-1095   do { edx=0;  ebx=10; ebx /= ;
 
 @@ultoaL638:
  mov  edx, 0
  mov  ebx, 10
  div  ebx
 
-;-1097        dl+=48; bx=s;   *bx=dl;  s--; } while (eax != 0);   s++; ax=s;
+;-1096        dl+=48; bx=s;   *bx=dl;  s--; } while (eax != 0);   s++; ax=s;
 
  add  dl, 48
  mov  bx, [bp+8]
@@ -11538,7 +11535,7 @@ ultoaL:  ; *** PROC ***
  inc  word [bp+8]
  mov  ax, [bp+8]
 
-;-1098 }
+;-1097 }
  LEAVE
  ret
 ; ENDP
@@ -11706,7 +11703,7 @@ ultoaL:  ; *** PROC ***
 ; Number of unresolved CALLs :  159
 ;use archive file: AR.C
 
-;-1099 // AR.C Archive
+;-1098 // AR.C Archive file for PLA.DE The MIT License (MIT) starting 1.1.2015  (c) 2015 Helmut Guenther
 
 ;Number of CALLs:    2 : writetty
 
@@ -11715,7 +11712,7 @@ writetty:  ; *** PROC ***
  mov  bx, 0
  int  16
 
-;-1100 int putch(char c)  {if (_ c==10) {al=13; writetty();} al=c; writetty(); }
+;-1099 int putch(char c)  {if (_ c==10) {al=13; writetty();} al=c; writetty(); }
 
  ret
 ; ENDP
@@ -11724,7 +11721,7 @@ writetty:  ; *** PROC ***
 putch:  ; *** PROC ***
 ;Function : putch, Number of local variables: 1
 ;   # type sign width line used address name   list of local variables
-;  200 var sign byte  1100 NULL bp+4    c;
+;  200 var sign byte  1099 NULL bp+4    c;
  ENTER  0,0
 cmp byte [bp+4], 10
  jne @@putch640
@@ -11734,7 +11731,7 @@ cmp byte [bp+4], 10
  mov  al, [bp+4]
  call writetty
 
-;-1101 int cputs(char *s) {char c;  while(*s) { c=*s; putch(c); s++; } }
+;-1100 int cputs(char *s) {char c;  while(*s) { c=*s; putch(c); s++; } }
  LEAVE
  ret
 ; ENDP
@@ -11743,8 +11740,8 @@ cmp byte [bp+4], 10
 cputs:  ; *** PROC ***
 ;Function : cputs, Number of local variables: 2
 ;   # type sign width line used address name   list of local variables
-;  200 ptr sign byte  1101 NULL bp+4    s
-;  201 var sign byte  1101 NULL bp-2    c;
+;  200 ptr sign byte  1100 NULL bp+4    s
+;  201 var sign byte  1100 NULL bp-2    c;
  ENTER  2,0
 @@cputs641:
  mov bx, [bp+4]
@@ -11765,7 +11762,7 @@ cputs:  ; *** PROC ***
  jmp @@cputs641
 @@cputs642:
 
-;-1102 int mkneg(int n) { n; __asm {neg ax} }
+;-1101 int mkneg(int n) { n; __asm {neg ax} }
  LEAVE
  ret
 ; ENDP
@@ -11774,12 +11771,12 @@ cputs:  ; *** PROC ***
 mkneg:  ; *** PROC ***
 ;Function : mkneg, Number of local variables: 1
 ;   # type sign width line used address name   list of local variables
-;  200 var sign word  1102 NULL bp+4    n;
+;  200 var sign word  1101 NULL bp+4    n;
  ENTER  0,0
  mov ax, [bp+4]
 neg ax
 
-;-1103 int prunsign(unsigned int n) { unsigned int e;
+;-1102 int prunsign(unsigned int n) { unsigned int e;
  LEAVE
  ret
 ; ENDP
@@ -11788,8 +11785,8 @@ neg ax
 pint:  ; *** PROC ***
 ;Function : pint, Number of local variables: 2
 ;   # type sign width line used address name   list of local variables
-;  200 var sign word  1103 NULL bp+4    n
-;  201 var sign word  1103 NULL bp-2    e;
+;  200 var sign word  1102 NULL bp+4    n
+;  201 var sign word  1102 NULL bp-2    e;
  ENTER  2,0
  mov ax, [bp+4]
  cmp ax, 0
@@ -11802,7 +11799,7 @@ pint:  ; *** PROC ***
  add  sp, 2
  mov word [bp+4], ax
 
-;-1104   if (n >= 10) {e=n/10;  pint(e);}  n=n%10; n=n+'0'; putch(n); }
+;-1103   if (n >= 10) {e=n/10;  pint(e);}  n=n%10; n=n+'0'; putch(n); }
 
 @@pint643:
  mov ax, [bp+4]
@@ -11830,7 +11827,7 @@ pint:  ; *** PROC ***
  call putch
  add  sp, 2
 
-;-1105 int printint5(unsigned int j)  {
+;-1104 int printint5(unsigned int j)  {
  LEAVE
  ret
 ; ENDP
@@ -11839,7 +11836,7 @@ pint:  ; *** PROC ***
 toupper:  ; *** PROC ***
 ;Function : toupper, Number of local variables: 1
 ;   # type sign width line used address name   list of local variables
-;  200 ptr sign byte  1105 NULL bp+4    s;
+;  200 ptr sign byte  1104 NULL bp+4    s;
  ENTER  0,0
 @@toupper645:
  mov bx, [bp+4]
@@ -11869,10 +11866,10 @@ toupper:  ; *** PROC ***
  jmp @@toupper645
 @@toupper646:
 
-;-1106 //int head1  (char *s) {char c; do{c=*s; c=letter(c); s++; }while(c) *s=0; }
+;-1105 //int head1  (char *s) {char c; do{c=*s; c=letter(c); s++; }while(c) *s=0; }
 
 
-;-1107 int strlen(char *s) { int c; c=0; while (*s!=0) {s++; c++;} return c; }
+;-1106 int strlen(char *s) { int c; c=0; while (*s!=0) {s++; c++;} return c; }
  LEAVE
  ret
 ; ENDP
@@ -11881,8 +11878,8 @@ toupper:  ; *** PROC ***
 strlen:  ; *** PROC ***
 ;Function : strlen, Number of local variables: 2
 ;   # type sign width line used address name   list of local variables
-;  200 ptr sign byte  1107 NULL bp+4    s
-;  201 var sign word  1107 NULL bp-2    c;
+;  200 ptr sign byte  1106 NULL bp+4    s
+;  201 var sign word  1106 NULL bp-2    c;
  ENTER  2,0
  mov eax, 0
  mov word [bp-2], ax
@@ -11899,7 +11896,7 @@ strlen:  ; *** PROC ***
  mov ax, [bp-2]
  jmp @@retn
 
-;-1108 int strcpy1(char *s, char *t) {do { *s=*t; s++; t++; } while (*t!=0); *s=0; }
+;-1107 int strcpy1(char *s, char *t) {do { *s=*t; s++; t++; } while (*t!=0); *s=0; }
 
 @@retn: LEAVE
  ret
@@ -11909,8 +11906,8 @@ strlen:  ; *** PROC ***
 strcpy:  ; *** PROC ***
 ;Function : strcpy, Number of local variables: 2
 ;   # type sign width line used address name   list of local variables
-;  200 ptr sign byte  1108 NULL bp+4    s
-;  201 ptr sign byte  1108 NULL bp+6    t;
+;  200 ptr sign byte  1107 NULL bp+4    s
+;  201 ptr sign byte  1107 NULL bp+6    t;
  ENTER  0,0
 @@strcpy651:
  mov bx, [bp+6]
@@ -11921,7 +11918,7 @@ strcpy:  ; *** PROC ***
  inc  word [bp+4]
  inc  word [bp+6]
 
-;-1109   while (*t!=0); *s=0; return s; }
+;-1108   while (*t!=0); *s=0; return s; }
 
  mov bx, [bp+6]
  mov al, [bx]
@@ -11936,7 +11933,7 @@ strcpy:  ; *** PROC ***
  mov ax, [bp+4]
  jmp @@retn
 
-;-1110 int strncpy(char *s, char *t, int n) { if (_ n==0) return;
+;-1109 int strncpy(char *s, char *t, int n) { if (_ n==0) return;
 
 @@retn: LEAVE
  ret
@@ -11946,8 +11943,8 @@ strcpy:  ; *** PROC ***
 instr1:  ; *** PROC ***
 ;Function : instr1, Number of local variables: 2
 ;   # type sign width line used address name   list of local variables
-;  200 ptr sign byte  1110 NULL bp+4    s
-;  201 var sign byte  1110 NULL bp+6    c;
+;  200 ptr sign byte  1109 NULL bp+4    s
+;  201 var sign byte  1109 NULL bp+6    c;
  ENTER  0,0
 @@instr1653:
  mov bx, [bp+4]
@@ -11969,7 +11966,7 @@ instr1:  ; *** PROC ***
  mov eax, 0
  jmp @@retn
 
-;-1111 int instr2(char *s, char c) { while(*s) { if (*s==c) return &s; s++;} return 0;}
+;-1110 int instr2(char *s, char c) { while(*s) { if (*s==c) return &s; s++;} return 0;}
 
 @@retn: LEAVE
  ret
@@ -11979,8 +11976,8 @@ instr1:  ; *** PROC ***
 instr2:  ; *** PROC ***
 ;Function : instr2, Number of local variables: 2
 ;   # type sign width line used address name   list of local variables
-;  200 ptr sign byte  1111 NULL bp+4    s
-;  201 var sign byte  1111 NULL bp+6    c;
+;  200 ptr sign byte  1110 NULL bp+4    s
+;  201 var sign byte  1110 NULL bp+6    c;
  ENTER  0,0
 @@instr2656:
  mov bx, [bp+4]
@@ -12002,7 +11999,7 @@ instr2:  ; *** PROC ***
  mov eax, 0
  jmp @@retn
 
-;-1112 int digit(char c){ if(c<'0') return 0; if(c>'9') return 0; return 1; }
+;-1111 int digit(char c){ if(c<'0') return 0; if(c>'9') return 0; return 1; }
 
 @@retn: LEAVE
  ret
@@ -12012,7 +12009,7 @@ instr2:  ; *** PROC ***
 digit:  ; *** PROC ***
 ;Function : digit, Number of local variables: 1
 ;   # type sign width line used address name   list of local variables
-;  200 var sign byte  1112 NULL bp+4    c;
+;  200 var sign byte  1111 NULL bp+4    c;
  ENTER  0,0
  mov al, [bp+4]
  cmp al, 48
@@ -12029,7 +12026,7 @@ digit:  ; *** PROC ***
  mov eax, 1
  jmp @@retn
 
-;-1113 int letter(char c) { if (digit(c)) return 1; if (c=='_') return 1;
+;-1112 int letter(char c) { if (digit(c)) return 1; if (c=='_') return 1;
 
 @@retn: LEAVE
  ret
@@ -12039,7 +12036,7 @@ digit:  ; *** PROC ***
 letter:  ; *** PROC ***
 ;Function : letter, Number of local variables: 1
 ;   # type sign width line used address name   list of local variables
-;  200 var sign byte  1113 NULL bp+4    c;
+;  200 var sign byte  1112 NULL bp+4    c;
  ENTER  0,0
  mov al, byte [bp+4]
  mov ah, 0
@@ -12057,7 +12054,7 @@ letter:  ; *** PROC ***
  mov eax, 1
  jmp @@retn
 
-;-1114   if (c> 'z') return 0; if (c< '@') return 0;
+;-1113   if (c> 'z') return 0; if (c< '@') return 0;
 
 @@letter662:
  mov al, [bp+4]
@@ -12072,7 +12069,7 @@ letter:  ; *** PROC ***
  mov eax, 0
  jmp @@retn
 
-;-1115   if (c> 'Z') { if (c< 'a') return 0; }  return 1; }
+;-1114   if (c> 'Z') { if (c< 'a') return 0; }  return 1; }
 
 @@letter664:
  mov al, [bp+4]
@@ -12088,7 +12085,7 @@ letter:  ; *** PROC ***
  mov eax, 1
  jmp @@retn
 
-;-1116 int alnum(char c) { if (digit(c)) return 1; if (c=='_') return 1;
+;-1115 int alnum(char c) { if (digit(c)) return 1; if (c=='_') return 1;
 
 @@retn: LEAVE
  ret
@@ -12098,8 +12095,8 @@ letter:  ; *** PROC ***
 eqstr:  ; *** PROC ***
 ;Function : eqstr, Number of local variables: 2
 ;   # type sign width line used address name   list of local variables
-;  200 ptr sign byte  1116 NULL bp+4    p
-;  201 ptr sign byte  1116 NULL bp+6    q;
+;  200 ptr sign byte  1115 NULL bp+4    p
+;  201 ptr sign byte  1115 NULL bp+6    q;
  ENTER  0,0
 @@eqstr667:
  mov bx, [bp+4]
@@ -12108,7 +12105,7 @@ eqstr:  ; *** PROC ***
  or  al, al
  je @@eqstr668
 
-;-1117     if (*p != *q) return 0; p++; q++; }
+;-1116     if (*p != *q) return 0; p++; q++; }
 
  mov bx, [bp+4]
  mov al, [bx]
@@ -12123,7 +12120,7 @@ eqstr:  ; *** PROC ***
  inc  word [bp+4]
  inc  word [bp+6]
 
-;-1118     if(*q) return 0; return 1; }
+;-1117     if(*q) return 0; return 1; }
 
  jmp @@eqstr667
 @@eqstr668:
@@ -12138,7 +12135,7 @@ eqstr:  ; *** PROC ***
  mov eax, 1
  jmp @@retn
 
-;-1119 int strcat1(char *s, char *t) { while (*s != 0) s++; strcpy(s, t);  }
+;-1118 int strcat1(char *s, char *t) { while (*s != 0) s++; strcpy(s, t);  }
 
 @@retn: LEAVE
  ret
@@ -12148,8 +12145,8 @@ eqstr:  ; *** PROC ***
 strcat1:  ; *** PROC ***
 ;Function : strcat1, Number of local variables: 2
 ;   # type sign width line used address name   list of local variables
-;  200 ptr sign byte  1119 NULL bp+4    s
-;  201 ptr sign byte  1119 NULL bp+6    t;
+;  200 ptr sign byte  1118 NULL bp+4    s
+;  201 ptr sign byte  1118 NULL bp+6    t;
  ENTER  0,0
 @@strcat1671:
  mov bx, [bp+4]
@@ -12165,7 +12162,7 @@ strcat1:  ; *** PROC ***
  call strcpy
  add  sp, 4
 
-;-1120 int basename(char *s) { char *p; p=0;
+;-1119 int basename(char *s) { char *p; p=0;
  LEAVE
  ret
 ; ENDP
@@ -12177,7 +12174,7 @@ DosInt:  ; *** PROC ***
  inc  word [DOS_ERR]
 @@DosInt673:
 
-;-1121 int openR (char *s) { dx=s; ax=0x3D02;  DosInt(); }
+;-1120 int openR (char *s) { dx=s; ax=0x3D02;  DosInt(); }
 
  ret
 ; ENDP
@@ -12186,13 +12183,13 @@ DosInt:  ; *** PROC ***
 openR:  ; *** PROC ***
 ;Function : openR, Number of local variables: 1
 ;   # type sign width line used address name   list of local variables
-;  200 ptr sign byte  1121 NULL bp+4    s;
+;  200 ptr sign byte  1120 NULL bp+4    s;
  ENTER  0,0
  mov  dx, [bp+4]
  mov  ax, 15618
  call DosInt
 
-;-1122 int creatR(char *s) { dx=s; cx=0; ax=0x3C00; DosInt(); }
+;-1121 int creatR(char *s) { dx=s; cx=0; ax=0x3C00; DosInt(); }
  LEAVE
  ret
 ; ENDP
@@ -12201,14 +12198,14 @@ openR:  ; *** PROC ***
 creatR:  ; *** PROC ***
 ;Function : creatR, Number of local variables: 1
 ;   # type sign width line used address name   list of local variables
-;  200 ptr sign byte  1122 NULL bp+4    s;
+;  200 ptr sign byte  1121 NULL bp+4    s;
  ENTER  0,0
  mov  dx, [bp+4]
  mov  cx, 0
  mov  ax, 15360
  call DosInt
 
-;-1123 int readR (char *s, int fd) {dx=s; cx=1; bx=fd; ax=0x3F00; DosInt(); }
+;-1122 int readR (char *s, int fd) {dx=s; cx=1; bx=fd; ax=0x3F00; DosInt(); }
  LEAVE
  ret
 ; ENDP
@@ -12217,8 +12214,8 @@ creatR:  ; *** PROC ***
 readR:  ; *** PROC ***
 ;Function : readR, Number of local variables: 2
 ;   # type sign width line used address name   list of local variables
-;  200 ptr sign byte  1123 NULL bp+4    s
-;  201 var sign word  1123 NULL bp+6    fd;
+;  200 ptr sign byte  1122 NULL bp+4    s
+;  201 var sign word  1122 NULL bp+6    fd;
  ENTER  0,0
  mov  dx, [bp+4]
  mov  cx, 1
@@ -12226,7 +12223,7 @@ readR:  ; *** PROC ***
  mov  ax, 16128
  call DosInt
 
-;-1124 int readRL(char *s, int fd, int len){dx=s; cx=len; bx=fd; ax=0x3F00; DosInt();}
+;-1123 int readRL(char *s, int fd, int len){dx=s; cx=len; bx=fd; ax=0x3F00; DosInt();}
  LEAVE
  ret
 ; ENDP
@@ -12235,9 +12232,9 @@ readR:  ; *** PROC ***
 readRL:  ; *** PROC ***
 ;Function : readRL, Number of local variables: 3
 ;   # type sign width line used address name   list of local variables
-;  200 ptr sign byte  1124 NULL bp+4    s
-;  201 var sign word  1124 NULL bp+6    fd
-;  202 var sign word  1124 NULL bp+8    len;
+;  200 ptr sign byte  1123 NULL bp+4    s
+;  201 var sign word  1123 NULL bp+6    fd
+;  202 var sign word  1123 NULL bp+8    len;
  ENTER  0,0
  mov  dx, [bp+4]
  mov  cx, [bp+8]
@@ -12245,7 +12242,7 @@ readRL:  ; *** PROC ***
  mov  ax, 16128
  call DosInt
 
-;-1125 int fputcR(char *n, int fd) { __asm{lea dx, [bp+4]}; /* = *n */
+;-1124 int fputcR(char *n, int fd) { __asm{lea dx, [bp+4]}; /* = *n */
  LEAVE
  ret
 ; ENDP
@@ -12254,19 +12251,19 @@ readRL:  ; *** PROC ***
 fputcR:  ; *** PROC ***
 ;Function : fputcR, Number of local variables: 2
 ;   # type sign width line used address name   list of local variables
-;  200 ptr sign byte  1125 NULL bp+4    n
-;  201 var sign word  1125 NULL bp+6    fd;
+;  200 ptr sign byte  1124 NULL bp+4    n
+;  201 var sign word  1124 NULL bp+6    fd;
  ENTER  0,0
 lea dx, [bp+4]
 
-;-1126   cx=1; bx=fd; ax=0x4000; DosInt(); }
+;-1125   cx=1; bx=fd; ax=0x4000; DosInt(); }
 
  mov  cx, 1
  mov  bx, [bp+6]
  mov  ax, 16384
  call DosInt
 
-;-1127 int writeRL(char *s, int fd, int len){dx=s; cx=len; bx=fd; ax=0x4000; DosInt();}
+;-1126 int writeRL(char *s, int fd, int len){dx=s; cx=len; bx=fd; ax=0x4000; DosInt();}
  LEAVE
  ret
 ; ENDP
@@ -12275,13 +12272,13 @@ lea dx, [bp+4]
 fcloseR:  ; *** PROC ***
 ;Function : fcloseR, Number of local variables: 1
 ;   # type sign width line used address name   list of local variables
-;  200 var sign word  1127 NULL bp+4    fd;
+;  200 var sign word  1126 NULL bp+4    fd;
  ENTER  0,0
  mov  bx, [bp+4]
  mov  ax, 15872
  int  33
 
-;-1128 int exitR(char c) {ah=0x4C; al=c; inth 0x21; }
+;-1127 int exitR(char c) {ah=0x4C; al=c; inth 0x21; }
  LEAVE
  ret
 ; ENDP
@@ -12290,13 +12287,13 @@ fcloseR:  ; *** PROC ***
 exitR:  ; *** PROC ***
 ;Function : exitR, Number of local variables: 1
 ;   # type sign width line used address name   list of local variables
-;  200 var sign byte  1128 NULL bp+4    c;
+;  200 var sign byte  1127 NULL bp+4    c;
  ENTER  0,0
  mov  ah, 76
  mov  al, [bp+4]
  int  33
 
-;-1129 int setdta(char *s) {dx=s; ah=0x1A; inth 0x21; }
+;-1128 int setdta(char *s) {dx=s; ah=0x1A; inth 0x21; }
  LEAVE
  ret
 ; ENDP
@@ -12479,7 +12476,7 @@ ret
 ;  168 var sign byte   696    4        0 wasfunction
 ;  169 arr sign byte   827    2    46920 symboltemp[80]
 ;  170 var unsg word  1010    2        0 MAXUI
-;  171 arr unsg byte  1063 NULL        0 GDT1[16]
+;  171 arr unsg byte  1062 NULL        0 GDT1[16]
 
 
 ;   # Calls Line Width  Name   list of functions
@@ -12575,45 +12572,45 @@ ret
 ;   88    1  996 word   listfunc
 ;   89    1 1000 word   funclisting
 ;   90    1 1011 word   epilog
-;   91    1 1045 word   memresize
-;   92    1 1047 word   memalloc
-;   93 NULL 1050 word   copyF
-;   94    5 1053 word   loadName
-;   95    1 1056 word   to_far
-;   96   10 1059 word   from_far
-;   97    4 1064 word   isvirtual86
-;   98    4 1065 word   is32bit
-;   99    1 1066 word   INITCPU32
-;  100 NULL 1083 void   to32
-;  101 NULL 1084 void   from32
-;  102 NULL 1085 void   prLr
-;  103   19 1086 void   prL
-;  104    1 1087 void   prf
-;  105    1 1090 void   ultoar
-;  106    2 1094 word   ultoaL
-;  107    4 1099 word   writetty
-;  108    3 1100 word   putch
-;  109   22 1101 word   cputs
-;  110    4 1102 word   mkneg
-;  111    2 1103 word   pint
-;  112    1 1105 word   toupper
-;  113    8 1107 word   strlen
-;  114   28 1108 word   strcpy
-;  115    1 1110 word   instr1
-;  116    3 1111 word   instr2
-;  117    3 1112 word   digit
-;  118    3 1113 word   letter
-;  119   69 1116 word   eqstr
-;  120    1 1119 word   strcat1
-;  121    7 1120 word   DosInt
-;  122    3 1121 word   openR
-;  123    1 1122 word   creatR
-;  124    1 1123 word   readR
-;  125    1 1124 word   readRL
-;  126    1 1125 word   fputcR
-;  127    2 1127 word   fcloseR
-;  128    4 1128 word   exitR
-;  129 NULL 1129 word   LastFunctionByt
+;   91    1 1044 word   memresize
+;   92    1 1046 word   memalloc
+;   93 NULL 1049 word   copyF
+;   94    5 1052 word   loadName
+;   95    1 1055 word   to_far
+;   96   10 1058 word   from_far
+;   97    4 1063 word   isvirtual86
+;   98    4 1064 word   is32bit
+;   99    1 1065 word   INITCPU32
+;  100 NULL 1082 void   to32
+;  101 NULL 1083 void   from32
+;  102 NULL 1084 void   prLr
+;  103   19 1085 void   prL
+;  104    1 1086 void   prf
+;  105    1 1089 void   ultoar
+;  106    2 1093 word   ultoaL
+;  107    4 1098 word   writetty
+;  108    3 1099 word   putch
+;  109   22 1100 word   cputs
+;  110    4 1101 word   mkneg
+;  111    2 1102 word   pint
+;  112    1 1104 word   toupper
+;  113    8 1106 word   strlen
+;  114   28 1107 word   strcpy
+;  115    1 1109 word   instr1
+;  116    3 1110 word   instr2
+;  117    3 1111 word   digit
+;  118    3 1112 word   letter
+;  119   69 1115 word   eqstr
+;  120    1 1118 word   strcat1
+;  121    7 1119 word   DosInt
+;  122    3 1120 word   openR
+;  123    1 1121 word   creatR
+;  124    1 1122 word   readR
+;  125    1 1123 word   readRL
+;  126    1 1124 word   fputcR
+;  127    2 1126 word   fcloseR
+;  128    4 1127 word   exitR
+;  129 NULL 1128 word   LastFunctionByt
 
 ;    #  addr name   list of CALLs
 
@@ -13710,11 +13707,11 @@ ret
 ; 1090  9698 DosInt
 ; 1091  9721 DosInt
 ; 1092  9740 DosInt
-;Input: A.C, List: A.S,  Lines: 1130
+;Input: A.C, List: A.S,  Lines: 1129
 ;Glob. variables:  171 max.:  200
 ;Local variables:    8 max.:  100, in 'expr'
 ;Functions      :  130 max.:  300
 ;Calls          : 1093 max.: 2000, NameField: 9782 max.:    65535
-;Code until     :25857 max.: 30000, free: 4143
+;Code until     :25853 max.: 30000, free: 4147
 ;Data (HeapEnd) :47000, resting stacksize: 18535
 ;Max. Const in 'epilog' : 1131 max. 3000, free: 1869
