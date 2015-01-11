@@ -7,7 +7,7 @@ xxx means, that there is work to do. I call you to give enhancement.
 I do not like segments and selectors in developing x86 software. I love *flat binary files* like the old CP/M or the DOS COM files. But you have only 64 KB for your text segment. For big data I have found a solution (see below). Even the PLA compiler needs only 26 KB for the code and constant data and works. There is no need for a linker. You load the program without changing anything into memory and it starts at location 100h. Thats all.
 ####memory mapping of COM Flat Model
 All COM file starts with only one segment and setting all the segment registers to the same address. This is the beginning of the 64 kbyte block of memory you can work with. The segment registers never change as long as the program is running and you can forget about them. The loader sets *CS=DS=SS=ES* and sets the intraction pointer *IP* to 100h. The COM flat model is the "little brother" of protected mode flat model. 
-
+```
  16-bit offset|                    
 -------------:|-------------------|-----------------------------------------------------------
 2,000,000     | ldata               GS segment register, declared in *LDATAORIG*
@@ -23,7 +23,7 @@ All COM file starts with only one segment and setting all the segment registers 
  256=100h     |                     IP: program starts here
  0            | PSP                 CS:, DS:, SS:
               |                    
-
+```
 There are two exception: 
 
 1. For storing the names of the variables and functions I needed a space of about 64 kbyte. So I reserved 64 kbyte and sets the *es* segment register to the beginning of that block. 
