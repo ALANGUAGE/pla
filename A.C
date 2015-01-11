@@ -1,4 +1,4 @@
-//   simplexpr-test-prleft-prrigth   22.05.2011 21.09.2014 1.1.2015
+//A.C  The MIT License 2015 (c) 2015 Helmut Guenther
 char Version1[]="A.COM CComp V0.6";
 #define BSS
 #define ARCHIVE "AR.C"
@@ -9,7 +9,7 @@ char BSS=0;  char NASM=0;  char PROTECTED=0;     char LIST=0;
 #define FUNCMAX       300
 #define CALLMAX      2000
 #define IDLENMAX       16
-#define _  // Konstantvergleich
+#define _  // constant compare
 #define T_NAME        256
 #define T_CONST       257 
 #define T_STRING      258     
@@ -289,7 +289,7 @@ int isvariable() {
 int sd; //side: 0=left, 1=middle, 2=rigth
 char un; //1=unary, 2=binary, 3=assign, 4=mul, 5=mod, 6=div
 char ty; // 1const, 2call, 3reg, 4var, 5arr
-char md[3];  int mod1; int mod2; //typename       issign,iswidth  0=m, 1=*, 2=&
+char md[3];  int mod1; int mod2; //typename       issign,iswidth  0=m, 1=*,2=&
 int  ir[3];  int irg1; int irg2; //checkreg       0=noreg, reg-nr
 int  ix[3];  int idx1; int idx2; //searchname     var-nr
 char is[3];  int ids1; int ids2; //gettypes(idx1) signi: 0=U, 1=S
@@ -322,17 +322,17 @@ void exprstart() { if (eqstr(symbol, "_")) simplexpr(); else expr(); }
 int simplexpr() {  int i;
   sd=0;
   token=getlex();
-  if (istoken(T_CONST)) { prs("\n mov eax, "); prL(lexvalL); return; }// 1const
+  if (istoken(T_CONST)) { prs("\n mov eax, "); prL(lexvalL); return; }//1const
   mod1=typeName();
-  if (token=='(')  {ids1=issign; idw1=iswidth; docall1(); return; }   // 2call
+  if (token=='(')  {ids1=issign; idw1=iswidth; docall1(); return; }   //2call
   if (mod1 == 2) error1(" & is not allowed in left side");
   irg1=checkreg();
-  if (irg1)       {doreg1(0); return; }                               // 3reg
+  if (irg1)       {doreg1(0); return; }                               //3reg
   if (irg1 == 0) { idx1=searchname();
-    gettypes(idx1); ids1=signi; idw1=wi; idt1=typei;                  // 4var
-    if (idt1==2)  error1("Array not allowed left side"); }//////      // 5arr
+    gettypes(idx1); ids1=signi; idw1=wi; idt1=typei;                  //4var
+    if (idt1==2)  error1("Array not allowed left side"); }//todo     //5arr
 
-  if (isrelational()) { error1("Relational not implemented yet"); ////////
+  if (isrelational()) { error1("Relational not implemented yet"); //todo
   }
   if (istoken('=') == 0) error1("Assign expected");
   if (istoken(T_CONST) ) { val2=lexvalL;
@@ -352,7 +352,7 @@ int simplexpr() {  int i;
     
     idx2=searchname();
     gettypes(idx2); ids2=signi; idw2=wi; idt2=typei;
-    if (idt2 == 1)  error1("Array right side not implemented"); ///////
+    if (idt2 == 1)  error1("Array right side not implemented"); //todo
     prs("\nmov ");
     if (irg1) printreg(irg1, mod1);
     else error1("Mem to Mem not allowed by x86-CPU");
@@ -394,7 +394,7 @@ int doreg1(int iscmp1) { int i; char sz;
   getop();
   if (iscmp1 == 1) {
       token=getlex();
-      if (isrelational() ==0) error1("Relational expected");
+      if (isrelational() ==0) error1("relational expected");
       strcpy(ops, "cmp");
       }
   if (un==1) { prleftreg(); return; }
@@ -614,7 +614,7 @@ void docall1() {int i; int narg; int t0; int n0;  int sz32;
 	 prs("\n call "); prs(&procname);
 	 if (narg>0) {prs("\n add  sp, ");
      narg=narg+narg; narg=narg+sz32; pint1(narg); } }
-//////////////////////////////////////////////////////////////////////////////////
+//********************************************************************
 int main() { getarg();
   memresize(4096);       if (DOS_ERR) error1("memresize");
   segE=memalloc(4096);   if (DOS_ERR) error1("alloc memory");
@@ -629,13 +629,13 @@ int getarg() { int arglen1; int i; char *c;
   arglen1=*arglen;                                     NASM=1; //default
   if (arglen1) { i=arglen1+129; *i=0; }
   else { cputs(Version1);
-    cputs(" Usage: F.COM [/N/P] in_file[.C] (/N=NASM, /P=ProtMode): ");
+    cputs(" Usage: A.COM [/N/P] in_file[.C] (/N=NASM, /P=ProtMode): ");
     DOS_NoBytes=readRL(argv, 0, CMDLENMAX); c=DOS_NoBytes+128; *c=0; prnl(); }
   strcpy(namein, argv);
   if (instr2(namein, '.') == 0) strcat1(namein, ".C");
   toupper(namein);
   c=instr2(namein, '/');
-  while (c != 0)  { c++;   //TODO only one parameter possible
+  while (c != 0)  { c++;   //todo: only one parameter possible
          if (*c == 'N') NASM=1;
          if (*c == 'P') PROTECTED=1;
 //    else {cputs("Parameter unknown "); exitR(3);  }
@@ -676,7 +676,7 @@ int parse() { token=getlex(); do {
       else if (istoken(T_INCLUDE)) doinclude();
       else error1("define or include expected");  }
     else{ typeName();
-    if (token=='(') dofunc(); else if (istoken('!')) doLdata(); else doglob(); }
+    if (token=='(') dofunc(); else if (istoken('!')) doLdata();else doglob();}
   } while(1);
 }
 int checkcalls() { int i; int j; int k;
@@ -698,7 +698,7 @@ int doar(int k) { int i; int fdtemp; int fdout1; int used; int found;
   cputs("  Open CALLs :"); pint(k);
   prs("\n; Number of unresolved CALLs :"); printint51(k);
   fdin=openR (archivename);
-  if(DOS_ERR){cputs("Archive file missing: "); cputs(archivename); exitR(3); }
+  if(DOS_ERR){cputs("Archive file missing: "); cputs(archivename); exitR(3);}
   prs("\n;use archive file: "); prs(archivename);
   fdtemp=fdout; wasfunction=0; getfirstchar();
   do { fdout=0;do {found=getfunctionhead();}while (found==0); fdout=fdtemp;
@@ -796,7 +796,7 @@ int cmpneg(int ids) {
                                prs("\n jb  @@");}//jb=jc=CF=1
   else if(iscmp=='<' ) prs("\n jge @@");         //          SF =OF
   else if(iscmp=='>' ) prs("\n jle @@");         //ZF=1 oder SF!=OF
-  else error1("Vergleich unbekannt in CMPNEG()");  }
+  else error1("compare unknown in CMPNEG()");  }
 
 int prlabel(int n) {prs("\n@@"); prs(fname); pint1(n); prc(':'); }
 int prjump (int n) {prs("\n jmp @@"); prs(fname); pint1(n); }
@@ -1040,7 +1040,6 @@ int epilog() {unsigned int i;
   prs(" max."); printint51(COMAX); i=COMAX; i=i-maxco; prs(", free:");
   printint51(i);if (i <= 1000)prs(" *** Warning *** constant area too small");
   if(NASM==0)prs("\nEND");end1(0);}
-// while(expr) stmt; do stmt while(expr); FOR: i=0; while(i<10){stmt; i++;}
 
 int memresize(unsigned int i) {
   _ DOS_ERR=0; bx=i; _ ax=cs; es=ax; ax=0x4A00; DosInt(); }
