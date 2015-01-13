@@ -8,12 +8,28 @@ The language consists of:
 
 1. **comments** *//* ist the comment for one line. /* ... */ is a multiline comment.
 2. **preprocessor** directives starting with #. there are only two directives:  *define* and *include*. Define exchanges a constant name with a fixed number. Include works as in "C" and includes files. The include file **AR.C** is hardcoded and will always be included. But PLA takes only the **needed** functions from AR.C to keep the file small and does not search for other things like variables.   
-3. **global declarations** for *char*, *int* and *long*, which may be prefixed by *unsigned*. Declare *pointer* by preceeding the variable name with a *.  *arrays* are declared by []. If the array is initialized, then it goes into the code segment, otherwiese into the bss segment. There are no *structur* and no *unions*. You can declare only *one* variable in a statement.:round_pushpin: Please fixe me.
+3. **global declarations** for *char*, *int* and *long*, which may be prefixed by *unsigned*. Declare *pointer* by preceeding the variable name with a *.  *arrays* are declared by []. If the array is initialized, then it goes into the code segment, otherwiese into the bss segment. Names are max. *IDLENMAX* long, current 16 character and may contain \_ and are case sensitive.There are no *struct* and no *unions*. You can declare only *one* variable in a statement.:round_pushpin: Please fixe me.
 4. **functions** are defined by either *void*, *char*, *int* or *long* before the function name. The name must be followed without any space by **(**. As PLA does not handle *prototypes*, it assumes that the return value is *int*.
-All of them can be used in any order until the program finishes.
+All of them can be used in any order until the program finishes. Inside the function block **{ }** you can declare local variables. Then start with the statements inside the function body.
 
-###Local Variables and Statements
-Inside the function block **{ }** you can declare simple local variables, but without declaring arrays, you start with your first expression.
+####Reserved Words
+All names are case sensitive and reserved words must be written in lower case letters. Reserved are all (segment and special) register names (8/16/32 bit,) like *al, fs, esi* and **cr0**, the last one for switching to protected mode. There are new PLA reserved words like:
+* *uint32*   unsigned integer 32 bit
+* *inth*     interrupt (CDh)
+* *asm*      assembly code following until end of line
+* *__asm*    assembly block follows surrounded by { }
+* *__emit__* byte values following surrounded by ( ) and separeted by ,
+* *ifcarry*  if carry flag set, statement(s) following. Must be the first statement after a DOS interrupt
+* *ifzero*   if zero flag set, statament(s) following.
+
+Reserved words are also the following C language key words:
+*signed, unsigned*
+*void, char, int, short, long*
+*return, if, else, while, do, goto*
+*define, include*
+
+Other C key words are *not* reserved words.
+
 
 ##Program Structure
 I do not like segments and selectors in developing x86 software. I love *flat binary files* like the old CP/M or the DOS COM files. But you have only 64 KB for your text segment. For big data I have found a solution (see below). Even the PLA compiler needs only 26 KB for the code and constant data and works. There is no need for a linker. You load the program without changing anything into memory and it starts at location 100h. Thats all.
@@ -22,7 +38,7 @@ All COM file starts with only one segment and setting all the segment registers 
 ```
  16-bit offset|                    
 -------------:|-------------------|
-2,000,000     | ldata               GS: segment register, declared in *LDATAORIG*
+2,000,000     | ldata               GS: segment register, declared in LDATAORIG
 --------------|-------------------|              
               |                    
  0 - 65,565   | uninitialized data  ES: segment register, saved in SegE
@@ -33,7 +49,7 @@ All COM file starts with only one segment and setting all the segment registers 
               | unused memory     
               |
               | .BSS                globally uninitialized data
-       30,000 | end of code         start of bss sectionn, declared in *ORGDATAORIG=30000*             
+       30,000 | end of code         start of bss sectionn, declared in ORGDATAORIG=30000            
      256=100h |                     IP: program starts here
             0 | PSP                 CS:, DS:, SS:
 ```
@@ -44,7 +60,7 @@ There are two exception:
 
 Today the computers are so fast, that you need no precompiled libraries for small programs. On my MacBook Pro it takes only two seconds to compile, including the source libraries, writing a huge listing file with a cross reference listing and statistics. I put all library stuff in an *archive source file* **AR.C** and the compiler takes only the needed funcions to keep the binary small. The following netwide assembler needs more time to produce the binary. So I started to write an x86 assembler, it will be an COM file, too.
 
-###functions
+###Functions
 As every C program, so PLA starts with the function **main**() (line 618 after the eye catcher). 
 ```C
 int main() { getarg();
