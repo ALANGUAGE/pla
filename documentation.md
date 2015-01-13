@@ -18,16 +18,15 @@ All names are case sensitive and reserved words must be written in lower case le
 * *inth*     interrupt (CDh)
 * *asm*      assembly code following until end of line
 * *__asm*    assembly block follows surrounded by { }
-* *__emit__* byte values following surrounded by ( ) and separeted by ,
+* *\__emit__* byte values following surrounded by ( ) and separeted by ,
 * *ifcarry*  if carry flag set, statement(s) following. Must be the first statement after a DOS interrupt
 * *ifzero*   if zero flag set, statament(s) following.
 
 Reserved words are also the following C language key words:
-*signed, unsigned*
-*void, char, int, short, long*
-*return, if, else, while, do, goto*
-*define, include*
-
+ *signed, unsigned*
+ *void, char, int, short, long*
+ *return, if, else, while, do, goto*
+ *define, include*
 Other C key words are *not* reserved words.
 
 
