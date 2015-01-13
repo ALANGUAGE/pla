@@ -25,9 +25,7 @@ All names are case sensitive and reserved words must be written in lower case le
 Reserved words are also the following C language key words:
 
 *signed, unsigned*                      *void, char, int, short, long*
-
-*return, if, else, while, do, goto*     *define, include*
-
+      *return, if, else, while, do, goto*     *define, include*
 Other C key words are *not* reserved words.
 
 
