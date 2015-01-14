@@ -24,10 +24,23 @@ All names are case sensitive and reserved words must be written in lower case le
 
 Reserved words are also the following C language key words:
 
-*signed, unsigned*                      *void, char, int, short, long*
-      *return, if, else, while, do, goto*     *define, include*
+*signed, unsigned, void, char, int, short, long, return, if, else, while, do, goto, define, include*. 
 Other C key words are *not* reserved words.
 
+####Expressions
+PLA does not know the *( )* for grouping expressions. Complex expressions must be separated into simple expressions. There are the following expression types:
+1. *expressions* normal expression type. PLA evaluates the right side of an expression to *al,ax,eax*.
+2. *constant expression* These expressions are preceeded with an underscore and a blank before the expression to give the compiler a hint, not to recursively parsing the expression. Instead it uses the short assembly form of an assignment of a constant.
+
+####Constants
+1. There are only positive dezimal constants. 
+2. Hexadezimal constants, which begin with 0x or 0X. 
+3. Single character constants surrounded by two apostrophes like 'A'. 
+4. Character string constants surrounded by two quotation marks like "ACB".
+5. Escape sequences are three: A backslash following a n=newline, t=tab or 0=zero. The newline is in real a line feed, disgarding the carriage return in DOS and windows systems.  
+
+####Pointers
+####Arrays
 
 ##Program Structure
 I do not like segments and selectors in developing x86 software. I love *flat binary files* like the old CP/M or the DOS COM files. But you have only 64 KB for your text segment. For big data I have found a solution (see below). Even the PLA compiler needs only 26 KB for the code and constant data and works. There is no need for a linker. You load the program without changing anything into memory and it starts at location 100h. Thats all.
