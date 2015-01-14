@@ -20,7 +20,7 @@ All names are case sensitive and reserved words must be written in lower case le
 * *__asm*    assembly block follows surrounded by { }
 * *\__emit__* byte values following surrounded by ( ) and separeted by ,
 * *ifcarry*  if carry flag set, statement(s) following. Must be the first statement after a DOS interrupt
-* *ifzero*   if zero flag set, statament(s) following.
+* *ifzero*   if zero flag set, statement(s) following.
 
 Reserved words are also the following C language key words:
 
@@ -28,7 +28,8 @@ Reserved words are also the following C language key words:
 Other C key words are *not* reserved words.
 
 ####Expressions
-PLA does not know the *( )* for grouping expressions. Complex expressions must be separated into simple expressions. There are the following expression types:
+PLA does not know the **( )** for grouping expressions. Complex expressions must be separated into simple expressions. There are the following expression types:
+
 1. *expressions* normal expression type. PLA evaluates the right side of an expression to *al,ax,eax*.
 2. *constant expression* These expressions are preceeded with an underscore and a blank before the expression to give the compiler a hint, not to recursively parsing the expression. Instead it uses the short assembly form of an assignment of a constant.
 
