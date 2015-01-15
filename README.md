@@ -28,6 +28,7 @@ there is no need any more. Beautifying the code is recommended.
 ####History
 I (Helmut Guenther) started the project in MS-DOS times to learn how a compiler works.
 As of 1.1.2015 I set the software as free software under the MIT license.
-You find a very old version from 2009 here: http://sourceforge.net/projects/pla/
-It includes with source compiler, command interpreter and the game [Towers of Hanoi](http://en.wikipedia.org/wiki/Tower_of_Hanoi).
+
+There is a very old version from 2009 [here](http://sourceforge.net/projects/pla/).
+It includes in PLA source code the compiler, command interpreter and the game [Towers of Hanoi](http://en.wikipedia.org/wiki/Tower_of_Hanoi).
 
