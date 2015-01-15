@@ -7,7 +7,7 @@ assembly language with C style syntax for X86 processors with the freedom of ass
 * [Compiler.md](/doc/PLA_Compiler.md) introduction for developers and collaborators.
 
 ####Home
-Website: https://github.com/ALANGUAGE/pla or http://pla.de
+https://github.com/ALANGUAGE/pla or http://pla.de
 
 :e-mail: help@pla.de
 
@@ -23,7 +23,7 @@ I am looking for comments, suggestions and of  course bugs. I start the document
 ####Later
 I used no version control system and printed out the code. 
 So I wrote the code very dense. With the code folding features of the editors 
-there is no need any more. Beautifying the code is necessary.
+there is no need any more. Beautifying the code is recommended.
 
 ####History
 I (Helmut Guenther) started the project in MS-DOS times to learn how a compiler works.
