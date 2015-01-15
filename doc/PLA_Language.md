@@ -1,4 +1,5 @@
 #PLA Language.md
+MIT license 2015 (C) Helmut Guenther.
 ##Program Structure
 I do not like segments and selectors in developing x86 software. I love *flat binary files* like the old CP/M or the DOS COM files. But you have only 64 KB for your text segment. For big data I have found a solution (see below). Even the PLA compiler needs only 26 KB for the code and constant data and works. There is no need for a linker. You load the program without changing anything into memory and it starts at location 100h. Thats all.
 ####memory mapping of COM Flat Model
