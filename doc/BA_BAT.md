@@ -1,0 +1,2 @@
+##BA.BAT batch file
+The DOS batch file calls A.COM with its own source code A.C. If there is no errror, it calls the assembler NASM wich outputs the binary fiele A.COM again. If you call the batch file again, you see, if the new generated file ist working. Otherwise you start thinking and a debug session. Take attention for the parameter -t for Turbo Assembler compatibility of the NASM file. My first assembler was TASM and now it is difficult to get rid of the TASM compatibility.
