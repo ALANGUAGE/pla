@@ -9,7 +9,7 @@ I do not like segments and selectors in developing x86 software. I love *flat bi
 ####memory mapping of COM Flat Model
 All COM file starts with only one segment and setting all the segment registers to the same address. This is the beginning of the 64 kbyte block of memory you can work with. The segment registers never change as long as the program is running and you can forget about them. The loader sets *CS=DS=SS=ES* and sets the intraction pointer *IP* to 100h. The COM flat model is the "little brother" of protected mode flat model. 
 ```
- 16-bit offset|                    
+ HIGH ADDRESS                    
 -------------:|-------------------|
 2,000,000     | ldata               GS: segment register, declared in LDATAORIG
 --------------|-------------------|              
@@ -19,17 +19,18 @@ All COM file starts with only one segment and setting all the segment registers 
               |
 65,565=FFFFh  | Start of stack      SP: stack pointer
               |
-              | unused memory     
+              |                     unused memory betwwen heap and stack      
               |
-              | .BSS                globally uninitialized data
-       30,000 | end of code         start of bss sectionn, declared in ORGDATAORIG=30000            
+       30,000 | Start of heap       start of bss sectionn, declared in ORGDATAORIG=30000 
+              | end of code                    
      256=100h |                     IP: program starts here
             0 | PSP                 CS:, DS:, SS:
+ LOW ADDRESS  
 ```
-There are two exception: 
-
-1. For storing the names of the variables and functions I needed a space of about 64 kbyte. So I reserved 64 kbyte and sets the *es* segment register to the beginning of that block. 
-2. After switching to [unreal mode](http://en.wikipedia.org/wiki/Unreal_mode) your program can store date within the 4 GByte address space. I started at 2 MByte, declared in the constant *unsigned long LDATAORIG=2000000*. So I left 1 Mbyte for DOS and nearly 1 MByte for XMS,EMS, caches and other DOS stuff.
+The amount of unused memory between *heap* and *stack* will be calculated and displayed. As PLA does not support allocation of memory at runtime, keep an eye only of the grows of the stack. The maximum used stack size (without recursion) will be displayed.    
+There are two exception of using one code segment:     
+1. For storing the names of the variables and functions I needed a space of about 64 kbyte. So I reserved 64 kbyte and sets the *es* segment register to the beginning of that block.     
+2. After switching to [unreal mode](http://en.wikipedia.org/wiki/Unreal_mode) your program can store data within the 4 GByte address space. I started at 2 MByte, declared in the constant *unsigned long LDATAORIG=2000000*. So I left 1 Mbyte for DOS and nearly 1 MByte for XMS, EMS, caches and other DOS stuff.
 
 Today the computers are so fast, that you need no precompiled libraries for small programs. On my MacBook Pro it takes only two seconds to compile, including the source libraries, writing a huge listing file with a cross reference listing and statistics. I put all library stuff in an *archive source file* **AR.C** and the compiler takes only the needed funcions to keep the binary small. The following netwide assembler needs more time to produce the binary. So I started to write an x86 assembler, it will be an COM file, too.
 
