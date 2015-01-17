@@ -48,23 +48,23 @@ The big problem in evaluating expressions is deciding which parts of an expressi
 5. **Escape sequences** are three: A backslash following a n=newline, t=tab or 0=zero. The newline is in reality a line feed (ASCII 10), with skipping the carriage return (ASCII 13) in DOS and windows systems.  
 
 ####Operators
-All operators are equal in precedence. There are the following groups of operators:
+All operators are equal in precedence. There are the following groups of operators:    
 **Operators**
 ```C
-+ - * / % (modulo) & (AND) | (OR)
++  -  *  /  %(modulo)  &(AND)  |(OR)
 ```
 **Assignment Operators**
 ```C
-= (assign) += -= *= /= &= |= << >> ++ --
+=(assign)  +=  -=  *=  /=  &=  |=  <<  >>  ++  --
 ```
 **Relational Operators**
 ```C
-== != < <= > >=
+==  !=  <  <=  >  >=
 ```
 **Missing Operators**
 ```C
 ! logical NOT
-~ one's complement
+~ one\'s complement
 - unary minus
 sizeof ( )
 ?: conditional operator
