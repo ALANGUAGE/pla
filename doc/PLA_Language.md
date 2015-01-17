@@ -11,7 +11,7 @@ You can use the address operator **&** to get the addres of the object. The addr
 The language is limited. There are no *struct* and no *unions* key words. You can declare only *one* variable in every statement. :round_pushpin:Please fix    
 
 4. **Functions** are defined by the word *void*, *char*, *int* or *long* before the function name. And the name must be followed without any space by a bracket open **(**. As PLA does not handle *prototypes*, it assumes that the return value has the size of an integer and does not check the return size. PLA uses the *call by value* for parameters. If you want a *call by reference*, use the *indirection operator* (\*). Array names as parameters are handled as call by reference, too. The number and type of arguments are not verified.            
-Inside the function block with curly brackets **{ }** you can declare local variables. After the declaration place the statements inside the function body. A *stack frame* is automatically created, if you use parametrs or local variables. As calls may be nested through **recursive** calling the function, the frames are stacked one above the other.
+Inside the function is a block with curly brackets **{ }**. If there are *local variables* to be declared, they must be declared before the first statement occurs. A *stack frame* is automatically created, if you use parametrs or local variables. As calls may be nested through **recursive** calling the function, the frames are stacked one above the other.
 
 ####Reserved Words
 All names are *case sensitive* and reserved words must be written in **lower case** letters. Reserved words are all (segment and special) register names (8/16/32 bit,) like *al, fs, esi* and **cr0**, the last one for switching to protected mode.    
@@ -55,7 +55,8 @@ All operators are equal in precedence. There are the following groups of operato
 ```
 **Assignment Operators**
 ```C
-=(assign)  +=  -=  *=  /=  &=  |=  <<  >>  ++  --
+=(assign)  +=  -=  *=  /=  &=  |=  <<  >>  
+++  -- (both postfix only)
 ```
 **Relational Operators**
 ```C
@@ -64,7 +65,7 @@ All operators are equal in precedence. There are the following groups of operato
 **Missing Operators**
 ```C
 ! logical NOT
-~ one\'s complement
+~ one complement
 - unary minus
 sizeof ( )
 ?: conditional operator
@@ -75,6 +76,28 @@ sizeof ( )
 As complex comparison are not allowed, the last operators are not useful.
 
 ####Statements
+There are the following statements:
+```C
+;       null statement
+expr;   simple statement
+_ expr; constant expression statement
+{ }     compound statement (block)
+if   (then   else)
+do
+while
+goto
+asm      until end of line
+asmblock surrounded with { } 
+inth     interrupt
+ifcarry
+ifzero
+emit     bytes only, separeted with comma
+return   may be followed by an expression
+```
+***Missing Statements**
+1. There is no **switch** statement, because it is difficult to implement and can be replaced with *if* statements. At run time, the *case* statement must load and evaluate every expression. Some *if* statements are more difficult to read, but they have the advantage of beeing smaller and faster at run time.    
+2. There is no ***for** statement. It can be replaced with a *while* statement.    
+3. no *break, continue, default*
 
 
 
