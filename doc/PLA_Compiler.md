@@ -5,6 +5,7 @@ This is the main documentation file for developers and programmers and will be c
 :round_pushpin:  means, that there is work to do. I call you to give enhancements. Please become a contributor for the development of PLA and give me a note at [help@pla.de](help@pla.de).
 
 ##Program Structure
+I do not like segments and selectors in developing x86 software. I love the flat binary files like the old CP/M or the DOS COM files. But the segment is limited to 64 kbyte. For most of the command line programs it will be enough space. Even the PLA compiler needs only 26 KByte for the code and the constant data and it works well. For storing more data there are some possibilities. Another advantage: There is no need for a linker. You load the program without changing anything into memory and start at location 100h. Thats all!
 
 ####Memory Mapping of the COM Flat Model
 All COM file starts with only one segment and set all the segment registers to the same start address. This is the beginning of the 64 kbyte block of memory you can work with. The segment registers never change as long as the program is running and therefore you can forget about them. The loader sets *CS=DS=SS=ES* and sets the intruction pointer *IP* to 100h. The COM flat model is the "little brother" of the protected mode flat model. 
