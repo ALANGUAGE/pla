@@ -8,7 +8,7 @@ The language consists of:
 **Pointers** are declared by preceeding the variable name with an asterisk (\*) like in the C language. All pointers are 16-bit segment offsets and are traited as short *unsigned* integers. There is no pointer arithmetic like in C, adding one to a pointer directs to the next *byte*, even if the pointer directs to an integer value.        
 **Arrays** are declared by following the square brackets **[ ]** after a variable name. PLA supports only single-dimension arrays. For *not* initialized values the subscript must be a constant number. The compiler reserves space in the *heap*, because there is no value to store in the code file. If the array is initialized (e.g.: char array1**[ ]**="ABC"), then the value of the variable is stored in the code segment and saved with the code. Variable names are of maximum size *IDLENMAX*, which is current 16 characters long and may contain the underscore **\_**, letters and numbers and must not begin with a number. The names are *case sensitive*.     
 You can use the address operator **&** to get the addres of the object. The address operator is implicit used by calling a subroutine with array names as parameters. The term *Array[x]* is equivalent of \*(array+x). **Address arithmetic** is done with scaling of integer and long arrays. To access data in memory, PLA uses the indirect address mode of the processor and uses the indirect register **BX**.    
-The language is limited. There are no *struct* and no *unions* key words. You can declare only *one* variable in every statement. :round_pushpin: Please fix    
+The language is limited. There are no *struct* and no *unions* key words. You can declare only *one* variable in every statement. :round_pushpin:Please fix    
 
 4. **Functions** are defined by the word *void*, *char*, *int* or *long* before the function name. And the name must be followed without any space by a bracket open **(**. As PLA does not handle *prototypes*, it assumes that the return value has the size of an integer. Inside the function block with curly brackets **{ }** you can declare local variables. After the declaration place the statements inside the function body.
 
@@ -16,13 +16,13 @@ The language is limited. There are no *struct* and no *unions* key words. You ca
 All names are *case sensitive* and reserved words must be written in **lower case** letters. Reserved words are all (segment and special) register names (8/16/32 bit,) like *al, fs, esi* and **cr0**, the last one for switching to protected mode.    
 There are new PLA reserved words as:
 ```
-* uint32   unsigned integer 32 bit
-* inth     interrupt (CDh)
-* asm      assembly code follows until end of line
-* __asm    assembly block follows surrounded by { }
-* __emit__ byte values following surrounded by ( ) and separeted by a comma ,
-* ifcarry  if carry flag set, statements follow. Must be the first statement after a DOS interrupt
-* ifzero   if  zero flag set, statements follow
+uint32   unsigned integer 32 bit
+inth     interrupt (CDh)
+asm      assembly code follows until end of line
+__asm    assembly block follows surrounded by { }
+__emit__ byte values following surrounded by ( ) and separeted by a comma ,
+ifcarry  if carry flag set, statements follow. Must be the first statement after a DOS interrupt
+ifzero   if  zero flag set, statements follow
 ```
 Reserved words are also the following C language key words:
 
@@ -42,6 +42,6 @@ PLA does not know the parentheses **( )** to group expressions. Therefore comple
 1. There are only positive **decimal** constants values. 
 2. **Hexadezimal** constants begins with 0x or 0X. 
 3. **Single character** constants are surrounded by two apostrophes as 'A'. 
-4. Character **string* constants surrounded by two quotation marks as "ACB". The terminal zero constant is added by the compiler.
+4. Character **string** constants surrounded by two quotation marks as "ACB". The terminal zero constant is added by the compiler.
 5. **Escape sequences** are three: A backslash following a n=newline, t=tab or 0=zero. The newline is in reality a line feed (ASCII 10), with skipping the carriage return (ASCII 13) in DOS and windows systems.  
 
