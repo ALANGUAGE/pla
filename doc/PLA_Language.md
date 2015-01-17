@@ -50,12 +50,19 @@ The big problem in evaluating expressions is deciding which parts of an expressi
 ####Operators
 All operators are equal in precedence. There are the following groups of operators:
 **Operators**
+```C
 + - * / % (modulo) & (AND) | (OR)
+```
 **Assignment Operators**
+```C
 = (assign) += -= *= /= &= |= << >> ++ --
-**Realtional Operators**
+```
+**Relational Operators**
+```C
 == != < <= > >=
+```
 **Missing Operators**
+```C
 ! logical NOT
 ~ one's complement
 - unary minus
@@ -64,6 +71,7 @@ sizeof ( )
 ^ bitwise exclusive OR
 && logical AND
 || logical OR
+```
 As complex comparison are not allowed, the last operators are not useful.
 
 ####Statements
