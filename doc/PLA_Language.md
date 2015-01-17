@@ -1,19 +1,20 @@
 #PLA Language.md
-MIT license 2015 (C) Helmut Guenther.
+MIT license 2015 (C) Helmut Guenther.     
+The PLA language is a subset of the C language with some useful extensions. In the output file are also the commented source code, additional statistics and a cross reference listing for every variable, function and call. 
 The language consists of:
 
 1. **Comments** *//* ist the comment for one line. /* ... */ is a multiline comment.
-2. **Preprocessor** directives starts with #. There are only two directives:  *define* and *include*. Define makes only a very limited macro processing and exchanges a fixed number with a constant name. Include works as in "C" and includes text from other files. The name of the file requires quotation marks.     
-The include archive file **AR.C** is hardcoded and will always be included. But PLA takes only the **needed** functions from AR.C to keep the runtime file small. The compiler searches only for functions and not for variables.      
-
+2. **Preprocessor** directives starts with #. There are only two directives:  *define* and *include*. **Define** makes only a very limited macro processing and exchanges a fixed number with a constant name. **Include** works as in C and includes text from other files. The name of the included file requires quotation marks.     
+The name of the included archive file **AR.C** is hardcoded and will always be included. But PLA takes only the **needed** functions from archive file to keep the runtime file small. The compiler searches only for functions and not for variables.    
 3. **Global declarations** are *char*, *int* and *long*, which may be prefixed by the term *unsigned*. You may also initialize a variable with a *constant* number. The variables are stored in the code segment together with the code. Uninitialized global variables are set to zero. Local variables can **not** be initialized.  
 **Pointers** are declared by preceeding the variable name with an asterisk (\*) like in the C language. All pointers are 16-bit segment offsets and are traited as short *unsigned* integers. There is no pointer arithmetic like in C, adding one to a pointer directs to the next *byte*, even if the pointer directs to an integer value.        
-**Arrays** are declared by following the square brackets **[ ]** after a variable name. PLA supports only single-dimension arrays. For *not* initialized values the subscript must be a constant number. The compiler reserves space in the *heap*, because there is no value to store in the code file. If the array is initialized (e.g.: char array1**[ ]**="ABC"), then the value of the variable is stored in the code segment and saved with the code. Variable names are of maximum size *IDLENMAX*, which is current 16 characters long and may contain the underscore **\_**, letters and numbers and must not begin with a number. The names are *case sensitive*.     
-You can use the address operator **&** to get the addres of the object. The address operator is implicit used by calling a subroutine with array names as parameters. The term *Array[x]* is equivalent of \*(array+x). **Address arithmetic** is done with scaling of integer and long arrays. To access data in memory, PLA uses the indirect address mode of the processor and uses the indirect register **BX**.    
+**Arrays** are declared by following the square brackets **[ ]** after a variable name. PLA supports only single-dimension arrays. For **not initialized** values the subscript must be a constant number. The compiler reserves space in the *heap*, because there is no value to store in the code file. If the array is **initialized** (e.g.: char array1**[ ]**="ABC"), then the value of the variable is stored in the code segment and saved with the code. Variable names are of maximum size *IDLENMAX*, which is current 16 characters long and may contain the underscore **\_**, letters and numbers and must not begin with a number. The names are *case sensitive*.     
+The address operator **&** gets the address of an object. The address operator is implicit used by calling a function with array names as parameters. The term *Array[x]* is equivalent of \*(array+x). **Address arithmetic** is done with scaling of integer and long arrays. To access data in memory, PLA uses the indirect address mode of the processor and uses the indirect register **BX**.     
+:boom: Experimental: If a variable name ends with an exclamation mark **!**, then the variable is stored in memory above 2 Mbytes in unreal mode. At the moment, the variable can not be accessed.     
 The language is limited. There are no *struct* and no *unions* key words. You can declare only *one* variable in every statement. :round_pushpin:Please fixme    
 
 4. **Functions** are defined by the word *void*, *char*, *int* or *long* before the function name. And the name must be followed without any space by a bracket open **(**. As PLA does not handle *prototypes*, it assumes that the return value has the size of an integer and does not check the return size. PLA uses the *call by value* for parameters. If you want a *call by reference*, use the *indirection operator* (\*). Array names as parameters are handled as call by reference, too. The number and type of arguments are not verified.            
-Inside the function is a block with curly brackets **{ }**. If there are *local variables* to be declared, they must be declared before the first statement occurs. A *stack frame* is automatically created, if you use parametrs or local variables. As calls may be nested through **recursive** calling the function, the frames are stacked one above the other.
+Inside the function is a block with curly brackets **{ }**. If there are *local variables* to be declared, they must be declared before the first statement occurs. A *stack frame* is automatically created, if you use parameters or local variables. As calls may be nested through **recursive** calling the function, the frames are stacked one above the other.
 
 ####Reserved Words
 All names are *case sensitive* and reserved words must be written in **lower case** letters. Reserved words are all (segment and special) register names (8/16/32 bit,) like *al, fs, esi* and **cr0**, the last one for switching to protected mode.    
@@ -36,15 +37,15 @@ Reserved words are also the following C language key words:
 Other C key words are **not** reserved words.
 
 ####Expressions
-The big problem in evaluating expressions is deciding which parts of an expression are to be associated with which operators. To eliminate ambiguity, PLA does not know the parentheses **( )**. Therefore complex expressions must be separated into simple individual expressions. The advantage is, that there is no hassle about the evaluation precedence and you can control the compiling process. This is optimizing by **brain**. There are the following expression types:
+The big problem in evaluating expressions is deciding which parts of an expression are to be associated with which operators. To eliminate ambiguity, PLA does not know the parentheses **( )** and has no evaluation precedence. Therefore complex expressions must be separated into simple individual expressions. The advantage is, that there is no hassle about the evaluation precedence and you can control the compiling process. This is optimizing by **brain**. It is possible to concatenate simple variables of the same type. *e.g. var1=var2=var3=5;*. Then the compiler creates optimized code. There are the following expression types:
 
 1. **normal expression** PLA evaluates the right side of an expression and stores the value in *al,ax or eax*.
 2. **constant expression** These expressions are preceeded with an underscore **_** and a blank before the expression. It gives the compiler a hint to use the short assembly form of an assignment of a constant.
 3. **comparison expression** In a comparison statement, two expressions are compared. If there is only one expression, a byte  comparison with the **al** register is created. E.g. *if (value)* evaluates *if ( value != 0)*. 
 
 ####Constants
-1. There are only positive **decimal** constants values. 
-2. **Hexadezimal** constants begins with 0x or 0X. 
+1. only **positive decimal** constants values. For negative constants use the hexedecimal constants instead.
+2. **Hexadecimal** constants begins with 0x or 0X, followed by a number.     
 3. **Single character** constants are surrounded by two apostrophes as 'A'. 
 4. Character **string** constants surrounded by two quotation marks as "ACB". The terminal zero constant is added by the compiler.
 5. **Escape sequences** are three: A backslash following a n=newline, t=tab or 0=zero. The newline is in reality a line feed (ASCII 10), with skipping the carriage return (ASCII 13) in DOS and windows systems.  
@@ -97,7 +98,7 @@ emit     bytes only, separeted with comma
 return   may be followed by an expression
 ```
 **Missing Statements**       
-1. There is no **switch** statement, because it is difficult to implement and can be replaced with *if* statements. At run time, the *case* statement must load and evaluate every expression. Some *if* statements are more difficult to read, but they have the advantage of beeing smaller and faster at run time.    
+1. There is no **switch** statement, because it is difficult to implement and can be replaced with *if* statements. At run time, the *case* statement must load and evaluate every expression. *If* statements are more difficult to read, but they have the advantage of beeing smaller and faster at run time.    
 2. There is no **for** statement. It can be replaced with a *while* statement.    
 3. no *break, continue, default* statements.
 
