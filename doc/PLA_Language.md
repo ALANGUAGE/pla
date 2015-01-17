@@ -63,7 +63,7 @@ All operators are equal in precedence. There are the following groups of operato
 ==  !=  <  <=  >  >=
 ```
 **Missing Operators**
-```C
+```
 ! logical NOT
 ~ one complement
 - unary minus
@@ -73,11 +73,11 @@ sizeof ( )
 && logical AND
 || logical OR
 ```
-As complex comparison are not allowed, the last operators are not useful.
+As complex comparisons are not allowed, the last operators are not useful.
 
 ####Statements
 There are the following statements:
-```C
+```
 ;       null statement
 expr;   simple statement
 _ expr; constant expression statement
@@ -94,7 +94,7 @@ ifzero
 emit     bytes only, separeted with comma
 return   may be followed by an expression
 ```
-***Missing Statements**
+**Missing Statements**
 1. There is no **switch** statement, because it is difficult to implement and can be replaced with *if* statements. At run time, the *case* statement must load and evaluate every expression. Some *if* statements are more difficult to read, but they have the advantage of beeing smaller and faster at run time.    
 2. There is no ***for** statement. It can be replaced with a *while* statement.    
 3. no *break, continue, default*
