@@ -2,12 +2,12 @@
 MIT license 2015 (C) Helmut Guenther. 
 This is the main documentation file for developers and programmers and will be continued...
 ##Introduction
-:round_pushpin:  means, that there is work to do. I call you to give enhancements.
+:round_pushpin:  means, that there is work to do. I call you to give enhancements. Please become a contributor for the development of PLA and give me a note at [help@pla.de](help@pla.de).
 
 ##Program Structure
-I do not like segments and selectors in developing x86 software. I love *flat binary files* like the old CP/M or the DOS COM files. But you have only 64 KB for your text segment. For big data I have found a solution (see below). Even the PLA compiler needs only 26 KB for the code and constant data and works. There is no need for a linker. You load the program without changing anything into memory and it starts at location 100h. Thats all.
-####memory mapping of COM Flat Model
-All COM file starts with only one segment and setting all the segment registers to the same address. This is the beginning of the 64 kbyte block of memory you can work with. The segment registers never change as long as the program is running and you can forget about them. The loader sets *CS=DS=SS=ES* and sets the intraction pointer *IP* to 100h. The COM flat model is the "little brother" of protected mode flat model. 
+
+####Memory Mapping of the COM Flat Model
+All COM file starts with only one segment and set all the segment registers to the same start address. This is the beginning of the 64 kbyte block of memory you can work with. The segment registers never change as long as the program is running and therefore you can forget about them. The loader sets *CS=DS=SS=ES* and sets the intruction pointer *IP* to 100h. The COM flat model is the "little brother" of the protected mode flat model. 
 ```
  HIGH ADDRESS                    
 -------------:|-------------------|
@@ -21,16 +21,16 @@ All COM file starts with only one segment and setting all the segment registers 
               |
               |                     unused memory betwwen heap and stack      
               |
-       30,000 | Start of heap       start of bss sectionn, declared in ORGDATAORIG=30000 
+       30,000 | Start of heap       start of bss section, declared in ORGDATAORIG=30000 
               | end of code                    
      256=100h |                     IP: program starts here
             0 | PSP                 CS:, DS:, SS:
  LOW ADDRESS  
 ```
-The amount of unused memory between *heap* and *stack* will be calculated and displayed. As PLA does not support allocation of memory at runtime, keep an eye only of the grows of the stack. The maximum used stack size (without recursion) will be displayed.    
+The amount of unused memory between *heap* and *stack* will be calculated and displayed at compile time. As PLA does not support allocation of memory at runtime, keep an eye only of the grows of the stack. The maximum used stack size (without recursion) will also be displayed at compile time.           
 There are two exception of using one code segment:     
-1. For storing the names of the variables and functions I needed a space of about 64 kbyte. So I reserved 64 kbyte and sets the *es* segment register to the beginning of that block.     
-2. After switching to [unreal mode](http://en.wikipedia.org/wiki/Unreal_mode) your program can store data within the 4 GByte address space. I started at 2 MByte, declared in the constant *unsigned long LDATAORIG=2000000*. So I left 1 Mbyte for DOS and nearly 1 MByte for XMS, EMS, caches and other DOS stuff.
+1. For storing the names of the variables and functions, I needed a space of about 64 kbyte. So I reserved 64 kbyte and sets the **es** segment register to the beginning of that block. This is a real quirk.   
+2. After switching to [unreal mode](http://en.wikipedia.org/wiki/Unreal_mode) your program can store data within the 4 GByte address space. I started arbitrary at 2 MByte, declared in the constant *unsigned long LDATAORIG=2000000*. So I left free 1 Mbyte for DOS and nearly 1 MByte for XMS, EMS, caches and other DOS stuff.
 
 Today the computers are so fast, that you need no precompiled libraries for small programs. On my MacBook Pro it takes only two seconds to compile, including the source libraries, writing a huge listing file with a cross reference listing and statistics. I put all library stuff in an *archive source file* **AR.C** and the compiler takes only the needed funcions to keep the binary small. The following netwide assembler needs more time to produce the binary. So I started to write an x86 assembler, it will be an COM file, too.
 
