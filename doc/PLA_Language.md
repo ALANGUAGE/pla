@@ -8,7 +8,7 @@ The language consists of:
 **Pointers** are declared by preceeding the variable name with an asterisk (\*) like in the C language. All pointers are 16-bit segment offsets and are traited as short *unsigned* integers. There is no pointer arithmetic like in C, adding one to a pointer directs to the next *byte*, even if the pointer directs to an integer value.        
 **Arrays** are declared by following the square brackets **[ ]** after a variable name. PLA supports only single-dimension arrays. For *not* initialized values the subscript must be a constant number. The compiler reserves space in the *heap*, because there is no value to store in the code file. If the array is initialized (e.g.: char array1**[ ]**="ABC"), then the value of the variable is stored in the code segment and saved with the code. Variable names are of maximum size *IDLENMAX*, which is current 16 characters long and may contain the underscore **\_**, letters and numbers and must not begin with a number. The names are *case sensitive*.     
 You can use the address operator **&** to get the addres of the object. The address operator is implicit used by calling a subroutine with array names as parameters. The term *Array[x]* is equivalent of \*(array+x). **Address arithmetic** is done with scaling of integer and long arrays. To access data in memory, PLA uses the indirect address mode of the processor and uses the indirect register **BX**.    
-The language is limited. There are no *struct* and no *unions* key words. You can declare only *one* variable in every statement. :round_pushpin:Please fix    
+The language is limited. There are no *struct* and no *unions* key words. You can declare only *one* variable in every statement. :round_pushpin:Please fixme    
 
 4. **Functions** are defined by the word *void*, *char*, *int* or *long* before the function name. And the name must be followed without any space by a bracket open **(**. As PLA does not handle *prototypes*, it assumes that the return value has the size of an integer and does not check the return size. PLA uses the *call by value* for parameters. If you want a *call by reference*, use the *indirection operator* (\*). Array names as parameters are handled as call by reference, too. The number and type of arguments are not verified.            
 Inside the function is a block with curly brackets **{ }**. If there are *local variables* to be declared, they must be declared before the first statement occurs. A *stack frame* is automatically created, if you use parametrs or local variables. As calls may be nested through **recursive** calling the function, the frames are stacked one above the other.
@@ -94,10 +94,11 @@ ifzero
 emit     bytes only, separeted with comma
 return   may be followed by an expression
 ```
-**Missing Statements**
+**Missing Statements**       
 1. There is no **switch** statement, because it is difficult to implement and can be replaced with *if* statements. At run time, the *case* statement must load and evaluate every expression. Some *if* statements are more difficult to read, but they have the advantage of beeing smaller and faster at run time.    
-2. There is no ***for** statement. It can be replaced with a *while* statement.    
-3. no *break, continue, default*
+2. There is no **for** statement. It can be replaced with a *while* statement.    
+3. no *break, continue, default* statements.
+
 
 
 
