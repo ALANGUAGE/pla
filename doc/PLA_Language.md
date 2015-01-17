@@ -10,7 +10,8 @@ The language consists of:
 You can use the address operator **&** to get the addres of the object. The address operator is implicit used by calling a subroutine with array names as parameters. The term *Array[x]* is equivalent of \*(array+x). **Address arithmetic** is done with scaling of integer and long arrays. To access data in memory, PLA uses the indirect address mode of the processor and uses the indirect register **BX**.    
 The language is limited. There are no *struct* and no *unions* key words. You can declare only *one* variable in every statement. :round_pushpin:Please fix    
 
-4. **Functions** are defined by the word *void*, *char*, *int* or *long* before the function name. And the name must be followed without any space by a bracket open **(**. As PLA does not handle *prototypes*, it assumes that the return value has the size of an integer. Inside the function block with curly brackets **{ }** you can declare local variables. After the declaration place the statements inside the function body.
+4. **Functions** are defined by the word *void*, *char*, *int* or *long* before the function name. And the name must be followed without any space by a bracket open **(**. As PLA does not handle *prototypes*, it assumes that the return value has the size of an integer and does not check the return size. PLA uses the *call by value* for parameters. If you want a *call by reference*, use the *indirection operator* (\*). Array names as parameters are handled as call by reference, too. The number and type of arguments are not verified.            
+Inside the function block with curly brackets **{ }** you can declare local variables. After the declaration place the statements inside the function body. A *stack frame* is automatically created, if you use parametrs or local variables. As calls may be nested through **recursive** calling the function, the frames are stacked one above the other.
 
 ####Reserved Words
 All names are *case sensitive* and reserved words must be written in **lower case** letters. Reserved words are all (segment and special) register names (8/16/32 bit,) like *al, fs, esi* and **cr0**, the last one for switching to protected mode.    
@@ -33,10 +34,11 @@ Reserved words are also the following C language key words:
 Other C key words are **not** reserved words.
 
 ####Expressions
-PLA does not know the parentheses **( )** to group expressions. Therefore complex expressions must be separated into simple expressions. There are the following expression types:
+The big problem in evaluating expressions is deciding which parts of an expression are to be associated with which operators. To eliminate ambiguity, PLA does not know the parentheses **( )**. Therefore complex expressions must be separated into simple individual expressions. The advantage is, that there is no hassle about the evaluation precedence and you can control the compiling process. This is optimizing by **brain**. There are the following expression types:
 
 1. **normal expression** PLA evaluates the right side of an expression and stores the value in *al,ax or eax*.
 2. **constant expression** These expressions are preceeded with an underscore **_** and a blank before the expression. It gives the compiler a hint to use the short assembly form of an assignment of a constant.
+3. **comparison expression** In a comparison statement, two expressions are compared. If there is only one expression, a byte  comparison with the **al** register is created. E.g. *if (value)* evaluates *if ( value != 0)*. 
 
 ####Constants
 1. There are only positive **decimal** constants values. 
