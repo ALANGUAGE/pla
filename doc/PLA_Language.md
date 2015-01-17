@@ -47,3 +47,26 @@ The big problem in evaluating expressions is deciding which parts of an expressi
 4. Character **string** constants surrounded by two quotation marks as "ACB". The terminal zero constant is added by the compiler.
 5. **Escape sequences** are three: A backslash following a n=newline, t=tab or 0=zero. The newline is in reality a line feed (ASCII 10), with skipping the carriage return (ASCII 13) in DOS and windows systems.  
 
+####Operators
+All operators are equal in precedence. There are the following groups of operators:
+**Operators**
++ - * / % (modulo) & (AND) | (OR)
+**Assignment Operators**
+= (assign) += -= *= /= &= |= << >> ++ --
+**Realtional Operators**
+== != < <= > >=
+**Missing Operators**
+! logical NOT
+~ one's complement
+- unary minus
+sizeof ( )
+?: conditional operator
+^ bitwise exclusive OR
+&& logical AND
+|| logical OR
+As complex comparison are not allowed, the last operators are not useful.
+
+####Statements
+
+
+
