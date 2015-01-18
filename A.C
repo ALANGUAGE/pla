@@ -1,7 +1,6 @@
-//A.C  The MIT License 2015 (c) 2015 Helmut Guenther
+//A.C  The MIT License (c) 2015 Helmut Guenther
 char Version1[]="A.COM CComp V0.6";
 #define BSS
-#define ARCHIVE "AR.C"
 #define ORGDATA     30000
 char BSS=0;  char NASM=0;  char PROTECTED=0;     char LIST=0;
 #define LSTART        200
