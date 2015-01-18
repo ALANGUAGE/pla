@@ -822,7 +822,7 @@ int isrelational() {
   if (token==T_LE) goto w; if (token==T_GE) goto w;
   if (token=='<' ) goto w; if (token=='>' ) goto w;
   return 0;  w: iscmp=token; token=getlex(); return 1;}
-
+ 
 char symboltemp[80];    
 int getlex() { char c; char *p; 
 g1: c=next(); if (c == 0) return 0; if (c <= ' ') goto g1;
@@ -943,14 +943,6 @@ int printinputline() { fgetsp=&fgetsdest;
     if (fdout) { prs("\n\n;-"); prunsign1(lineno); prc(' '); lineno++;
       prscomment(&fgetsdest);}
 }
-int ifEOL(char c) {
-  if (c == 10) return 1;
-  if (c == 13) {
-    DOS_NoBytes=readR(&DOS_ByteRead, fdin);
-    return 1;}
-  return 0;
-}
- 
 int end1(int n) {fcloseR(fdin); fcloseR(fdout); exitR(n); }
 int error1(char *s) { LIST=1;
   lineno--;
@@ -1090,7 +1082,7 @@ void to32  (long L,  char *src) { }
 void from32(char *dest, long L) { }
 void prLr(unsigned long L) {           ultoar(L, Ls); prs(Ls); }//right
 void prL (unsigned long L) {char *p; p=ultoaL(L, Ls); prs(p ); }//left
-    void prf(unsigned long L, int w) {char len; char *p;            //format width
+void prf(unsigned long L, int w) {char len; char *p;            //format width
   p=ultoaL(L, Ls); len=strlen(p); if (w > len) do {prc(32); w--;} while (w>len);
   prs(p); }
 void ultoar(unsigned long L, char *s) { int i;//edx:eax DIV ebx = eax Modulo edx
