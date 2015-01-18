@@ -945,8 +945,8 @@ int printinputline() { fgetsp=&fgetsdest;
 }
 int ifEOL(char c) {
   if (c == 10) return 1;
-  if (c == 13) { 
-    DOS_NoBytes=readR(&DOS_ByteRead, fdin); 
+  if (c == 13) {
+    DOS_NoBytes=readR(&DOS_ByteRead, fdin);
     return 1;}
   return 0;
 }
@@ -1090,7 +1090,7 @@ void to32  (long L,  char *src) { }
 void from32(char *dest, long L) { }
 void prLr(unsigned long L) {           ultoar(L, Ls); prs(Ls); }//right
 void prL (unsigned long L) {char *p; p=ultoaL(L, Ls); prs(p ); }//left
-void prf(unsigned long L, int w) {char len; char *p;            //format width
+    void prf(unsigned long L, int w) {char len; char *p;            //format width
   p=ultoaL(L, Ls); len=strlen(p); if (w > len) do {prc(32); w--;} while (w>len);
   prs(p); }
 void ultoar(unsigned long L, char *s) { int i;//edx:eax DIV ebx = eax Modulo edx

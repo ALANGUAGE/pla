@@ -9877,14 +9877,14 @@ ifEOL:  ; *** PROC ***
  mov eax, 1
  jmp @@retn
 
-;-948   if (c == 13) { 
+;-948   if (c == 13) {
 
 @@ifEOL580:
  mov al, [bp+4]
  cmp al, 13
  jne @@ifEOL581
 
-;-949     DOS_NoBytes=readR(&DOS_ByteRead, fdin); 
+;-949     DOS_NoBytes=readR(&DOS_ByteRead, fdin);
 
  push word [fdin]
  lea  ax, [DOS_ByteRead]
@@ -11384,152 +11384,4 @@ PROT_DI:
 
 to32:  ; *** PROC ***
 ;Function : to32, Number of local variables: 2
-;   # type sign width line used address name   list of local variables
-;  200 var sign dwrd  1089 NULL bp+4    L
-;  201 ptr sign byte  1089 NULL bp+8    src;
- ENTER  0,0
-
-;-1090 void from32(char *dest, long L) { }
- LEAVE
- ret
-; ENDP
-
-from32:  ; *** PROC ***
-;Function : from32, Number of local variables: 2
-;   # type sign width line used address name   list of local variables
-;  200 ptr sign byte  1090 NULL bp+4    dest
-;  201 var sign dwrd  1090 NULL bp+6    L;
- ENTER  0,0
-
-;-1091 void prLr(unsigned long L) {           ultoar(L, Ls); prs(Ls); }//right
- LEAVE
- ret
-; ENDP
-
-prLr:  ; *** PROC ***
-;Function : prLr, Number of local variables: 1
-;   # type sign width line used address name   list of local variables
-;  200 var unsg dwrd  1091 NULL bp+4    L;
- ENTER  0,0
- lea  ax, [Ls]
- push ax
- push dword [bp+4]
- call ultoar
- add  sp, 6
- lea  ax, [Ls]
- push ax
- call prs
- add  sp, 2
-
-;-1092 void prL (unsigned long L) {char *p; p=ultoaL(L, Ls); prs(p ); }//left
- LEAVE
- ret
-; ENDP
-
-prL:  ; *** PROC ***
-;Function : prL, Number of local variables: 2
-;   # type sign width line used address name   list of local variables
-;  200 var unsg dwrd  1092 NULL bp+4    L
-;  201 ptr sign byte  1092 NULL bp-2    p;
- ENTER  2,0
- lea  ax, [Ls]
- push ax
- push dword [bp+4]
- call ultoaL
- add  sp, 6
- mov word [bp-2], ax
- push word [bp-2]
- call prs
- add  sp, 2
-
-;-1093 void prf(unsigned long L, int w) {char len; char *p;            //format width
- LEAVE
- ret
-; ENDP
-
-prf:  ; *** PROC ***
-
-;-1094   p=ultoaL(L, Ls); len=strlen(p); if (w > len) do {prc(32); w--;} while (w>len);
-
-;Function : prf, Number of local variables: 4
-;   # type sign width line used address name   list of local variables
-;  200 var unsg dwrd  1093 NULL bp+4    L
-;  201 var sign word  1093 NULL bp+8    w
-;  202 var sign byte  1093 NULL bp-2    len
-;  203 ptr sign byte  1093 NULL bp-4    p;
- ENTER  4,0
- lea  ax, [Ls]
- push ax
- push dword [bp+4]
- call ultoaL
- add  sp, 6
- mov word [bp-4], ax
- push word [bp-4]
- call strlen
- add  sp, 2
- mov byte [bp-2], al
- mov ax, [bp+8]
- cmp al, [bp-2]
- jle @@prf633
-@@prf634:
- push 32
- call prc
- add  sp, 2
- dec  word [bp+8]
- mov ax, [bp+8]
- cmp al, [bp-2]
- jle @@prf635
- jmp @@prf634
-@@prf635:
-@@prf633:
-
-;-1095   prs(p); }
-
- push word [bp-4]
- call prs
- add  sp, 2
-
-;-1096 void ultoar(unsigned long L, char *s) { int i;//edx:eax DIV ebx = eax Modulo edx
- LEAVE
- ret
-; ENDP
-
-ultoar:  ; *** PROC ***
-
-;-1097   i=0;  while(i<10) { *s = '0'; s++; i++; }   *s = 0;   s--;  eax=L;
-
-;Function : ultoar, Number of local variables: 3
-;   # type sign width line used address name   list of local variables
-;  200 var unsg dwrd  1096 NULL bp+4    L
-;  201 ptr sign byte  1096 NULL bp+8    s
-;  202 var sign word  1096 NULL bp-2    i;
- ENTER  2,0
- mov eax, 0
- mov word [bp-2], ax
-@@ultoar636:
- mov ax, [bp-2]
- cmp ax, 10
- jge @@ultoar637
- mov eax, 48
- mov  bx, [bp+8]
- mov  [bx], al
- inc  word [bp+8]
- inc  word [bp-2]
- jmp @@ultoar636
-@@ultoar637:
- mov eax, 0
- mov  bx, [bp+8]
- mov  [bx], al
- dec  word [bp+8]
- mov  eax, [bp+4]
-
-;-1098   do { edx=0;  ebx=10; ebx /= ;
-
-@@ultoar638:
- mov  edx, 0
- mov  ebx, 10
- div  ebx
-
-;-1099        dl+=48; bx=s;   *bx=dl;  s--; } while (eax != 0);  }
-
- add  dl, 48
+;   # type sign
