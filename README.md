@@ -8,7 +8,7 @@ Look in the **doc** folder for:
 3. [files.md](doc/files.md) description of all files   
 
 ####Home
-https://github.com/ALANGUAGE/pla or http://pla.de    
+https://github.com/ALANGUAGE/pla or http://pla.de/w/pla/   
 :e-mail: help@pla.de    
 
 I do not like segments and selectors in developing x86 software. I love the flat binary files like the old CP/M or the DOS COM files. But the segment is limited to 64 kbyte. For most of the command line programs it will be enough space. Even the PLA compiler needs only 26 KByte for the code and the constant data and it works well. For storing more data there are some possibilities. See [PLA_Compiler.md](/doc/PLA_Compiler.md). Another advantage: There is no need for a linker. You load the program without changing anything into memory and start at location 100h. Thats all.
