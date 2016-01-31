@@ -4,7 +4,7 @@ char Version1[]="A.COM CComp V0.6";
 #define ARCHIVE "AR.C"
 #define ORGDATA     30000
 char BSS=0;  char NASM=0;  char PROTECTED=0;     char LIST=0;
-#define LSTART        200
+#define LSTART        250
 #define VARMAX        300
 #define FUNCMAX       300
 #define CALLMAX      2000
