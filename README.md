@@ -16,7 +16,7 @@ I do not like segments and selectors in developing x86 software. I love the flat
 It is my first free software and I am new to Github. Contrubutors are heartily wellcome! 
 I am looking for comments, suggestions and of  course bugs. I start the documentation in the **doc** folder and will explain the design, all functions and variables. If it holds interests to you, please come back or write me an email.
 
-####T ODO
+#### TODO
 * writing the documentation
 * installing a mailing list, issues tracker
 
