@@ -7,7 +7,7 @@ Look in the **doc** folder for:
 2. [PLA_Compiler.md](/doc/PLA_Compiler.md) introduction for developers and collaborators
 3. [files.md](doc/files.md) description of all files   
 
-####Home
+#### Home
 https://github.com/ALANGUAGE/pla or http://pla.de/w/pla/   
 :e-mail: help@pla.de    
 
@@ -16,16 +16,16 @@ I do not like segments and selectors in developing x86 software. I love the flat
 It is my first free software and I am new to Github. Contrubutors are heartily wellcome! 
 I am looking for comments, suggestions and of  course bugs. I start the documentation in the **doc** folder and will explain the design, all functions and variables. If it holds interests to you, please come back or write me an email.
 
-####TODO
+####T ODO
 * writing the documentation
 * installing a mailing list, issues tracker
 
-####Later
+#### Later
 I used no version control system and printed out the code. 
 So I wrote the code very dense. With the code folding features of the editors 
 there is no need any more. Beautifying the code is recommended.
 
-####History
+#### History
 I (Helmut Guenther) started the project in MS-DOS times to learn how a compiler works.
 As of 1.1.2015 I set the software as free software under the [MIT license](/doc/LICENSE).
 
