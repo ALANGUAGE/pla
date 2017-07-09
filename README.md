@@ -1,3 +1,4 @@
+[TOC]  
 PLA Programming Language A
 =
 Assembly language with C style syntax for X86 processors with the freedom of assembly and the notation of the C language using the MIT License.    
